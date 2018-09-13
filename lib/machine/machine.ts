@@ -19,7 +19,7 @@ import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitH
 import { GitProject } from "@atomist/automation-client/project/git/GitProject";
 import {
     allSatisfied,
-    FingerprintGoal,
+    Fingerprint,
     goals,
     not,
     PredicatePushTest,
@@ -50,7 +50,7 @@ import {
     LeinDockerGoals,
     LeinSupport,
     MaterialChangeToClojureRepo} from "@atomist/sdm-pack-clojure";
-import { FingerprintSupport } from "@atomist/sdm-pack-fingerprints";
+import { fingerprintSupport } from "@atomist/sdm-pack-fingerprints";
 import {RccaSupport} from "@atomist/sdm-pack-rcca";
 import { handleRuningPods } from "./events/HandleRunningPods";
 import {addCacheHooks, k8SpecUpdater, K8SpecUpdaterParameters, updateK8Spec} from "./k8Support";
@@ -62,6 +62,8 @@ export const HasAtomistFile: PredicatePushTest = predicatePushTest(
 export const HasAtomistDockerfile: PredicatePushTest = predicatePushTest(
     "Has Atomist Dockerfile file",
     hasFile("docker/Dockerfile").predicate);
+
+export const FingerprintGoal = new Fingerprint();
 
 export function machine(configuration: SoftwareDeliveryMachineConfiguration): SoftwareDeliveryMachine {
     const sdm = createSoftwareDeliveryMachine({
@@ -92,7 +94,7 @@ export function machine(configuration: SoftwareDeliveryMachineConfiguration): So
 
     sdm.addExtensionPacks(
         LeinSupport,
-        FingerprintSupport,
+        fingerprintSupport(FingerprintGoal),
         RccaSupport,
     );
 
