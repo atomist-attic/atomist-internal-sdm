@@ -15,22 +15,22 @@
  */
 
 import {
+    addressEvent,
+    doWithFiles,
+    GitHubRepoRef,
+    GitProject,
     HandlerContext,
     logger,
     MappedParameter,
     MappedParameters,
     Parameter,
     Parameters,
+    Project,
     Secret,
     Secrets,
+    SimpleProjectEditor,
     SuccessPromise,
 } from "@atomist/automation-client";
-import { GitHubRepoRef } from "@atomist/automation-client";
-
-import { SimpleProjectEditor } from "@atomist/automation-client";
-import { GitProject } from "@atomist/automation-client";
-import { Project } from "@atomist/automation-client";
-import { doWithFiles } from "@atomist/automation-client";
 
 import {
     ExecuteGoal,
@@ -38,8 +38,6 @@ import {
     GoalInvocation,
     SoftwareDeliveryMachineOptions,
 } from "@atomist/sdm";
-
-import { addressEvent } from "@atomist/automation-client";
 import * as fs from "fs";
 import * as _ from "lodash";
 import * as dir from "node-dir";
@@ -183,11 +181,14 @@ export function k8SpecUpdater(sdm: SoftwareDeliveryMachineOptions, branch: strin
         const { credentials, id } = rwlc;
         const version = await rwlcVersion(rwlc);
         return sdm.projectLoader.doWithProject({
-            credentials,
-            id: GitHubRepoRef.from({ owner: "atomisthq", repo: "atomist-k8-specs", branch, sha: "HEAD" }),
-            readOnly: false,
-            context: rwlc.context,
-        },
+                credentials,
+                id: GitHubRepoRef.from({ owner: "atomisthq", repo: "atomist-k8-specs", branch }),
+                readOnly: false,
+                context: rwlc.context,
+                cloneOptions: {
+                    alwaysDeep: true,
+                },
+            },
             async (project: GitProject) => {
                 await updateK8Spec(project, rwlc.context, { owner: id.owner, repo: id.repo, version, branch });
                 await project.commit(`Update ${id.owner}/${id.repo} to ${version}`);
