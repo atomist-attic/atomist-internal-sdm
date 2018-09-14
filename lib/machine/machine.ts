@@ -22,8 +22,8 @@ import {
     Fingerprint,
     goals,
     not,
-    predicatePushTest,
     PredicatePushTest,
+    predicatePushTest,
     SoftwareDeliveryMachine,
     SoftwareDeliveryMachineConfiguration,
     ToDefaultBranch,
@@ -36,6 +36,7 @@ import { summarizeGoalsInGitHubStatus } from "@atomist/sdm-core";
 import {
     DisableDeploy,
     EnableDeploy,
+    GoalState,
 } from "@atomist/sdm-core";
 import { executeTag } from "@atomist/sdm-core";
 import { createSoftwareDeliveryMachine } from "@atomist/sdm-core";
@@ -108,6 +109,7 @@ export function machine(configuration: SoftwareDeliveryMachineConfiguration): So
         LeinSupport,
         fingerprintSupport(FingerprintGoal),
         RccaSupport,
+        GoalState,
     );
 
     sdm.addCommand(DisableDeploy);
