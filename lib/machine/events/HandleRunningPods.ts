@@ -26,7 +26,11 @@ import { NoParameters } from "@atomist/automation-client";
 import { SdmGoalState } from "@atomist/sdm";
 import { findSdmGoalOnCommit } from "@atomist/sdm";
 import { updateGoal } from "@atomist/sdm";
-import { FetchDockerImage, PodDeployments, RunningPods } from "../../typings/types";
+import {
+    FetchDockerImage,
+    PodDeployments,
+    RunningPods,
+} from "../../typings/types";
 import {
     DeployToProd,
     DeployToStaging,

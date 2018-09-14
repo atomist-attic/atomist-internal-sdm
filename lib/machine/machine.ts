@@ -41,7 +41,8 @@ import { executeTag } from "@atomist/sdm-core";
 import { createSoftwareDeliveryMachine } from "@atomist/sdm-core";
 import { HasTravisFile } from "@atomist/sdm/lib/api-helper/pushtest/ci/ciPushTests";
 import {
-    NoGoals, TagGoal,
+    NoGoals,
+    TagGoal,
 } from "@atomist/sdm/lib/pack/well-known-goals/commonGoals";
 import { DeployToProd, DeployToStaging, LeinDefaultBranchDockerGoals, UpdateProdK8SpecsGoal, UpdateStagingK8SpecsGoal } from "./goals";
 
