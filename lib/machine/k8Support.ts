@@ -25,12 +25,12 @@ import {
     Secrets,
     SuccessPromise,
 } from "@atomist/automation-client";
-import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
+import { GitHubRepoRef } from "@atomist/automation-client";
 
-import { SimpleProjectEditor } from "@atomist/automation-client/operations/edit/projectEditor";
-import { GitProject } from "@atomist/automation-client/project/git/GitProject";
-import { Project } from "@atomist/automation-client/project/Project";
-import { doWithFiles } from "@atomist/automation-client/project/util/projectUtils";
+import { SimpleProjectEditor } from "@atomist/automation-client";
+import { GitProject } from "@atomist/automation-client";
+import { Project } from "@atomist/automation-client";
+import { doWithFiles } from "@atomist/automation-client";
 
 import {
     ExecuteGoal,
@@ -39,7 +39,7 @@ import {
     SoftwareDeliveryMachineOptions,
 } from "@atomist/sdm";
 
-import { addressEvent } from "@atomist/automation-client/spi/message/MessageClient";
+import { addressEvent } from "@atomist/automation-client";
 import * as fs from "fs";
 import * as _ from "lodash";
 import * as dir from "node-dir";

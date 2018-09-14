@@ -14,12 +14,9 @@
  * limitations under the License.
  */
 
-import {
-    ingester,
-    subscription,
-} from "@atomist/automation-client/graph/graphQL";
-import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import { GitProject } from "@atomist/automation-client/project/git/GitProject";
+import { GraphQL } from "@atomist/automation-client";
+import { GitHubRepoRef } from "@atomist/automation-client";
+import { GitProject } from "@atomist/automation-client";
 import {
     allSatisfied,
     Fingerprint,
@@ -32,20 +29,20 @@ import {
     ToDefaultBranch,
     whenPushSatisfies,
 } from "@atomist/sdm";
+
+import { CloningProjectLoader } from "@atomist/sdm";
+import { hasFile } from "@atomist/sdm";
+import { summarizeGoalsInGitHubStatus } from "@atomist/sdm-core";
 import {
     DisableDeploy,
     EnableDeploy,
 } from "@atomist/sdm-core";
 import { executeTag } from "@atomist/sdm-core";
 import { createSoftwareDeliveryMachine } from "@atomist/sdm-core";
-import { summarizeGoalsInGitHubStatus } from "@atomist/sdm-core";
-import { CloningProjectLoader } from "@atomist/sdm/api-helper/project/cloningProjectLoader";
-import { HasTravisFile } from "@atomist/sdm/api-helper/pushtest/ci/ciPushTests";
-import { hasFile } from "@atomist/sdm/api/mapping/support/commonPushTests";
+import { HasTravisFile } from "@atomist/sdm/lib/api-helper/pushtest/ci/ciPushTests";
 import {
-    NoGoals,
-    TagGoal,
-} from "@atomist/sdm/pack/well-known-goals/commonGoals";
+    NoGoals, TagGoal,
+} from "@atomist/sdm/lib/pack/well-known-goals/commonGoals";
 import { DeployToProd, DeployToStaging, LeinDefaultBranchDockerGoals, UpdateProdK8SpecsGoal, UpdateStagingK8SpecsGoal } from "./goals";
 
 import {
@@ -59,7 +56,7 @@ import {
 import { fingerprintSupport } from "@atomist/sdm-pack-fingerprints";
 import { RccaSupport } from "@atomist/sdm-pack-rcca";
 import { handleRuningPods } from "./events/HandleRunningPods";
-import {addCacheHooks, k8SpecUpdater, K8SpecUpdaterParameters, updateK8Spec} from "./k8Support";
+import { addCacheHooks, k8SpecUpdater, K8SpecUpdaterParameters, updateK8Spec } from "./k8Support";
 
 export const HasAtomistFile: PredicatePushTest = predicatePushTest(
     "Has Atomist file",
@@ -117,7 +114,7 @@ export function machine(configuration: SoftwareDeliveryMachineConfiguration): So
 
     sdm.addGoalImplementation("tag", TagGoal, executeTag());
 
-    sdm.addIngester(ingester("podDeployments"));
+    sdm.addIngester(GraphQL.ingester("podDeployments"));
 
     sdm.addGoalImplementation("updateStagingK8Specs", UpdateStagingK8SpecsGoal,
         k8SpecUpdater(sdm.configuration.sdm, "staging"));
@@ -149,7 +146,7 @@ export function machine(configuration: SoftwareDeliveryMachineConfiguration): So
     sdm.addEvent({
         name: "handleRunningPod",
         description: "Update goal based on running pods in an environemnt",
-        subscription: subscription("runningPods"),
+        subscription: GraphQL.subscription("runningPods"),
         listener: handleRuningPods(),
     });
 

@@ -20,13 +20,12 @@ import {
     logger,
     Success,
 } from "@atomist/automation-client";
-import { CommandResult } from "@atomist/automation-client/action/cli/commandLine";
-import { configurationValue } from "@atomist/automation-client/configuration";
-import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import { TokenCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
-import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
-import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
-import { GitProject } from "@atomist/automation-client/project/git/GitProject";
+import { GitHubRepoRef } from "@atomist/automation-client";
+import { TokenCredentials } from "@atomist/automation-client";
+import { RemoteRepoRef } from "@atomist/automation-client";
+import { GitCommandGitProject } from "@atomist/automation-client";
+import { GitProject } from "@atomist/automation-client";
+import { configurationValue } from "@atomist/automation-client";
 import {
     ExecuteGoal,
     ExecuteGoalResult,
@@ -35,20 +34,22 @@ import {
     ProgressLog,
     ProjectLoader,
 } from "@atomist/sdm";
-import {
-    createRelease,
-} from "@atomist/sdm-core";
+import { DelimitedWriteProgressLogDecorator } from "@atomist/sdm";
 import { createTagForStatus } from "@atomist/sdm-core";
 import { ProjectIdentifier } from "@atomist/sdm-core";
 import { readSdmVersion } from "@atomist/sdm-core";
-import { DockerOptions } from "@atomist/sdm-pack-docker";
-import { DelimitedWriteProgressLogDecorator } from "@atomist/sdm/api-helper/log/DelimitedWriteProgressLogDecorator";
+
 import {
     ChildProcessResult,
     spawnAndWatch,
     SpawnCommand,
-} from "@atomist/sdm/api-helper/misc/spawned";
+} from "@atomist/automation-client";
+import { DockerOptions } from "@atomist/sdm-pack-docker";
 import { SpawnOptions } from "child_process";
+
+import {
+    github,
+} from "@atomist/sdm-core";
 
 interface ProjectRegistryInfo {
     registry: string;
@@ -121,7 +122,6 @@ function spawnExecuteLogger(swc: SpawnWatchCommand): ExecuteLogger {
         return res;
     };
 }
-
 /**
  * Transform a GitCommandGitProject operation into an ExecuteLogger
  * suitable for execution by executeLoggers.  The operation is awaited
@@ -132,42 +132,28 @@ function spawnExecuteLogger(swc: SpawnWatchCommand): ExecuteLogger {
  * returned or exception caught, the returned code is guaranteed to be
  * non-zero.
  */
-function gitExecuteLogger(gp: GitCommandGitProject, op: () => Promise<CommandResult<GitCommandGitProject>>): ExecuteLogger {
+function gitExecuteLogger(
+    gp: GitCommandGitProject,
+    op: () => Promise<GitCommandGitProject>,
+    name: string,
+): ExecuteLogger {
 
     return async (log: ProgressLog) => {
-        let res: CommandResult<GitCommandGitProject>;
+        log.write(`Running: git ${name}`);
         try {
-            res = await op();
+            await op();
+            log.write(`Success: git ${name}`);
+            return { code: 0 };
         } catch (e) {
-            res = {
-                error: e,
-                success: false,
-                childProcess: {
-                    exitCode: -1,
-                    killed: true,
-                    pid: 99999,
-                },
-                stdout: `Error: ${e.message}`,
-                stderr: `Error: ${e.stack}`,
-                target: gp,
+            log.write(e.stdout);
+            log.write(e.stderr);
+            const message = `Failure: git ${name}: ${e.message}`;
+            log.write(message);
+            return {
+                code: e.code,
+                message,
             };
         }
-        log.write(res.stdout);
-        log.write(res.stderr);
-        if (res.error) {
-            res.childProcess.exitCode = (res.childProcess.exitCode === 0) ? 999 : res.childProcess.exitCode;
-        }
-        const message = (res.error && res.error.message) ? res.error.message :
-            ((res.childProcess.exitCode !== 0) ? `Git command failed: ${res.stderr}` : undefined);
-        if (res.childProcess.exitCode !== 0) {
-            logger.error(message);
-            log.write(message);
-        }
-        const egr: ExecuteGoalResult = {
-            code: res.childProcess.exitCode,
-            message,
-        };
-        return egr;
     };
 }
 
@@ -290,7 +276,7 @@ export function executeReleaseTag(projectLoader: ProjectLoader): ExecuteGoal {
                 ...Success,
                 targetUrl,
             };
-            return createRelease((credentials as TokenCredentials).token, id as GitHubRepoRef, release)
+            return github.createRelease((credentials as TokenCredentials).token, id as GitHubRepoRef, release)
                 .then(() => egr);
         });
     };
@@ -315,7 +301,7 @@ export function executeReleaseVersion(
             const branch = "master";
             const remote = gp.remote || "origin";
             const preEls: ExecuteLogger[] = [
-                gitExecuteLogger(gp, () => gp.checkout(branch)),
+                gitExecuteLogger(gp, () => gp.checkout(branch), "checkout"),
                 spawnExecuteLogger({ cmd: { command: "git", args: ["pull", remote, branch] }, cwd: gp.baseDir }),
             ];
             const preRes = await executeLoggers(preEls, rwlc.progressLog);
@@ -338,8 +324,8 @@ export function executeReleaseVersion(
 
             const postEls: ExecuteLogger[] = [
                 spawnExecuteLogger({ cmd: { command: "npm", args: ["version", "--no-git-tag-version", "patch"] }, cwd: gp.baseDir }),
-                gitExecuteLogger(gp, () => gp.commit(`Increment version after ${versionRelease} release`)),
-                gitExecuteLogger(gp, () => gp.push()),
+                gitExecuteLogger(gp, () => gp.commit(`Increment version after ${versionRelease} release`), "commit"),
+                gitExecuteLogger(gp, () => gp.push(), "push"),
             ];
             return executeLoggers(postEls, rwlc.progressLog);
         });

@@ -15,8 +15,8 @@
  */
 
 import { HandlerContext } from "@atomist/automation-client";
-import { SimpleRepoId } from "@atomist/automation-client/operations/common/RepoId";
-import { InMemoryProject } from "@atomist/automation-client/project/mem/InMemoryProject";
+import { SimpleRepoId } from "@atomist/automation-client";
+import { InMemoryProject } from "@atomist/automation-client";
 import * as fs from "fs";
 import * as assert from "power-assert";
 import { addCacheHooks, updateK8Spec } from "../lib/machine/k8Support";

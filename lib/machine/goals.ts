@@ -25,7 +25,7 @@ import {
 } from "@atomist/sdm";
 import {
     TagGoal,
-} from "@atomist/sdm/pack/well-known-goals/commonGoals";
+} from "@atomist/sdm/lib/pack/well-known-goals/commonGoals";
 
 import {
     DefaultBranchGoals,

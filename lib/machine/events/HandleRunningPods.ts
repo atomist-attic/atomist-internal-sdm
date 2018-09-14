@@ -20,17 +20,13 @@ import {
     logger,
     Success,
 } from "@atomist/automation-client";
-import { OnEvent } from "@atomist/automation-client/onEvent";
-import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import { NoParameters } from "@atomist/automation-client/SmartParameters";
+import { OnEvent } from "@atomist/automation-client";
+import { GitHubRepoRef } from "@atomist/automation-client";
+import { NoParameters } from "@atomist/automation-client";
 import { SdmGoalState } from "@atomist/sdm";
-import { findSdmGoalOnCommit } from "@atomist/sdm/api-helper/goal/fetchGoalsOnCommit";
-import { updateGoal } from "@atomist/sdm/api-helper/goal/storeGoals";
-import {
-    FetchDockerImage,
-    PodDeployments,
-    RunningPods,
-} from "../../typings/types";
+import { findSdmGoalOnCommit } from "@atomist/sdm";
+import { updateGoal } from "@atomist/sdm";
+import { FetchDockerImage, PodDeployments, RunningPods } from "../../typings/types";
 import {
     DeployToProd,
     DeployToStaging,
