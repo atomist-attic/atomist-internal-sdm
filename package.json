@@ -20,7 +20,7 @@
     "url": "https://github.com/atomist/clojure-sdm/issues"
   },
   "dependencies": {
-    "@atomist/automation-client": "1.0.0-master.20180914125809",
+    "@atomist/automation-client": "1.0.0-master.20180914162458",
     "@atomist/automation-client-ext-logzio": "1.0.0-master.20180914122002",
     "@atomist/automation-client-ext-raven": "1.0.0-master.20180914122619",
     "@atomist/clj-editors": "^0.5.0",
