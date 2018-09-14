@@ -99,9 +99,9 @@ export function machine(configuration: SoftwareDeliveryMachineConfiguration): So
             .itMeans("Build a Clojure Library with Leiningen")
             .setGoals(goals("library with fingerprints").plan(LeinBuildGoals, FingerprintGoal)),
 
-        whenPushSatisfies(IsNode)
-            .itMeans("just fingerprint any of our Node projects")
-            .setGoals(FingerprintGoal),
+        // whenPushSatisfies(IsNode)
+        //     .itMeans("just fingerprint any of our Node projects")
+        //     .setGoals(FingerprintGoal),
     );
 
     sdm.addExtensionPacks(
