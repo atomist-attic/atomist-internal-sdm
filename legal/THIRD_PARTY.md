@@ -164,7 +164,7 @@ Creative Commons Zero v1.0 Universal - [http://creativecommons.org/publicdomain/
 
 | Name | Version | Publisher | Repository |
 |------|---------|-----------|------------|
-|`@atomist/sdm-pack-rcca`|`0.0.4`|Atomist||
+|`@atomist/sdm-pack-rcca`|`0.0.5`|Atomist||
 
 #### Custom: https://github.com/douglascrockford/JSON-js
 
