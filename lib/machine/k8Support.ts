@@ -184,7 +184,7 @@ export function k8SpecUpdater(sdm: SoftwareDeliveryMachineOptions, branch: strin
         const version = await rwlcVersion(rwlc);
         return sdm.projectLoader.doWithProject({
             credentials,
-            id: new GitHubRepoRef("atomisthq", "atomist-k8-specs", branch),
+            id: GitHubRepoRef.from({ owner: "atomisthq", repo: "atomist-k8-specs", branch, sha: "HEAD" }),
             readOnly: false,
             context: rwlc.context,
         },
