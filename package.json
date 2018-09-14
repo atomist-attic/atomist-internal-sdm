@@ -29,7 +29,7 @@
     "@atomist/sdm-pack-clojure": "0.3.0-master.20180911215935",
     "@atomist/sdm-pack-docker": "1.0.0-docker-pack.20180903214340",
     "@atomist/sdm-pack-fingerprints": "^0.4.0",
-    "@atomist/sdm-pack-rcca": "0.0.4",
+    "@atomist/sdm-pack-rcca": "0.0.5",
     "@atomist/slack-messages": "^1.0.0",
     "dateformat": "^3.0.3",
     "fs-extra": "^6.0.0",
