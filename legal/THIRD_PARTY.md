@@ -157,7 +157,7 @@ Creative Commons Zero v1.0 Universal - [http://creativecommons.org/publicdomain/
 
 | Name | Version | Publisher | Repository |
 |------|---------|-----------|------------|
-|`@atomist/sdm-pack-rcca`|`0.0.4-master.20180914200141`|Atomist||
+|`@atomist/sdm-pack-rcca`|`0.0.4-master.20180914211735`|Atomist||
 
 #### GPL-3.0
 GNU General Public License v3.0 only - [http://www.gnu.org/licenses/gpl-3.0-standalone.html](http://www.gnu.org/licenses/gpl-3.0-standalone.html)
