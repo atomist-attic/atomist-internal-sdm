@@ -64,7 +64,7 @@ export const HasAtomistDockerfile: PredicatePushTest = predicatePushTest(
     hasFile("docker/Dockerfile").predicate);
 
 export const IsNode: PredicatePushTest = predicatePushTest(
-    "Has packag.json file", 
+    "Has packag.json file",
     hasFile("package.json").predicate);
 
 export const FingerprintGoal = new Fingerprint();
@@ -94,7 +94,7 @@ export function machine(configuration: SoftwareDeliveryMachineConfiguration): So
         whenPushSatisfies(IsLein, not(HasTravisFile), HasAtomistFile, not(HasAtomistDockerfile), MaterialChangeToClojureRepo)
             .itMeans("Build a Clojure Library with Leiningen")
             .setGoals(goals("library with fingerprints").plan(LeinBuildGoals, FingerprintGoal)),
-        
+
         whenPushSatisfies(IsNode)
             .itMeans("just fingerprint any of our Node projects")
             .setGoals(FingerprintGoal),
