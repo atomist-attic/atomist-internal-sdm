@@ -14,7 +14,10 @@
  * limitations under the License.
  */
 
-import { ingester, subscription} from "@atomist/automation-client/graph/graphQL";
+import {
+    ingester,
+    subscription,
+} from "@atomist/automation-client/graph/graphQL";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { GitProject } from "@atomist/automation-client/project/git/GitProject";
 import {
@@ -22,12 +25,13 @@ import {
     Fingerprint,
     goals,
     not,
-    PredicatePushTest,
     predicatePushTest,
+    PredicatePushTest,
     SoftwareDeliveryMachine,
     SoftwareDeliveryMachineConfiguration,
     ToDefaultBranch,
-    whenPushSatisfies} from "@atomist/sdm";
+    whenPushSatisfies,
+} from "@atomist/sdm";
 import {
     DisableDeploy,
     EnableDeploy,
@@ -39,7 +43,8 @@ import { CloningProjectLoader } from "@atomist/sdm/api-helper/project/cloningPro
 import { HasTravisFile } from "@atomist/sdm/api-helper/pushtest/ci/ciPushTests";
 import { hasFile } from "@atomist/sdm/api/mapping/support/commonPushTests";
 import {
-    NoGoals, TagGoal,
+    NoGoals,
+    TagGoal,
 } from "@atomist/sdm/pack/well-known-goals/commonGoals";
 import { DeployToProd, DeployToStaging, LeinDefaultBranchDockerGoals, UpdateProdK8SpecsGoal, UpdateStagingK8SpecsGoal } from "./goals";
 
@@ -49,9 +54,10 @@ import {
     LeinDefaultBranchBuildGoals,
     LeinDockerGoals,
     LeinSupport,
-    MaterialChangeToClojureRepo} from "@atomist/sdm-pack-clojure";
+    MaterialChangeToClojureRepo,
+} from "@atomist/sdm-pack-clojure";
 import { fingerprintSupport } from "@atomist/sdm-pack-fingerprints";
-import {RccaSupport} from "@atomist/sdm-pack-rcca";
+import { RccaSupport } from "@atomist/sdm-pack-rcca";
 import { handleRuningPods } from "./events/HandleRunningPods";
 import {addCacheHooks, k8SpecUpdater, K8SpecUpdaterParameters, updateK8Spec} from "./k8Support";
 

@@ -18,8 +18,8 @@
 
 import {
     Goal,
-    Goals,
     goals,
+    Goals,
     ProductionEnvironment,
     StagingEnvironment,
 } from "@atomist/sdm";
@@ -27,7 +27,10 @@ import {
     TagGoal,
 } from "@atomist/sdm/pack/well-known-goals/commonGoals";
 
-import { DefaultBranchGoals, LeinDockerGoals } from "@atomist/sdm-pack-clojure";
+import {
+    DefaultBranchGoals,
+    LeinDockerGoals,
+} from "@atomist/sdm-pack-clojure";
 
 // GOALSET Definition
 
