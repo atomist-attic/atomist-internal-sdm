@@ -14,13 +14,17 @@
  * limitations under the License.
  */
 
-import { GraphQL } from "@atomist/automation-client";
-import { GitHubRepoRef } from "@atomist/automation-client";
-import { GitProject } from "@atomist/automation-client";
+import {
+    GitHubRepoRef,
+    GitProject,
+    GraphQL,
+} from "@atomist/automation-client";
 import {
     allSatisfied,
+    CloningProjectLoader,
     Fingerprint,
     goals,
+    hasFile,
     not,
     predicatePushTest,
     PredicatePushTest,
@@ -29,23 +33,14 @@ import {
     ToDefaultBranch,
     whenPushSatisfies,
 } from "@atomist/sdm";
-
-import { CloningProjectLoader } from "@atomist/sdm";
-import { hasFile } from "@atomist/sdm";
-import { summarizeGoalsInGitHubStatus } from "@atomist/sdm-core";
 import {
+    createSoftwareDeliveryMachine,
     DisableDeploy,
     EnableDeploy,
+    executeTag,
     GoalState,
+    summarizeGoalsInGitHubStatus,
 } from "@atomist/sdm-core";
-import { executeTag } from "@atomist/sdm-core";
-import { createSoftwareDeliveryMachine } from "@atomist/sdm-core";
-import { HasTravisFile } from "@atomist/sdm/lib/api-helper/pushtest/ci/ciPushTests";
-import {
-    NoGoals,
-    TagGoal,
-} from "@atomist/sdm/lib/pack/well-known-goals/commonGoals";
-import { DeployToProd, DeployToStaging, LeinDefaultBranchDockerGoals, UpdateProdK8SpecsGoal, UpdateStagingK8SpecsGoal } from "./goals";
 
 import {
     IsLein,
@@ -57,8 +52,25 @@ import {
 } from "@atomist/sdm-pack-clojure";
 import { fingerprintSupport } from "@atomist/sdm-pack-fingerprints";
 import { RccaSupport } from "@atomist/sdm-pack-rcca";
+import { HasTravisFile } from "@atomist/sdm/lib/api-helper/pushtest/ci/ciPushTests";
+import {
+    NoGoals,
+    TagGoal,
+} from "@atomist/sdm/lib/pack/well-known-goals/commonGoals";
 import { handleRuningPods } from "./events/HandleRunningPods";
-import { addCacheHooks, k8SpecUpdater, K8SpecUpdaterParameters, updateK8Spec } from "./k8Support";
+import {
+    DeployToProd,
+    DeployToStaging,
+    LeinDefaultBranchDockerGoals,
+    UpdateProdK8SpecsGoal,
+    UpdateStagingK8SpecsGoal,
+} from "./goals";
+import {
+    addCacheHooks,
+    k8SpecUpdater,
+    K8SpecUpdaterParameters,
+    updateK8Spec,
+} from "./k8Support";
 
 export const HasAtomistFile: PredicatePushTest = predicatePushTest(
     "Has Atomist file",
@@ -76,9 +88,9 @@ export const FingerprintGoal = new Fingerprint();
 
 export function machine(configuration: SoftwareDeliveryMachineConfiguration): SoftwareDeliveryMachine {
     const sdm = createSoftwareDeliveryMachine({
-        name: "Atomist Software Delivery Machine",
-        configuration,
-    },
+            name: "Atomist Software Delivery Machine",
+            configuration,
+        },
 
         whenPushSatisfies(IsLein, not(HasTravisFile), not(MaterialChangeToClojureRepo))
             .itMeans("No material change")
@@ -169,11 +181,14 @@ export function machine(configuration: SoftwareDeliveryMachineConfiguration): So
         listener: async cli => {
 
             return CloningProjectLoader.doWithProject({
-                credentials: { token: cli.parameters.token },
-                id: new GitHubRepoRef("atomisthq", "atomist-k8-specs", cli.parameters.env),
-                readOnly: false,
-                context: cli.context,
-            },
+                    credentials: { token: cli.parameters.token },
+                    id: GitHubRepoRef.from({ owner: "atomisthq", repo: "atomist-k8-specs", branch: cli.parameters.env }),
+                    readOnly: false,
+                    context: cli.context,
+                    cloneOptions: {
+                        alwaysDeep: true,
+                    },
+                },
                 async (prj: GitProject) => {
                     const result = await updateK8Spec(prj, cli.context, {
                         owner: cli.parameters.owner,
