@@ -51,7 +51,11 @@ import {
     LeinSupport,
     MaterialChangeToClojureRepo,
 } from "@atomist/sdm-pack-clojure";
-import { fingerprintSupport, forFingerprints, renderDiffSnippet } from "@atomist/sdm-pack-fingerprints";
+import {
+    fingerprintSupport,
+    forFingerprints,
+    renderDiffSnippet,
+} from "@atomist/sdm-pack-fingerprints";
 import { RccaSupport } from "@atomist/sdm-pack-rcca";
 import { HasTravisFile } from "@atomist/sdm/lib/api-helper/pushtest/ci/ciPushTests";
 import {
