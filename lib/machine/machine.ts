@@ -51,7 +51,7 @@ import {
     LeinSupport,
     MaterialChangeToClojureRepo,
 } from "@atomist/sdm-pack-clojure";
-import { fingerprintSupport } from "@atomist/sdm-pack-fingerprints";
+import { fingerprintSupport, forFingerprints, renderDiffSnippet } from "@atomist/sdm-pack-fingerprints";
 import { RccaSupport } from "@atomist/sdm-pack-rcca";
 import { HasTravisFile } from "@atomist/sdm/lib/api-helper/pushtest/ci/ciPushTests";
 import {
@@ -86,6 +86,7 @@ import {
     NodeProjectVersioner,
     NpmPreparations,
 } from "@atomist/sdm-pack-node";
+import { renderData } from "@atomist/clj-editors";
 
 export const HasAtomistFile: PredicatePushTest = predicatePushTest(
     "Has Atomist file",
@@ -130,7 +131,25 @@ export function machine(configuration: SoftwareDeliveryMachineConfiguration): So
 
     sdm.addExtensionPacks(
         LeinSupport,
-        fingerprintSupport(FingerprintGoal),
+        fingerprintSupport(
+            FingerprintGoal,
+            {
+                selector: forFingerprints(
+                    "clojure-project-deps",
+                    "npm-project-deps"),
+                diffHandler: renderDiffSnippet,
+            },
+            {
+                selector: forFingerprints(
+                    "clojure-project-coordinates",
+                    "npm-project-coordinates"),
+                diffHandler: (ctx, diff) => {
+                    return ctx.messageClient.addressChannels(
+                        `change in ${diff.from.name} project coords ${renderData(diff.data)}`,
+                        diff.channel);
+                },
+            },
+        ),
         RccaSupport,
         GoalState,
     );
