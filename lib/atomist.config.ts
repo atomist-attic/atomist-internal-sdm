@@ -47,5 +47,12 @@ export const configuration: Configuration = {
         build: {
             tag: false,
         },
+        npm: {
+            publish: {
+                tag: {
+                    defaultBranch: false,
+                },
+            },
+        },
     },
 };
