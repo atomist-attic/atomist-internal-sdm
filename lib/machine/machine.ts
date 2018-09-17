@@ -38,6 +38,7 @@ import {
     DisableDeploy,
     EnableDeploy,
     executeTag,
+    executeVersioner,
     GoalState,
     summarizeGoalsInGitHubStatus,
 } from "@atomist/sdm-core";
@@ -58,10 +59,13 @@ import {
     TagGoal,
 } from "@atomist/sdm/lib/pack/well-known-goals/commonGoals";
 import { handleRuningPods } from "./events/HandleRunningPods";
+import { dockerBuildGoal } from "./goals";
 import {
     DeployToProd,
     DeployToStaging,
     LeinDefaultBranchDockerGoals,
+    NodeServiceGoals,
+    NodeVersionGoal,
     UpdateProdK8SpecsGoal,
     UpdateStagingK8SpecsGoal,
 } from "./goals";
@@ -72,6 +76,13 @@ import {
     updateK8Spec,
 } from "./k8Support";
 
+import { DefaultDockerImageNameCreator, DockerOptions, HasDockerfile } from "@atomist/sdm-pack-docker";
+import {
+    IsNode,
+    NodeProjectVersioner,
+    NpmPreparations,
+} from "@atomist/sdm-pack-node";
+
 export const HasAtomistFile: PredicatePushTest = predicatePushTest(
     "Has Atomist file",
     hasFile("atomist.sh").predicate);
@@ -80,17 +91,13 @@ export const HasAtomistDockerfile: PredicatePushTest = predicatePushTest(
     "Has Atomist Dockerfile file",
     hasFile("docker/Dockerfile").predicate);
 
-export const IsNode: PredicatePushTest = predicatePushTest(
-    "Has packag.json file",
-    hasFile("package.json").predicate);
-
 export const FingerprintGoal = new Fingerprint();
 
 export function machine(configuration: SoftwareDeliveryMachineConfiguration): SoftwareDeliveryMachine {
     const sdm = createSoftwareDeliveryMachine({
-            name: "Atomist Software Delivery Machine",
-            configuration,
-        },
+        name: "Atomist Software Delivery Machine",
+        configuration,
+    },
 
         whenPushSatisfies(IsLein, not(HasTravisFile), not(MaterialChangeToClojureRepo))
             .itMeans("No material change")
@@ -112,9 +119,9 @@ export function machine(configuration: SoftwareDeliveryMachineConfiguration): So
             .itMeans("Build a Clojure Library with Leiningen")
             .setGoals(goals("library with fingerprints").plan(LeinBuildGoals, FingerprintGoal)),
 
-        // whenPushSatisfies(IsNode)
-        //     .itMeans("just fingerprint any of our Node projects")
-        //     .setGoals(FingerprintGoal),
+        whenPushSatisfies(not(IsLein), not(HasTravisFile), HasDockerfile, IsNode)
+            .itMeans("Simple node based docker service")
+            .setGoals(goals("simple node service").plan(NodeServiceGoals)),
     );
 
     sdm.addExtensionPacks(
@@ -135,16 +142,17 @@ export function machine(configuration: SoftwareDeliveryMachineConfiguration): So
         k8SpecUpdater(sdm.configuration.sdm, "staging"));
     sdm.addGoalImplementation("updateProdK8Specs", UpdateProdK8SpecsGoal,
         k8SpecUpdater(sdm.configuration.sdm, "prod"));
-    // sdm.addGoalImplementation("integrationTests", IntegrationTestGoal,
-    //     executeSmokeTests(sdm.configuration.sdm.projectLoader, {
-    //         team: "T1L0VDKJP",
-    //         org: "atomisthqa",
-    //         port: 2867,
-    //         sdm: new GitHubRepoRef("atomist", "sample-sdm"),
-    //         graphql: "https://automation-staging.atomist.services/graphql/team",
-    //         api: "https://automation-staging.atomist.services/registration",
-    //     }, new GitHubRepoRef("atomist", "sdm-smoke-test"), "nodeBuild"),
-    // );
+
+    sdm.addGoalImplementation("updateVersion", NodeVersionGoal, executeVersioner(NodeProjectVersioner));
+
+    dockerBuildGoal.with({
+        preparations: NpmPreparations,
+        imageNameCreator: DefaultDockerImageNameCreator,
+        options: {
+            ...sdm.configuration.sdm.docker.jfrog as DockerOptions,
+            push: true,
+        },
+    });
 
     sdm.addGoalSideEffect(
         DeployToStaging,
@@ -181,14 +189,14 @@ export function machine(configuration: SoftwareDeliveryMachineConfiguration): So
         listener: async cli => {
 
             return CloningProjectLoader.doWithProject({
-                    credentials: { token: cli.parameters.token },
-                    id: GitHubRepoRef.from({ owner: "atomisthq", repo: "atomist-k8-specs", branch: cli.parameters.env }),
-                    readOnly: false,
-                    context: cli.context,
-                    cloneOptions: {
-                        alwaysDeep: true,
-                    },
+                credentials: { token: cli.parameters.token },
+                id: GitHubRepoRef.from({ owner: "atomisthq", repo: "atomist-k8-specs", branch: cli.parameters.env }),
+                readOnly: false,
+                context: cli.context,
+                cloneOptions: {
+                    alwaysDeep: true,
                 },
+            },
                 async (prj: GitProject) => {
                     const result = await updateK8Spec(prj, cli.context, {
                         owner: cli.parameters.owner,
