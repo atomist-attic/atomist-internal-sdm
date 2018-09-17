@@ -25,10 +25,9 @@ import {
     StagingEnvironment,
 } from "@atomist/sdm";
 import {
-    DockerBuildGoal, TagGoal,
+    TagGoal,
 } from "@atomist/sdm/lib/pack/well-known-goals/commonGoals";
 
-import { Version } from "@atomist/sdm-core";
 import {
     DefaultBranchGoals,
     LeinDockerGoals,
