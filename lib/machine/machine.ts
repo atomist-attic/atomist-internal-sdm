@@ -76,7 +76,11 @@ import {
     updateK8Spec,
 } from "./k8Support";
 
-import { DefaultDockerImageNameCreator, DockerOptions, HasDockerfile } from "@atomist/sdm-pack-docker";
+import {
+    DefaultDockerImageNameCreator,
+    DockerOptions,
+    HasDockerfile,
+} from "@atomist/sdm-pack-docker";
 import {
     IsNode,
     NodeProjectVersioner,
