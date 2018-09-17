@@ -76,6 +76,7 @@ import {
     updateK8Spec,
 } from "./k8Support";
 
+import { renderData } from "@atomist/clj-editors";
 import {
     DefaultDockerImageNameCreator,
     DockerOptions,
@@ -86,7 +87,6 @@ import {
     NodeProjectVersioner,
     NpmPreparations,
 } from "@atomist/sdm-pack-node";
-import { renderData } from "@atomist/clj-editors";
 
 export const HasAtomistFile: PredicatePushTest = predicatePushTest(
     "Has Atomist file",
