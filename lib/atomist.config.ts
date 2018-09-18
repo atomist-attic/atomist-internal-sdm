@@ -50,7 +50,7 @@ export const configuration: Configuration = {
         npm: {
             publish: {
                 tag: {
-                    defaultBranch: false,
+                    defaultBranch: true,
                 },
             },
         },
