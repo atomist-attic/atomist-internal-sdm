@@ -18,6 +18,7 @@ import {
     GitHubRepoRef,
     GitProject,
     GraphQL,
+    spawnAndWatch,
 } from "@atomist/automation-client";
 import {
     allSatisfied,
@@ -40,6 +41,7 @@ import {
     executeTag,
     executeVersioner,
     GoalState,
+    ProjectVersioner,
     summarizeGoalsInGitHubStatus,
 } from "@atomist/sdm-core";
 
@@ -88,9 +90,38 @@ import {
 } from "@atomist/sdm-pack-docker";
 import {
     IsNode,
-    NodeProjectVersioner,
+    // NodeProjectVersioner,
     NpmPreparations,
 } from "@atomist/sdm-pack-node";
+
+import * as df from "dateformat";
+
+export const NodeProjectVersioner: ProjectVersioner = async (sdmGoal, p, log) => {
+    const pjFile = await p.getFile("package.json");
+    const pj = JSON.parse(await pjFile.getContent());
+    const branch = sdmGoal.branch.split("/").join(".");
+
+    let branchSuffix = "";
+    if (branch !== "master") {
+        branchSuffix = "master.";
+    }
+
+    const version = `${pj.version}-${branchSuffix}${df(new Date(), "yyyymmddHHMMss")}`;
+
+    await spawnAndWatch({
+        command: "npm",
+        args: ["--no-git-tag-version", "version", version],
+    },
+        {
+            cwd: p.baseDir,
+        },
+        log,
+        {
+            errorFinder: code => code !== 0,
+        });
+
+    return version;
+};
 
 export const HasAtomistFile: PredicatePushTest = predicatePushTest(
     "Has Atomist file",
