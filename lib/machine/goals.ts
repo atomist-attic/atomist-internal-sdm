@@ -42,7 +42,7 @@ export const UpdateStagingK8SpecsGoal = new Goal({
     orderedName: "5-update-staging-k8-specs",
     displayName: "update staging k8s specs",
     workingDescription: "Updating `staging` K8 specs...",
-    completedDescription: "Update `staging` K8 specs",
+    completedDescription: "Updated `staging` K8 specs",
     failedDescription: "Update `staging` K8 specs failed",
 });
 
@@ -54,7 +54,7 @@ export const DeployToStaging = new Goal({
     workingDescription: "Deploying to `staging`",
     completedDescription: "Deployed to `staging`",
     failedDescription: "Deployment to `staging` failed",
-    waitingForApprovalDescription: "for `prod` promotion",
+    waitingForApprovalDescription: "`prod` promotion approval pending",
     approvalRequired: true,
 });
 
@@ -78,7 +78,7 @@ export const UpdateProdK8SpecsGoal = new Goal({
     orderedName: "7-update-prod-k8-specs",
     displayName: "update prod k8s specs",
     workingDescription: "Updating `prod` K8 specs...",
-    completedDescription: "Update `prod` K8 specs",
+    completedDescription: "Updated `prod` K8 specs",
     failedDescription: "Update `prod` K8 specs failed",
 });
 
@@ -97,8 +97,8 @@ export const NodeVersionGoal = new Goal({
     environment: IndependentOfEnvironment,
     displayName: "update version",
     workingDescription: "Updating version",
-    completedDescription: "Version updated",
-    failedDescription: "Failed to update version",
+    completedDescription: "Updated version",
+    failedDescription: "Update version failed",
 });
 
 export const dockerBuildGoal = new DockerBuild();
