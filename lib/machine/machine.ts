@@ -95,6 +95,7 @@ import {
 } from "@atomist/sdm-pack-node";
 
 import * as df from "dateformat";
+import { K8SpecKick } from "../handlers/commands/HandleK8SpecKick";
 
 export const NodeProjectVersioner: ProjectVersioner = async (sdmGoal, p, log) => {
     const pjFile = await p.getFile("package.json");
@@ -191,6 +192,7 @@ export function machine(configuration: SoftwareDeliveryMachineConfiguration): So
 
     sdm.addCommand(DisableDeploy);
     sdm.addCommand(EnableDeploy);
+    sdm.addCommand(K8SpecKick);
 
     sdm.addGoalImplementation("tag", TagGoal, executeTag());
 
