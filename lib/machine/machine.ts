@@ -23,9 +23,11 @@ import {
 import {
     allSatisfied,
     CloningProjectLoader,
+    DoNotSetAnyGoals,
     Fingerprint,
     goals,
     hasFile,
+    isSdmEnabled,
     not,
     predicatePushTest,
     PredicatePushTest,
@@ -139,6 +141,10 @@ export function machine(configuration: SoftwareDeliveryMachineConfiguration): So
         name: "Atomist Software Delivery Machine",
         configuration,
     },
+
+        whenPushSatisfies(not(isSdmEnabled(configuration.name)), IsNode)
+            .itMeans("Default to not build Node.js projects")
+            .setGoals(DoNotSetAnyGoals),
 
         whenPushSatisfies(IsLein, not(HasTravisFile), not(MaterialChangeToClojureRepo))
             .itMeans("No material change")
