@@ -67,7 +67,10 @@ import {
     TagGoal,
 } from "@atomist/sdm/lib/pack/well-known-goals/commonGoals";
 import { handleRuningPods } from "./events/HandleRunningPods";
-import { BranchNodeServiceGoals, dockerBuildGoal } from "./goals";
+import {
+    BranchNodeServiceGoals,
+    dockerBuildGoal,
+} from "./goals";
 import {
     DeployToProd,
     DeployToStaging,
