@@ -112,6 +112,11 @@ export const NodeServiceGoals: Goals = goals("Simple Node Service Goals")
     .plan(UpdateProdK8SpecsGoal).after(DeployToStaging)
     .plan(DeployToProd).after(UpdateProdK8SpecsGoal);
 
+export const BranchNodeServiceGoals: Goals = goals("Simple Node Service Goals")
+    .plan(NodeVersionGoal)
+    .plan(dockerBuildGoal).after(NodeVersionGoal)
+    .plan(TagGoal).after(dockerBuildGoal);
+
 export const LeinDefaultBranchDockerGoals: Goals = goals("Lein Docker Build")
     .plan(LeinDockerGoals, DefaultBranchGoals)
     .plan(UpdateStagingK8SpecsGoal).after(TagGoal)

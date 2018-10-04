@@ -67,7 +67,7 @@ import {
     TagGoal,
 } from "@atomist/sdm/lib/pack/well-known-goals/commonGoals";
 import { handleRuningPods } from "./events/HandleRunningPods";
-import { dockerBuildGoal } from "./goals";
+import { BranchNodeServiceGoals, dockerBuildGoal } from "./goals";
 import {
     DeployToProd,
     DeployToStaging,
@@ -92,7 +92,6 @@ import {
 } from "@atomist/sdm-pack-docker";
 import {
     IsNode,
-    // NodeProjectVersioner,
     NpmPreparations,
 } from "@atomist/sdm-pack-node";
 
@@ -166,9 +165,14 @@ export function machine(configuration: SoftwareDeliveryMachineConfiguration): So
             .itMeans("Build a Clojure Library with Leiningen")
             .setGoals(goals("library with fingerprints").plan(LeinBuildGoals, FingerprintGoal)),
 
-        whenPushSatisfies(not(IsLein), not(HasTravisFile), HasDockerfile, IsNode)
+        whenPushSatisfies(not(IsLein), not(HasTravisFile), HasDockerfile, IsNode, ToDefaultBranch)
             .itMeans("Simple node based docker service")
             .setGoals(goals("simple node service").plan(NodeServiceGoals)),
+
+        whenPushSatisfies(not(IsLein), not(HasTravisFile), HasDockerfile, IsNode, not(ToDefaultBranch))
+            .itMeans("Simple node based docker service")
+            .setGoals(goals("simple node service").plan(BranchNodeServiceGoals)),
+
     );
 
     sdm.addExtensionPacks(
