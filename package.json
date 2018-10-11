@@ -30,6 +30,7 @@
     "@atomist/sdm-pack-docker": "1.0.0-master.20181010105453",
     "@atomist/sdm-pack-fingerprints": "1.0.0-master.20181010130129",
     "@atomist/sdm-pack-node": "1.0.0-master.20181011124853",
+    "@atomist/sdm-pack-rcca": "0.0.5-master.20181011150101",
     "@atomist/slack-messages": "1.0.1-master.20180830190736",
     "dateformat": "^3.0.3",
     "fs-extra": "^6.0.0",

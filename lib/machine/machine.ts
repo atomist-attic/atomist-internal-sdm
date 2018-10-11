@@ -47,6 +47,7 @@ import {
 } from "@atomist/sdm-core";
 
 import {
+    autofix,
     IsLein,
     LeinBuildGoals,
     LeinDefaultBranchBuildGoals,
@@ -54,7 +55,6 @@ import {
     LeinSupport,
     MaterialChangeToClojureRepo,
 } from "@atomist/sdm-pack-clojure";
-import { autofix } from "@atomist/sdm-pack-clojure";
 import {
     DefaultDockerImageNameCreator,
     DockerOptions,
@@ -71,8 +71,8 @@ import {
     NpmCompileProjectListener,
     NpmVersionProjectListener,
 } from "@atomist/sdm-pack-node";
+import { RccaSupport } from "@atomist/sdm-pack-rcca";
 import { HasTravisFile } from "@atomist/sdm/lib/api-helper/pushtest/ci/ciPushTests";
-
 import * as df from "dateformat";
 import { K8SpecKick } from "../handlers/commands/HandleK8SpecKick";
 import { handleRuningPods } from "./events/HandleRunningPods";
@@ -190,7 +190,7 @@ export function machine(configuration: SoftwareDeliveryMachineConfiguration): So
                 },
             },
         ),
-        // RccaSupport,
+        RccaSupport,
         pack.goalState.GoalState,
         pack.githubGoalStatus.GitHubGoalStatus,
     );

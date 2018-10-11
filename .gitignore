@@ -19,3 +19,4 @@ git-info.json
 
 # This is generated in compile:gql
 lib/typings/types.ts
+/lib/typings/types.ts
