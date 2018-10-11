@@ -32,8 +32,8 @@ import {
     RunningPods,
 } from "../../typings/types";
 import {
-    DeployToProd,
-    DeployToStaging,
+    deployToProd,
+    deployToStaging,
 } from "../goals";
 
 export function handleRuningPods(): OnEvent<RunningPods.Subscription, NoParameters> {
@@ -45,22 +45,18 @@ export function handleRuningPods(): OnEvent<RunningPods.Subscription, NoParamete
 
         let deployGoal;
         let desc;
-        let approvalDesc;
 
         if (pod.environment === "staging") {
             try {
-                deployGoal = await findSdmGoalOnCommit(context, id, commit.repo.org.provider.providerId, DeployToStaging);
-                desc = DeployToStaging.successDescription;
-                approvalDesc = DeployToStaging.waitingForApprovalDescription;
-
+                deployGoal = await findSdmGoalOnCommit(context, id, commit.repo.org.provider.providerId, deployToStaging);
+                desc = deployToStaging.successDescription;
             } catch (err) {
                 logger.info(`No goal staging deploy goal found`);
             }
         } else if (pod.environment === "prod") {
             try {
-                deployGoal = await findSdmGoalOnCommit(context, id, commit.repo.org.provider.providerId, DeployToProd);
-                desc = DeployToProd.successDescription;
-                approvalDesc = DeployToProd.waitingForApprovalDescription;
+                deployGoal = await findSdmGoalOnCommit(context, id, commit.repo.org.provider.providerId, deployToProd);
+                desc = deployToProd.successDescription;
             } catch (err) {
                 logger.info(`No goal prod deploy goal found`);
             }
@@ -82,7 +78,7 @@ export function handleRuningPods(): OnEvent<RunningPods.Subscription, NoParamete
                     // need to find commits between current and previous!
                     await updateGoal(context, deployGoal, {
                         state: SdmGoalState.success,
-                        description: approvalDesc + ` (${numTargetPods}/${numTargetPods})`,
+                        description: desc + ` (${numTargetPods}/${numTargetPods})`,
                         url: deployGoal.url,
                     });
                 } else {

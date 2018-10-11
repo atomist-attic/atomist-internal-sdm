@@ -21,7 +21,7 @@ import {
     ConfigureOptions,
     configureSdm,
 } from "@atomist/sdm-core";
-import { machine } from "./machine/machine";
+import { machine } from "./lib/machine/machine";
 
 const machineOptions: ConfigureOptions = {
     requiredConfigurationValues: [

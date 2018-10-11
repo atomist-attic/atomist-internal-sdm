@@ -20,13 +20,14 @@ import {
     GraphQL,
     spawnAndWatch,
 } from "@atomist/automation-client";
+import { renderData } from "@atomist/clj-editors";
 import {
     allSatisfied,
     CloningProjectLoader,
     DoNotSetAnyGoals,
-    Fingerprint,
     goals,
     hasFile,
+    ImmaterialGoals,
     isSdmEnabled,
     not,
     predicatePushTest,
@@ -40,11 +41,9 @@ import {
     createSoftwareDeliveryMachine,
     DisableDeploy,
     EnableDeploy,
-    executeTag,
     executeVersioner,
-    GoalState,
+    pack,
     ProjectVersioner,
-    summarizeGoalsInGitHubStatus,
 } from "@atomist/sdm-core";
 
 import {
@@ -55,30 +54,39 @@ import {
     LeinSupport,
     MaterialChangeToClojureRepo,
 } from "@atomist/sdm-pack-clojure";
+import { autofix } from "@atomist/sdm-pack-clojure";
+import {
+    DefaultDockerImageNameCreator,
+    DockerOptions,
+    HasDockerfile,
+} from "@atomist/sdm-pack-docker";
 import {
     fingerprintSupport,
     forFingerprints,
     renderDiffSnippet,
 } from "@atomist/sdm-pack-fingerprints";
-import { RccaSupport } from "@atomist/sdm-pack-rcca";
-import { HasTravisFile } from "@atomist/sdm/lib/api-helper/pushtest/ci/ciPushTests";
 import {
-    NoGoals,
-    TagGoal,
-} from "@atomist/sdm/lib/pack/well-known-goals/commonGoals";
+    IsNode,
+    NodeModulesProjectListener,
+    NpmCompileProjectListener,
+    NpmVersionProjectListener,
+} from "@atomist/sdm-pack-node";
+import { HasTravisFile } from "@atomist/sdm/lib/api-helper/pushtest/ci/ciPushTests";
+
+import * as df from "dateformat";
+import { K8SpecKick } from "../handlers/commands/HandleK8SpecKick";
 import { handleRuningPods } from "./events/HandleRunningPods";
 import {
     BranchNodeServiceGoals,
-    dockerBuildGoal,
-} from "./goals";
-import {
-    DeployToProd,
-    DeployToStaging,
+    deployToProd,
+    deployToStaging,
+    dockerBuild,
+    fingerprint,
     LeinDefaultBranchDockerGoals,
     NodeServiceGoals,
-    NodeVersionGoal,
-    UpdateProdK8SpecsGoal,
-    UpdateStagingK8SpecsGoal,
+    nodeVersion,
+    updateProdK8Specs,
+    updateStagingK8Specs,
 } from "./goals";
 import {
     addCacheHooks,
@@ -86,20 +94,6 @@ import {
     K8SpecUpdaterParameters,
     updateK8Spec,
 } from "./k8Support";
-
-import { renderData } from "@atomist/clj-editors";
-import {
-    DefaultDockerImageNameCreator,
-    DockerOptions,
-    HasDockerfile,
-} from "@atomist/sdm-pack-docker";
-import {
-    IsNode,
-    NpmPreparations,
-} from "@atomist/sdm-pack-node";
-
-import * as df from "dateformat";
-import { K8SpecKick } from "../handlers/commands/HandleK8SpecKick";
 
 export const NodeProjectVersioner: ProjectVersioner = async (sdmGoal, p, log) => {
     const pjFile = await p.getFile("package.json");
@@ -114,9 +108,9 @@ export const NodeProjectVersioner: ProjectVersioner = async (sdmGoal, p, log) =>
     const version = `${pj.version}-${branchSuffix}${df(new Date(), "yyyymmddHHMMss")}`;
 
     await spawnAndWatch({
-        command: "npm",
-        args: ["--no-git-tag-version", "version", version],
-    },
+            command: "npm",
+            args: ["--no-git-tag-version", "version", version],
+        },
         {
             cwd: p.baseDir,
         },
@@ -136,13 +130,11 @@ export const HasAtomistDockerfile: PredicatePushTest = predicatePushTest(
     "Has Atomist Dockerfile file",
     hasFile("docker/Dockerfile").predicate);
 
-export const FingerprintGoal = new Fingerprint();
-
 export function machine(configuration: SoftwareDeliveryMachineConfiguration): SoftwareDeliveryMachine {
     const sdm = createSoftwareDeliveryMachine({
-        name: "Atomist Software Delivery Machine",
-        configuration,
-    },
+            name: "Atomist Software Delivery Machine",
+            configuration,
+        },
 
         whenPushSatisfies(not(isSdmEnabled(configuration.name)), IsNode)
             .itMeans("Default to not build Node.js projects")
@@ -150,23 +142,23 @@ export function machine(configuration: SoftwareDeliveryMachineConfiguration): So
 
         whenPushSatisfies(IsLein, not(HasTravisFile), not(MaterialChangeToClojureRepo))
             .itMeans("No material change")
-            .setGoals(NoGoals),
+            .setGoals(ImmaterialGoals),
 
         whenPushSatisfies(IsLein, not(HasTravisFile), HasAtomistFile, HasAtomistDockerfile, ToDefaultBranch, MaterialChangeToClojureRepo)
             .itMeans("Build a Clojure Service with Leiningen")
-            .setGoals(goals("service with fingerprints on master").plan(LeinDefaultBranchDockerGoals, FingerprintGoal)),
+            .setGoals(goals("service with fingerprints on master").plan(fingerprint, LeinDefaultBranchDockerGoals)),
 
         whenPushSatisfies(IsLein, not(HasTravisFile), HasAtomistFile, HasAtomistDockerfile, MaterialChangeToClojureRepo)
             .itMeans("Build a Clojure Service with Leiningen")
-            .setGoals(goals("service with fingerprints").plan(LeinDockerGoals, FingerprintGoal)),
+            .setGoals(goals("service with fingerprints").plan(fingerprint, LeinDockerGoals)),
 
         whenPushSatisfies(IsLein, not(HasTravisFile), HasAtomistFile, not(HasAtomistDockerfile), ToDefaultBranch, MaterialChangeToClojureRepo)
             .itMeans("Build a Clojure Library with Leiningen")
-            .setGoals(goals("library on master with fingerprints").plan(LeinDefaultBranchBuildGoals, FingerprintGoal)),
+            .setGoals(goals("library on master with fingerprints").plan(fingerprint, LeinDefaultBranchBuildGoals)),
 
         whenPushSatisfies(IsLein, not(HasTravisFile), HasAtomistFile, not(HasAtomistDockerfile), MaterialChangeToClojureRepo)
             .itMeans("Build a Clojure Library with Leiningen")
-            .setGoals(goals("library with fingerprints").plan(LeinBuildGoals, FingerprintGoal)),
+            .setGoals(goals("library with fingerprints").plan(fingerprint, LeinBuildGoals)),
 
         whenPushSatisfies(not(IsLein), not(HasTravisFile), HasDockerfile, IsNode, ToDefaultBranch)
             .itMeans("Simple node based docker service")
@@ -175,13 +167,12 @@ export function machine(configuration: SoftwareDeliveryMachineConfiguration): So
         whenPushSatisfies(not(IsLein), not(HasTravisFile), HasDockerfile, IsNode, not(ToDefaultBranch))
             .itMeans("Simple node based docker service")
             .setGoals(goals("simple node service").plan(BranchNodeServiceGoals)),
-
     );
 
     sdm.addExtensionPacks(
         LeinSupport,
         fingerprintSupport(
-            FingerprintGoal,
+            fingerprint,
             {
                 selector: forFingerprints(
                     "clojure-project-deps",
@@ -199,45 +190,60 @@ export function machine(configuration: SoftwareDeliveryMachineConfiguration): So
                 },
             },
         ),
-        RccaSupport,
-        GoalState,
+        // RccaSupport,
+        pack.goalState.GoalState,
+        pack.githubGoalStatus.GitHubGoalStatus,
     );
 
     sdm.addCommand(DisableDeploy);
     sdm.addCommand(EnableDeploy);
     sdm.addCommand(K8SpecKick);
 
-    sdm.addGoalImplementation("tag", TagGoal, executeTag());
-
     sdm.addIngester(GraphQL.ingester("podDeployments"));
 
-    sdm.addGoalImplementation("updateStagingK8Specs", UpdateStagingK8SpecsGoal,
-        k8SpecUpdater(sdm.configuration.sdm, "staging"));
-    sdm.addGoalImplementation("updateProdK8Specs", UpdateProdK8SpecsGoal,
-        k8SpecUpdater(sdm.configuration.sdm, "prod"));
+    autofix.with(
+        {
+            name: "maven-repo-cache",
+            transform: addCacheHooks,
+            pushTest: allSatisfied(IsLein, not(HasTravisFile), ToDefaultBranch),
+        },
+    );
 
-    sdm.addGoalImplementation("updateVersion", NodeVersionGoal, executeVersioner(NodeProjectVersioner));
+    updateStagingK8Specs.with({
+        name: "update-staging-k8-specs",
+        goalExecutor: k8SpecUpdater("staging"),
+    });
 
-    dockerBuildGoal.with({
-        preparations: NpmPreparations,
+    updateProdK8Specs.with({
+        name: "update-prod-k8-specs",
+        goalExecutor: k8SpecUpdater("prod"),
+    });
+
+    nodeVersion.with({
+        name: "update-version",
+        goalExecutor: executeVersioner(NodeProjectVersioner),
+    });
+
+    dockerBuild.with({
         imageNameCreator: DefaultDockerImageNameCreator,
         options: {
             ...sdm.configuration.sdm.docker.jfrog as DockerOptions,
             push: true,
         },
+    })
+        .withProjectListener(NodeModulesProjectListener)
+        .withProjectListener(NpmVersionProjectListener)
+        .withProjectListener(NpmCompileProjectListener);
+
+    deployToStaging.with({
+        name: "deployToStaging",
+        pushTest: allSatisfied(IsLein, not(HasTravisFile), ToDefaultBranch),
     });
 
-    sdm.addGoalSideEffect(
-        DeployToStaging,
-        "deployToStaging",
-        allSatisfied(IsLein, not(HasTravisFile), ToDefaultBranch),
-    );
-
-    sdm.addGoalSideEffect(
-        DeployToProd,
-        "deployToProd",
-        allSatisfied(IsLein, not(HasTravisFile), ToDefaultBranch),
-    );
+    deployToProd.with({
+        name: "deployToProd",
+        pushTest: allSatisfied(IsLein, not(HasTravisFile), ToDefaultBranch),
+    });
 
     sdm.addEvent({
         name: "handleRunningPod",
@@ -245,14 +251,6 @@ export function machine(configuration: SoftwareDeliveryMachineConfiguration): So
         subscription: GraphQL.subscription("runningPods"),
         listener: handleRuningPods(),
     });
-
-    sdm.addAutofix(
-        {
-            name: "maven-repo-cache",
-            transform: addCacheHooks,
-            pushTest: allSatisfied(IsLein, not(HasTravisFile), ToDefaultBranch),
-        },
-    );
 
     sdm.addCommand<K8SpecUpdaterParameters>({
         name: "k8SpecUpdater",
@@ -262,14 +260,14 @@ export function machine(configuration: SoftwareDeliveryMachineConfiguration): So
         listener: async cli => {
 
             return CloningProjectLoader.doWithProject({
-                credentials: { token: cli.parameters.token },
-                id: GitHubRepoRef.from({ owner: "atomisthq", repo: "atomist-k8-specs", branch: cli.parameters.env }),
-                readOnly: false,
-                context: cli.context,
-                cloneOptions: {
-                    alwaysDeep: true,
+                    credentials: { token: cli.parameters.token },
+                    id: GitHubRepoRef.from({ owner: "atomisthq", repo: "atomist-k8-specs", branch: cli.parameters.env }),
+                    readOnly: false,
+                    context: cli.context,
+                    cloneOptions: {
+                        alwaysDeep: true,
+                    },
                 },
-            },
                 async (prj: GitProject) => {
                     const result = await updateK8Spec(prj, cli.context, {
                         owner: cli.parameters.owner,
@@ -284,8 +282,6 @@ export function machine(configuration: SoftwareDeliveryMachineConfiguration): So
             );
         },
     });
-
-    summarizeGoalsInGitHubStatus(sdm);
 
     return sdm;
 }

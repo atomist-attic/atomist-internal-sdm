@@ -17,17 +17,15 @@
 // GOAL Definition
 
 import {
-    Goal,
+    Fingerprint,
     goals,
     Goals,
+    GoalWithFulfillment,
     IndependentOfEnvironment,
     ProductionEnvironment,
     StagingEnvironment,
 } from "@atomist/sdm";
-import {
-    TagGoal,
-} from "@atomist/sdm/lib/pack/well-known-goals/commonGoals";
-
+import { Tag } from "@atomist/sdm-core";
 import {
     DefaultBranchGoals,
     LeinDockerGoals,
@@ -36,7 +34,7 @@ import { DockerBuild } from "@atomist/sdm-pack-docker";
 
 // GOALSET Definition
 
-export const UpdateStagingK8SpecsGoal = new Goal({
+export const updateStagingK8Specs = new GoalWithFulfillment({
     uniqueName: "UpdateStagingK8Specs",
     environment: StagingEnvironment,
     orderedName: "5-update-staging-k8-specs",
@@ -46,19 +44,17 @@ export const UpdateStagingK8SpecsGoal = new Goal({
     failedDescription: "Update `staging` K8 specs failed",
 });
 
-export const DeployToStaging = new Goal({
-    uniqueName: "DeployToStaging",
+export const deployToStaging = new GoalWithFulfillment({
+    uniqueName: "deployToStaging",
     environment: StagingEnvironment,
     orderedName: "5.1-deploy-to-staging",
     displayName: "deploy to `staging`",
     workingDescription: "Deploying to `staging`",
     completedDescription: "Deployed to `staging`",
     failedDescription: "Deployment to `staging` failed",
-    waitingForApprovalDescription: "`prod` promotion approval pending",
-    approvalRequired: true,
 });
 
-export const IntegrationTestGoal = new Goal({
+export const integrationTest = new GoalWithFulfillment({
     uniqueName: "IntegrationTest",
     environment: StagingEnvironment,
     orderedName: "6-integration-test",
@@ -72,7 +68,7 @@ export const IntegrationTestGoal = new Goal({
     isolated: true,
 });
 
-export const UpdateProdK8SpecsGoal = new Goal({
+export const updateProdK8Specs = new GoalWithFulfillment({
     uniqueName: "UpdateProdK8Specs",
     environment: ProductionEnvironment,
     orderedName: "7-update-prod-k8-specs",
@@ -80,10 +76,12 @@ export const UpdateProdK8SpecsGoal = new Goal({
     workingDescription: "Updating `prod` K8 specs...",
     completedDescription: "Updated `prod` K8 specs",
     failedDescription: "Update `prod` K8 specs failed",
+    waitingForPreApprovalDescription: "Ready to start `prod` deployment",
+    preApprovalRequired: true,
 });
 
-export const DeployToProd = new Goal({
-    uniqueName: "DeployToProd",
+export const deployToProd = new GoalWithFulfillment({
+    uniqueName: "deployToProd",
     environment: ProductionEnvironment,
     orderedName: "5.1-deploy-to-prod",
     displayName: "deploy to prod",
@@ -92,8 +90,8 @@ export const DeployToProd = new Goal({
     failedDescription: "Deployment to `prod` failed",
 });
 
-export const NodeVersionGoal = new Goal({
-    uniqueName: "NodeVersionGoal",
+export const nodeVersion = new GoalWithFulfillment({
+    uniqueName: "nodeVersion",
     environment: IndependentOfEnvironment,
     displayName: "update version",
     workingDescription: "Updating version",
@@ -101,25 +99,27 @@ export const NodeVersionGoal = new Goal({
     failedDescription: "Update version failed",
 });
 
-export const dockerBuildGoal = new DockerBuild();
+export const dockerBuild = new DockerBuild();
+export const tag = new Tag();
+export const fingerprint = new Fingerprint();
 
 export const NodeServiceGoals: Goals = goals("Simple Node Service Goals")
-    .plan(NodeVersionGoal)
-    .plan(dockerBuildGoal).after(NodeVersionGoal)
-    .plan(TagGoal).after(dockerBuildGoal)
-    .plan(UpdateStagingK8SpecsGoal).after(TagGoal)
-    .plan(DeployToStaging).after(UpdateStagingK8SpecsGoal)
-    .plan(UpdateProdK8SpecsGoal).after(DeployToStaging)
-    .plan(DeployToProd).after(UpdateProdK8SpecsGoal);
+    .plan(nodeVersion)
+    .plan(dockerBuild).after(nodeVersion)
+    .plan(tag).after(dockerBuild)
+    .plan(updateStagingK8Specs).after(tag)
+    .plan(deployToStaging).after(updateStagingK8Specs)
+    .plan(updateProdK8Specs).after(deployToStaging)
+    .plan(deployToProd).after(updateProdK8Specs);
 
 export const BranchNodeServiceGoals: Goals = goals("Simple Node Service Goals")
-    .plan(NodeVersionGoal)
-    .plan(dockerBuildGoal).after(NodeVersionGoal)
-    .plan(TagGoal).after(dockerBuildGoal);
+    .plan(nodeVersion)
+    .plan(dockerBuild).after(nodeVersion)
+    .plan(tag).after(dockerBuild);
 
 export const LeinDefaultBranchDockerGoals: Goals = goals("Lein Docker Build")
     .plan(LeinDockerGoals, DefaultBranchGoals)
-    .plan(UpdateStagingK8SpecsGoal).after(TagGoal)
-    .plan(DeployToStaging).after(UpdateStagingK8SpecsGoal)
-    .plan(UpdateProdK8SpecsGoal).after(DeployToStaging)
-    .plan(DeployToProd).after(UpdateProdK8SpecsGoal);
+    .plan(updateStagingK8Specs).after(tag)
+    .plan(deployToStaging).after(updateStagingK8Specs)
+    .plan(updateProdK8Specs).after(deployToStaging)
+    .plan(deployToProd).after(updateProdK8Specs);

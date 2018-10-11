@@ -16,7 +16,6 @@
 
 import {
     addressEvent,
-    doWithFiles,
     GitHubRepoRef,
     GitProject,
     HandlerContext,
@@ -26,6 +25,7 @@ import {
     Parameter,
     Parameters,
     Project,
+    projectUtils,
     Secret,
     Secrets,
     SimpleProjectEditor,
@@ -36,7 +36,6 @@ import {
     ExecuteGoal,
     ExecuteGoalResult,
     GoalInvocation,
-    SoftwareDeliveryMachineOptions,
 } from "@atomist/sdm";
 import * as fs from "fs";
 import * as _ from "lodash";
@@ -112,7 +111,7 @@ export const updateK8Spec: SimpleProjectEditor = async (project: Project, ctx: H
     const repo = params.repo;
     const version = params.version;
 
-    return doWithFiles(project, "**/*.json", async f => {
+    return projectUtils.doWithFiles(project, "**/*.json", async f => {
         logger.info("Processing file: " + f.path);
         const spec = JSON.parse(await f.getContent());
         let dirty = false;
@@ -176,11 +175,11 @@ export const updateK8Spec: SimpleProjectEditor = async (project: Project, ctx: H
 
 };
 
-export function k8SpecUpdater(sdm: SoftwareDeliveryMachineOptions, branch: string): ExecuteGoal {
+export function k8SpecUpdater(branch: string): ExecuteGoal {
     return async (rwlc: GoalInvocation): Promise<ExecuteGoalResult> => {
-        const { credentials, id } = rwlc;
+        const { credentials, id, configuration } = rwlc;
         const version = await rwlcVersion(rwlc);
-        return sdm.projectLoader.doWithProject({
+        return configuration.sdm.projectLoader.doWithProject({
                 credentials,
                 id: GitHubRepoRef.from({ owner: "atomisthq", repo: "atomist-k8-specs", branch }),
                 readOnly: false,
