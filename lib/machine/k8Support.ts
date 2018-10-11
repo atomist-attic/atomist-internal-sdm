@@ -16,7 +16,6 @@
 
 import {
     addressEvent,
-    projectUtils,
     GitHubRepoRef,
     GitProject,
     HandlerContext,
@@ -26,6 +25,7 @@ import {
     Parameter,
     Parameters,
     Project,
+    projectUtils,
     Secret,
     Secrets,
     SimpleProjectEditor,
@@ -36,7 +36,6 @@ import {
     ExecuteGoal,
     ExecuteGoalResult,
     GoalInvocation,
-    SoftwareDeliveryMachineOptions,
 } from "@atomist/sdm";
 import * as fs from "fs";
 import * as _ from "lodash";

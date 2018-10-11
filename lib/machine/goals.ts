@@ -18,7 +18,6 @@
 
 import {
     Fingerprint,
-    Goal,
     goals,
     Goals,
     GoalWithFulfillment,

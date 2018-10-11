@@ -25,7 +25,6 @@ import {
     allSatisfied,
     CloningProjectLoader,
     DoNotSetAnyGoals,
-    Fingerprint,
     goals,
     hasFile,
     ImmaterialGoals,
