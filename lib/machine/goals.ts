@@ -53,6 +53,7 @@ export const deployToStaging = new GoalWithFulfillment({
     workingDescription: "Deploying to `staging`",
     completedDescription: "Deployed to `staging`",
     failedDescription: "Deployment to `staging` failed",
+    requestedDescription: "Waiting for `staging` deployment",
 });
 
 export const integrationTest = new GoalWithFulfillment({
@@ -77,7 +78,7 @@ export const updateProdK8Specs = new GoalWithFulfillment({
     workingDescription: "Updating `prod` K8 specs...",
     completedDescription: "Updated `prod` K8 specs",
     failedDescription: "Update `prod` K8 specs failed",
-    waitingForPreApprovalDescription: "Ready to start `prod` deployment",
+    waitingForPreApprovalDescription: "Ready to update `prod` K8 specs",
     preApprovalRequired: true,
 });
 
@@ -89,6 +90,7 @@ export const deployToProd = new GoalWithFulfillment({
     workingDescription: "Deploying to `prod`",
     completedDescription: "Deployed to `prod`",
     failedDescription: "Deployment to `prod` failed",
+    requestedDescription: "Waiting for `prod` deployment",
 });
 
 export const nodeVersion = new GoalWithFulfillment({
