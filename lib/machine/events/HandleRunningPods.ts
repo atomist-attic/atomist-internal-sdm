@@ -32,8 +32,8 @@ import {
     RunningPods,
 } from "../../typings/types";
 import {
-    DeployToProd,
-    DeployToStaging,
+    deployToProd,
+    deployToStaging,
 } from "../goals";
 
 export function handleRuningPods(): OnEvent<RunningPods.Subscription, NoParameters> {
@@ -49,18 +49,18 @@ export function handleRuningPods(): OnEvent<RunningPods.Subscription, NoParamete
 
         if (pod.environment === "staging") {
             try {
-                deployGoal = await findSdmGoalOnCommit(context, id, commit.repo.org.provider.providerId, DeployToStaging);
-                desc = DeployToStaging.successDescription;
-                approvalDesc = DeployToStaging.waitingForApprovalDescription;
+                deployGoal = await findSdmGoalOnCommit(context, id, commit.repo.org.provider.providerId, deployToStaging);
+                desc = deployToStaging.successDescription;
+                approvalDesc = deployToStaging.waitingForApprovalDescription;
 
             } catch (err) {
                 logger.info(`No goal staging deploy goal found`);
             }
         } else if (pod.environment === "prod") {
             try {
-                deployGoal = await findSdmGoalOnCommit(context, id, commit.repo.org.provider.providerId, DeployToProd);
-                desc = DeployToProd.successDescription;
-                approvalDesc = DeployToProd.waitingForApprovalDescription;
+                deployGoal = await findSdmGoalOnCommit(context, id, commit.repo.org.provider.providerId, deployToProd);
+                desc = deployToProd.successDescription;
+                approvalDesc = deployToProd.waitingForApprovalDescription;
             } catch (err) {
                 logger.info(`No goal prod deploy goal found`);
             }

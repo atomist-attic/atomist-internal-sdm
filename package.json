@@ -26,11 +26,10 @@
     "@atomist/clj-editors": "0.5.7",
     "@atomist/sdm": "1.0.0-master.20181010145707",
     "@atomist/sdm-core": "1.0.0-master.20181011053254",
-    "@atomist/sdm-pack-clojure": "1.0.0-master.20180920052906",
+    "@atomist/sdm-pack-clojure": "1.0.0-master.20181011115446",
     "@atomist/sdm-pack-docker": "1.0.0-master.20181010105453",
     "@atomist/sdm-pack-fingerprints": "1.0.0-master.20181010130129",
     "@atomist/sdm-pack-node": "1.0.0-master.20181010104236",
-    "@atomist/sdm-pack-rcca": "0.0.5-master.20181006072355",
     "@atomist/slack-messages": "1.0.1-master.20180830190736",
     "dateformat": "^3.0.3",
     "fs-extra": "^6.0.0",
@@ -58,8 +57,7 @@
     "ts-node": "^3.3.0",
     "tslint": "^5.11.0",
     "typedoc": "^0.11.1",
-    "typescript": "2.8.3",
-    "typescript-formatter": "^7.2.0"
+    "typescript": "2.9.2"
   },
   "directories": {
     "test": "test"
