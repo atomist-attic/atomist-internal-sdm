@@ -30,6 +30,7 @@ import {
     DefaultBranchGoals,
     LeinDockerGoals,
 } from "@atomist/sdm-pack-clojure";
+import { tag } from "@atomist/sdm-pack-clojure";
 import { DockerBuild } from "@atomist/sdm-pack-docker";
 
 // GOALSET Definition
@@ -100,14 +101,14 @@ export const nodeVersion = new GoalWithFulfillment({
 });
 
 export const dockerBuild = new DockerBuild();
-export const tag = new Tag();
 export const fingerprint = new Fingerprint();
+export const nodeTag = new Tag();
 
 export const NodeServiceGoals: Goals = goals("Simple Node Service Goals")
     .plan(nodeVersion)
     .plan(dockerBuild).after(nodeVersion)
-    .plan(tag).after(dockerBuild)
-    .plan(updateStagingK8Specs).after(tag)
+    .plan(nodeTag).after(dockerBuild)
+    .plan(updateStagingK8Specs).after(nodeTag)
     .plan(deployToStaging).after(updateStagingK8Specs)
     .plan(updateProdK8Specs).after(deployToStaging)
     .plan(deployToProd).after(updateProdK8Specs);
@@ -115,10 +116,10 @@ export const NodeServiceGoals: Goals = goals("Simple Node Service Goals")
 export const BranchNodeServiceGoals: Goals = goals("Simple Node Service Goals")
     .plan(nodeVersion)
     .plan(dockerBuild).after(nodeVersion)
-    .plan(tag).after(dockerBuild);
+    .plan(nodeTag).after(dockerBuild);
 
 export const LeinDefaultBranchDockerGoals: Goals = goals("Lein Docker Build")
-    .plan(LeinDockerGoals, DefaultBranchGoals)
+    .plan(DefaultBranchGoals, LeinDockerGoals)
     .plan(updateStagingK8Specs).after(tag)
     .plan(deployToStaging).after(updateStagingK8Specs)
     .plan(updateProdK8Specs).after(deployToStaging)

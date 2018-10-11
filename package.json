@@ -26,7 +26,7 @@
     "@atomist/clj-editors": "0.5.7",
     "@atomist/sdm": "1.0.0-master.20181010145707",
     "@atomist/sdm-core": "1.0.0-master.20181011053254",
-    "@atomist/sdm-pack-clojure": "1.0.0-master.20181011115446",
+    "@atomist/sdm-pack-clojure": "1.0.0-master.20181011132625",
     "@atomist/sdm-pack-docker": "1.0.0-master.20181010105453",
     "@atomist/sdm-pack-fingerprints": "1.0.0-master.20181010130129",
     "@atomist/sdm-pack-node": "1.0.0-master.20181011124853",
@@ -50,9 +50,11 @@
     "graphql-code-generator": "^0.8.19",
     "mocha": "^4.1.0",
     "npm-run-all": "^4.1.2",
+    "nyc": "^13.0.1",
     "power-assert": "^1.4.4",
     "prettier": "^1.14.2",
     "rimraf": "^2.6.2",
+    "source-map-support": "^0.5.9",
     "supervisor": "^0.12.0",
     "ts-node": "^3.3.0",
     "tslint": "^5.11.0",
@@ -63,39 +65,47 @@
     "test": "test"
   },
   "scripts": {
-    "autostart": "npm-run-all --print-label --parallel watch:compile watch",
-    "autotest": "supervisor --watch src,test --extensions ts --no-restart-on exit --quiet --exec npm -- test",
-    "build": "npm-run-all compile resources:copy test lint typedoc",
-    "clean": "npm-run-all clean:js clean:build",
-    "clean:build": "rimraf *-v8.log profile.txt build",
-    "clean:dist": "npm-run-all clean clean:npm",
-    "clean:js": "rimraf \"{lib,test}/**/*.js\"",
+    "autostart": "nodemon --watch index.ts --watch lib --ext ts --delay 4 --exec ts-node -- node_modules/@atomist/automation-client/bin/start.js",
+    "autotest": "supervisor --watch index.ts,lib,test --extensions ts --no-restart-on exit --quiet --exec npm -- test",
+    "build": "run-s compile test lint doc",
+    "clean": "run-p clean:compile clean:test clean:doc clean:run",
+    "clean:compile": "rimraf git-info.json \"index.{d.ts,js{,.map}}\" \"{lib,test}/**/*.{d.ts,js{,.map}}\" lib/typings/types.ts",
+    "clean:dist": "run-s clean clean:npm",
+    "clean:doc": "rimraf doc",
     "clean:npm": "rimraf node_modules",
-    "compile": "npm-run-all git:info compile:gql compile:ts",
-    "compile:gql": "npm-run-all gql:gen gql:copy",
+    "clean:run": "rimraf *-v8.log profile.txt log",
+    "clean:test": "rimraf .nyc_output coverage",
+    "compile": "run-s git:info gql:gen compile:ts",
     "compile:ts": "tsc --project .",
-    "debug": "node --inspect node_modules/@atomist/automation-client/start.client.js",
-    "fmt": "npm-run-all fmt:gql",
-    "fmt:gql": "prettier --write \"**/*.graphql\"",
+    "doc": "typedoc --mode modules --excludeExternals --ignoreCompilerErrors --exclude \"**/*.d.ts\" --out doc index.ts lib",
     "git:info": "atm-git-info",
-    "gql:copy": "copyfiles \"./lib/**/*.graphql\" build",
     "gql:gen": "atm-gql-gen",
-    "js:copy": "copyfiles \"./lib/**/*.js\" build",
-    "lint": "npm-run-all lint:ts",
-    "lint:ts": "tslint --format verbose --project . --exclude \"{build,node_modules}/**\" \"**/*.ts\"",
-    "lint:gql": "prettier --list-different \"lib/graphql/**/*.graphql\"",
-    "lint:fix": "npm-run-all lint:ts:fix",
-    "lint:ts:fix": "npm run lint:ts -- --fix",
+    "lint": "tslint --format verbose --project . --exclude \"node_modules/**\" --exclude \"**/*.d.ts\" \"**/*.ts\"",
+    "lint:fix": "npm run lint -- --fix",
     "start": "atm-start",
-    "resources:copy": "cp -a lib/resources build/lib",
-    "test": "mocha --exit --require espower-typescript/guess \"test/**/*est.ts\"",
-    "test:one": "mocha --require espower-typescript/guess \"test/**/${TEST:-*.ts}\"",
-    "typedoc": "typedoc --mode modules --excludeExternals --out build/typedoc lib",
-    "watch:compile": "tsc --project . --watch",
-    "watch": "supervisor --watch build --quiet --exec npm -- run start"
+    "test": "nyc mocha --require espower-typescript/guess --require source-map-support/register \"test/**/*.test.ts\"",
+    "test:one": "mocha --require espower-typescript/guess \"test/**/${TEST:-*.test.ts}\"",
+    "typedoc": "npm run doc"
   },
   "engines": {
     "node": "9.x.x",
     "npm": "5.x.x"
+  },
+  "nyc": {
+    "include": [
+      "lib/**/*.*"
+    ],
+    "extension": [
+      ".ts"
+    ],
+    "exclude": [
+      "lib/typings",
+      "**/*.d.ts"
+    ],
+    "reporter": [
+      "html",
+      "text-summary"
+    ],
+    "all": true
   }
 }
