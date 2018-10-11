@@ -52,7 +52,6 @@ export const deployToStaging = new GoalWithFulfillment({
     workingDescription: "Deploying to `staging`",
     completedDescription: "Deployed to `staging`",
     failedDescription: "Deployment to `staging` failed",
-    waitingForApprovalDescription: "`prod` promotion approval pending",
 });
 
 export const integrationTest = new GoalWithFulfillment({
