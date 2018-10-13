@@ -63,7 +63,6 @@ import {
 import {
     fingerprintSupport,
     forFingerprints,
-    renderDiffSnippet,
 } from "@atomist/sdm-pack-fingerprints";
 import {
     IsNode,
@@ -173,12 +172,6 @@ export function machine(configuration: SoftwareDeliveryMachineConfiguration): So
         LeinSupport,
         fingerprintSupport(
             fingerprint,
-            {
-                selector: forFingerprints(
-                    "clojure-project-deps",
-                    "npm-project-deps"),
-                diffHandler: renderDiffSnippet,
-            },
             {
                 selector: forFingerprints(
                     "clojure-project-coordinates",
