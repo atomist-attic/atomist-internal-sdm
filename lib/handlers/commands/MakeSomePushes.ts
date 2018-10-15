@@ -22,10 +22,17 @@ import {
     MappedParameter,
     MappedParameters,
     Parameter,
-    Parameters, Project, projectUtils, Secret, Secrets,
+    Parameters,
+    Project,
+    projectUtils,
+    Secret,
+    Secrets,
     SimpleProjectEditor,
 } from "@atomist/automation-client";
-import { CloningProjectLoader, CommandHandlerRegistration } from "@atomist/sdm";
+import {
+    CloningProjectLoader,
+    CommandHandlerRegistration,
+} from "@atomist/sdm";
 import _ = require("lodash");
 
 @Parameters()
