@@ -76,6 +76,7 @@ import * as df from "dateformat";
 import * as _ from "lodash";
 import * as path from "path";
 import { K8SpecKick } from "../handlers/commands/HandleK8SpecKick";
+import { MakeSomePushes } from "../handlers/commands/MakeSomePushes";
 import { handleRuningPods } from "./events/HandleRunningPods";
 import {
     BranchNodeServiceGoals,
@@ -287,6 +288,7 @@ export function machine(configuration: SoftwareDeliveryMachineConfiguration): So
         },
     });
 
+    sdm.addCommand(MakeSomePushes);
     return sdm;
 }
 
