@@ -74,6 +74,7 @@ import {
 import { HasTravisFile } from "@atomist/sdm/lib/api-helper/pushtest/ci/ciPushTests";
 import * as df from "dateformat";
 import { K8SpecKick } from "../handlers/commands/HandleK8SpecKick";
+import { MakeSomePushes } from "../handlers/commands/MakeSomePushes";
 import { handleRuningPods } from "./events/HandleRunningPods";
 import {
     BranchNodeServiceGoals,
@@ -107,9 +108,9 @@ export const NodeProjectVersioner: ProjectVersioner = async (sdmGoal, p, log) =>
     const version = `${pj.version}-${branchSuffix}${df(new Date(), "yyyymmddHHMMss")}`;
 
     await spawnAndWatch({
-            command: "npm",
-            args: ["--no-git-tag-version", "version", version],
-        },
+        command: "npm",
+        args: ["--no-git-tag-version", "version", version],
+    },
         {
             cwd: p.baseDir,
         },
@@ -131,9 +132,9 @@ export const HasAtomistDockerfile: PredicatePushTest = predicatePushTest(
 
 export function machine(configuration: SoftwareDeliveryMachineConfiguration): SoftwareDeliveryMachine {
     const sdm = createSoftwareDeliveryMachine({
-            name: "Atomist Software Delivery Machine",
-            configuration,
-        },
+        name: "Atomist Software Delivery Machine",
+        configuration,
+    },
 
         whenPushSatisfies(not(isSdmEnabled(configuration.name)), IsNode)
             .itMeans("Default to not build Node.js projects")
@@ -253,14 +254,14 @@ export function machine(configuration: SoftwareDeliveryMachineConfiguration): So
         listener: async cli => {
 
             return CloningProjectLoader.doWithProject({
-                    credentials: { token: cli.parameters.token },
-                    id: GitHubRepoRef.from({ owner: "atomisthq", repo: "atomist-k8-specs", branch: cli.parameters.env }),
-                    readOnly: false,
-                    context: cli.context,
-                    cloneOptions: {
-                        alwaysDeep: true,
-                    },
+                credentials: { token: cli.parameters.token },
+                id: GitHubRepoRef.from({ owner: "atomisthq", repo: "atomist-k8-specs", branch: cli.parameters.env }),
+                readOnly: false,
+                context: cli.context,
+                cloneOptions: {
+                    alwaysDeep: true,
                 },
+            },
                 async (prj: GitProject) => {
                     const result = await updateK8Spec(prj, cli.context, {
                         owner: cli.parameters.owner,
@@ -276,5 +277,6 @@ export function machine(configuration: SoftwareDeliveryMachineConfiguration): So
         },
     });
 
+    sdm.addCommand(MakeSomePushes);
     return sdm;
 }
