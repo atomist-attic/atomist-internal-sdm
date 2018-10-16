@@ -28,10 +28,10 @@ import {
 import { Tag } from "@atomist/sdm-core";
 import {
     DefaultBranchGoals,
-    LeinDockerGoals,
     dockerBuild,
-    LeinBuildGoals,
     leinBuild,
+    LeinBuildGoals,
+    LeinDockerGoals,
 } from "@atomist/sdm-pack-clojure";
 import { tag } from "@atomist/sdm-pack-clojure";
 import { DockerBuild } from "@atomist/sdm-pack-docker";

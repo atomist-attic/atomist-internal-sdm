@@ -20,9 +20,9 @@ import {
     getGoalDefinitionFrom,
     Goal,
     GoalDefinition,
+    GoalInvocation,
     ImplementationRegistration,
     IndependentOfEnvironment,
-    GoalInvocation,
 } from "@atomist/sdm";
 import { DockerProgressReporter } from "@atomist/sdm-pack-docker";
 import {
