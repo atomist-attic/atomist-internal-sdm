@@ -225,7 +225,7 @@ export function machine(configuration: SoftwareDeliveryMachineConfiguration): So
             // note that I've just made this public locally for the moment
             imageNameCreator: imageNamer,
             options: {
-                dockerfileFinder: async () => "docker/Dockerfile",
+                dockerfileFinder: async () => "apollo/Dockerfile",
                 ...sdm.configuration.sdm.docker.jfrog as DockerOptions,
                 push: true,
             },
