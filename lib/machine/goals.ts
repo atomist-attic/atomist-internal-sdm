@@ -29,13 +29,12 @@ import { Tag } from "@atomist/sdm-core";
 import {
     DefaultBranchGoals,
     LeinDockerGoals,
-    //dockerBuild,
+    dockerBuild,
     LeinBuildGoals,
     leinBuild,
 } from "@atomist/sdm-pack-clojure";
 import { tag } from "@atomist/sdm-pack-clojure";
 import { DockerBuild } from "@atomist/sdm-pack-docker";
-import { MultiDockerBuild } from "./MultiDockerBuild";
 
 // GOALSET Definition
 
@@ -107,7 +106,7 @@ export const nodeVersion = new GoalWithFulfillment({
 });
 
 export const nodeDockerBuild = new DockerBuild();
-export const neoApolloDockerBuild = new MultiDockerBuild();
+export const neoApolloDockerBuild = new DockerBuild({ uniqueName: "apollo-build" });
 export const fingerprint = new Fingerprint();
 export const nodeTag = new Tag();
 
@@ -135,7 +134,7 @@ export const LeinDefaultBranchDockerGoals: Goals = goals("Lein Docker Build")
 export const LeinAndNodeDockerGoals: Goals = goals("Lein and npm combined goals")
     .plan(LeinBuildGoals, DefaultBranchGoals)
     .plan(neoApolloDockerBuild).after(leinBuild)
-    //.plan(dockerBuild).after(neoApolloDockerBuild)
+    .plan(dockerBuild).after(neoApolloDockerBuild)
     .plan(tag).after(neoApolloDockerBuild)
     .plan(updateStagingK8Specs).after(tag)
     .plan(deployToStaging).after(updateStagingK8Specs)

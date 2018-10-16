@@ -220,7 +220,7 @@ export function machine(configuration: SoftwareDeliveryMachineConfiguration): So
         .withProjectListener(NpmVersionProjectListener)
         .withProjectListener(NpmCompileProjectListener);
 
-    neoApolloDockerBuild.with([
+    neoApolloDockerBuild.with(
         {
             // note that I've just made this public locally for the moment
             imageNameCreator: imageNamer,
@@ -229,16 +229,8 @@ export function machine(configuration: SoftwareDeliveryMachineConfiguration): So
                 ...sdm.configuration.sdm.docker.jfrog as DockerOptions,
                 push: true,
             },
-        },
-        {
-            imageNameCreator: imageNamer,
-            options: {
-                dockerfileFinder: async () => "apollo/Dockerfile",
-                ...sdm.configuration.sdm.docker.jfrog as DockerOptions,
-                push: true,
-            },
-        },
-    ])
+        }
+    )
 
     deployToStaging.with({
         name: "deployToStaging",
