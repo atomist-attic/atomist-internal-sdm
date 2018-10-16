@@ -20,7 +20,6 @@ import {
     GraphQL,
     spawnAndWatch,
 } from "@atomist/automation-client";
-import { renderData } from "@atomist/clj-editors";
 import {
     allSatisfied,
     CloningProjectLoader,
@@ -61,10 +60,6 @@ import {
     HasDockerfile,
 } from "@atomist/sdm-pack-docker";
 import {
-    fingerprintSupport,
-    forFingerprints,
-} from "@atomist/sdm-pack-fingerprints";
-import {
     IsNode,
     NodeModulesProjectListener,
     NpmCompileProjectListener,
@@ -79,13 +74,14 @@ import {
     BranchNodeServiceGoals,
     deployToProd,
     deployToStaging,
-    dockerBuild,
-    fingerprint,
+    nodeDockerBuild,
     LeinDefaultBranchDockerGoals,
     NodeServiceGoals,
     nodeVersion,
     updateProdK8Specs,
     updateStagingK8Specs,
+    LeinAndNodeDockerGoals,
+    neoApolloDockerBuild,
 } from "./goals";
 import {
     addCacheHooks,
@@ -93,6 +89,7 @@ import {
     K8SpecUpdaterParameters,
     updateK8Spec,
 } from "./k8Support";
+import { imageNamer } from "@atomist/sdm-pack-clojure/lib/machine/leinSupport";
 
 export const NodeProjectVersioner: ProjectVersioner = async (sdmGoal, p, log) => {
     const pjFile = await p.getFile("package.json");
@@ -107,9 +104,9 @@ export const NodeProjectVersioner: ProjectVersioner = async (sdmGoal, p, log) =>
     const version = `${pj.version}-${branchSuffix}${df(new Date(), "yyyymmddHHMMss")}`;
 
     await spawnAndWatch({
-            command: "npm",
-            args: ["--no-git-tag-version", "version", version],
-        },
+        command: "npm",
+        args: ["--no-git-tag-version", "version", version],
+    },
         {
             cwd: p.baseDir,
         },
@@ -129,11 +126,15 @@ export const HasAtomistDockerfile: PredicatePushTest = predicatePushTest(
     "Has Atomist Dockerfile file",
     hasFile("docker/Dockerfile").predicate);
 
+const HasNeoApolloDockerfile: PredicatePushTest = predicatePushTest(
+    "Has an apollo Dockerfile file",
+    hasFile("apollo/Dockerfile").predicate);
+
 export function machine(configuration: SoftwareDeliveryMachineConfiguration): SoftwareDeliveryMachine {
     const sdm = createSoftwareDeliveryMachine({
-            name: "Atomist Software Delivery Machine",
-            configuration,
-        },
+        name: "Atomist Software Delivery Machine",
+        configuration,
+    },
 
         whenPushSatisfies(not(isSdmEnabled(configuration.name)), IsNode)
             .itMeans("Default to not build Node.js projects")
@@ -143,21 +144,25 @@ export function machine(configuration: SoftwareDeliveryMachineConfiguration): So
             .itMeans("No material change")
             .setGoals(ImmaterialGoals),
 
-        whenPushSatisfies(IsLein, not(HasTravisFile), HasAtomistFile, HasAtomistDockerfile, ToDefaultBranch, MaterialChangeToClojureRepo)
+        whenPushSatisfies(IsLein, HasAtomistFile, HasAtomistDockerfile, HasNeoApolloDockerfile, ToDefaultBranch)
+            .itMeans("Build project with lein and npm parts")
+            .setGoals(goals("lein and npm project").plan(LeinAndNodeDockerGoals)),
+
+        whenPushSatisfies(IsLein, not(HasTravisFile), HasAtomistFile, HasAtomistDockerfile, ToDefaultBranch, MaterialChangeToClojureRepo, not(HasNeoApolloDockerfile))
             .itMeans("Build a Clojure Service with Leiningen")
-            .setGoals(goals("service with fingerprints on master").plan(fingerprint, LeinDefaultBranchDockerGoals)),
+            .setGoals(goals("service with fingerprints on master").plan(LeinDefaultBranchDockerGoals)),
 
         whenPushSatisfies(IsLein, not(HasTravisFile), HasAtomistFile, HasAtomistDockerfile, MaterialChangeToClojureRepo)
             .itMeans("Build a Clojure Service with Leiningen")
-            .setGoals(goals("service with fingerprints").plan(fingerprint, LeinDockerGoals)),
+            .setGoals(goals("service with fingerprints").plan(LeinDockerGoals)),
 
         whenPushSatisfies(IsLein, not(HasTravisFile), HasAtomistFile, not(HasAtomistDockerfile), ToDefaultBranch, MaterialChangeToClojureRepo)
             .itMeans("Build a Clojure Library with Leiningen")
-            .setGoals(goals("library on master with fingerprints").plan(fingerprint, LeinDefaultBranchBuildGoals)),
+            .setGoals(goals("library on master with fingerprints").plan(LeinDefaultBranchBuildGoals)),
 
         whenPushSatisfies(IsLein, not(HasTravisFile), HasAtomistFile, not(HasAtomistDockerfile), MaterialChangeToClojureRepo)
             .itMeans("Build a Clojure Library with Leiningen")
-            .setGoals(goals("library with fingerprints").plan(fingerprint, LeinBuildGoals)),
+            .setGoals(goals("library with fingerprints").plan(LeinBuildGoals)),
 
         whenPushSatisfies(not(IsLein), not(HasTravisFile), HasDockerfile, IsNode, ToDefaultBranch)
             .itMeans("Simple node based docker service")
@@ -170,19 +175,6 @@ export function machine(configuration: SoftwareDeliveryMachineConfiguration): So
 
     sdm.addExtensionPacks(
         LeinSupport,
-        fingerprintSupport(
-            fingerprint,
-            {
-                selector: forFingerprints(
-                    "clojure-project-coordinates",
-                    "npm-project-coordinates"),
-                diffHandler: (ctx, diff) => {
-                    return ctx.messageClient.addressChannels(
-                        `change in ${diff.from.name} project coords ${renderData(diff.data)}`,
-                        diff.channel);
-                },
-            },
-        ),
         // RccaSupport, removing for now as it has an incompatible subscription
         pack.goalState.GoalState,
         pack.githubGoalStatus.GitHubGoalStatus,
@@ -217,7 +209,7 @@ export function machine(configuration: SoftwareDeliveryMachineConfiguration): So
         goalExecutor: executeVersioner(NodeProjectVersioner),
     });
 
-    dockerBuild.with({
+    nodeDockerBuild.with({
         imageNameCreator: DefaultDockerImageNameCreator,
         options: {
             ...sdm.configuration.sdm.docker.jfrog as DockerOptions,
@@ -227,6 +219,26 @@ export function machine(configuration: SoftwareDeliveryMachineConfiguration): So
         .withProjectListener(NodeModulesProjectListener)
         .withProjectListener(NpmVersionProjectListener)
         .withProjectListener(NpmCompileProjectListener);
+
+    neoApolloDockerBuild.with([
+        {
+            // note that I've just made this public locally for the moment
+            imageNameCreator: imageNamer,
+            options: {
+                dockerfileFinder: async () => "docker/Dockerfile",
+                ...sdm.configuration.sdm.docker.jfrog as DockerOptions,
+                push: true,
+            },
+        },
+        {
+            imageNameCreator: imageNamer,
+            options: {
+                dockerfileFinder: async () => "apollo/Dockerfile",
+                ...sdm.configuration.sdm.docker.jfrog as DockerOptions,
+                push: true,
+            },
+        },
+    ])
 
     deployToStaging.with({
         name: "deployToStaging",
@@ -253,14 +265,14 @@ export function machine(configuration: SoftwareDeliveryMachineConfiguration): So
         listener: async cli => {
 
             return CloningProjectLoader.doWithProject({
-                    credentials: { token: cli.parameters.token },
-                    id: GitHubRepoRef.from({ owner: "atomisthq", repo: "atomist-k8-specs", branch: cli.parameters.env }),
-                    readOnly: false,
-                    context: cli.context,
-                    cloneOptions: {
-                        alwaysDeep: true,
-                    },
+                credentials: { token: cli.parameters.token },
+                id: GitHubRepoRef.from({ owner: "atomisthq", repo: "atomist-k8-specs", branch: cli.parameters.env }),
+                readOnly: false,
+                context: cli.context,
+                cloneOptions: {
+                    alwaysDeep: true,
                 },
+            },
                 async (prj: GitProject) => {
                     const result = await updateK8Spec(prj, cli.context, {
                         owner: cli.parameters.owner,

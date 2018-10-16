@@ -29,9 +29,13 @@ import { Tag } from "@atomist/sdm-core";
 import {
     DefaultBranchGoals,
     LeinDockerGoals,
+    //dockerBuild,
+    LeinBuildGoals,
+    leinBuild,
 } from "@atomist/sdm-pack-clojure";
 import { tag } from "@atomist/sdm-pack-clojure";
 import { DockerBuild } from "@atomist/sdm-pack-docker";
+import { MultiDockerBuild } from "./MultiDockerBuild";
 
 // GOALSET Definition
 
@@ -102,14 +106,15 @@ export const nodeVersion = new GoalWithFulfillment({
     failedDescription: "Update version failed",
 });
 
-export const dockerBuild = new DockerBuild();
+export const nodeDockerBuild = new DockerBuild();
+export const neoApolloDockerBuild = new MultiDockerBuild();
 export const fingerprint = new Fingerprint();
 export const nodeTag = new Tag();
 
 export const NodeServiceGoals: Goals = goals("Simple Node Service Goals")
     .plan(nodeVersion)
-    .plan(dockerBuild).after(nodeVersion)
-    .plan(nodeTag).after(dockerBuild)
+    .plan(nodeDockerBuild).after(nodeVersion)
+    .plan(nodeTag).after(nodeDockerBuild)
     .plan(updateStagingK8Specs).after(nodeTag)
     .plan(deployToStaging).after(updateStagingK8Specs)
     .plan(updateProdK8Specs).after(deployToStaging)
@@ -117,11 +122,21 @@ export const NodeServiceGoals: Goals = goals("Simple Node Service Goals")
 
 export const BranchNodeServiceGoals: Goals = goals("Simple Node Service Goals")
     .plan(nodeVersion)
-    .plan(dockerBuild).after(nodeVersion)
-    .plan(nodeTag).after(dockerBuild);
+    .plan(nodeDockerBuild).after(nodeVersion)
+    .plan(nodeTag).after(nodeDockerBuild);
 
 export const LeinDefaultBranchDockerGoals: Goals = goals("Lein Docker Build")
     .plan(DefaultBranchGoals, LeinDockerGoals)
+    .plan(updateStagingK8Specs).after(tag)
+    .plan(deployToStaging).after(updateStagingK8Specs)
+    .plan(updateProdK8Specs).after(deployToStaging)
+    .plan(deployToProd).after(updateProdK8Specs);
+
+export const LeinAndNodeDockerGoals: Goals = goals("Lein and npm combined goals")
+    .plan(LeinBuildGoals, DefaultBranchGoals)
+    .plan(neoApolloDockerBuild).after(leinBuild)
+    //.plan(dockerBuild).after(neoApolloDockerBuild)
+    .plan(tag).after(neoApolloDockerBuild)
     .plan(updateStagingK8Specs).after(tag)
     .plan(deployToStaging).after(updateStagingK8Specs)
     .plan(updateProdK8Specs).after(deployToStaging)
