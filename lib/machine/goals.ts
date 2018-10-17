@@ -106,8 +106,15 @@ export const nodeVersion = new GoalWithFulfillment({
 });
 
 export const nodeDockerBuild = new DockerBuild();
-export const neoApolloDockerBuild = new DockerBuild({ uniqueName: "apollo-build" });
-neoApolloDockerBuild.definition.displayName = "apollo build"
+export const neoApolloDockerBuild = new DockerBuild({
+    uniqueName: "apollo-docker-build",
+    displayName: "Apollo docker build",
+    descriptions: {
+        inProcess: "Running Apollo docker build",
+        completed: "Apollo docker build successful",
+        failed: "Apollo docker build failed",
+    }
+});
 export const fingerprint = new Fingerprint();
 export const nodeTag = new Tag();
 
