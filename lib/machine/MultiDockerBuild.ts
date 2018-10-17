@@ -45,7 +45,7 @@ export interface MultiDockerBuildRegistration extends Partial<ImplementationRegi
  */
 export class MultiDockerBuild extends FulfillableGoalWithRegistrations<MultiDockerBuildRegistration[]> {
 
-    constructor(string = DefaultGoalNameGenerator.generateName("docker-build"),
+    constructor(uniqueName: string = DefaultGoalNameGenerator.generateName("docker-build"),
                 ...dependsOn: Goal[]) {
 
         super({
