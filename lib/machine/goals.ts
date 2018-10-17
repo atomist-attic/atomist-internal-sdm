@@ -113,7 +113,7 @@ export const neoApolloDockerBuild = new DockerBuild({
         inProcess: "Running Apollo docker build",
         completed: "Apollo docker build successful",
         failed: "Apollo docker build failed",
-    }
+    },
 });
 export const fingerprint = new Fingerprint();
 export const nodeTag = new Tag();
