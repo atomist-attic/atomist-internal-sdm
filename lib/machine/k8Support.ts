@@ -98,14 +98,6 @@ export class K8SpecUpdaterParameters {
     public readonly token: string;
 }
 
-function xx(updater) {
-    const mapping = updater.replace("{", "").replace("}", "").split(" ");
-    const pairs = _.chunk(mapping, 2);
-    _.filter(['a', 'b', 'c', 'd'],
-        (value, idx) => idx % 2 === 0
-    );
-}
-
 /**
  * Update all Deployments that contain the mapping
  * @param owner
