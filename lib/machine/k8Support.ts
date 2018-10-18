@@ -123,9 +123,9 @@ export const updateK8Spec: SimpleProjectEditor = async (project: Project, ctx: H
                 if (updater) {
                     logger.info("Found updater config" + updater);
                     const mapping = updater.replace("{", "").replace("}", "").split(" ");
-                    const keys = _.filter(mapping, (value, idx) => idx % 2 === 1)
-                    const images = _.filter(mapping, (value, idx) => idx % 2 === 0)
-                    let dirtyImages: Array<{ previousImage: string, currentImage: string }> = [];
+                    const keys = _.filter(mapping, (value, idx) => idx % 2 === 1);
+                    const images = _.filter(mapping, (value, idx) => idx % 2 === 0);
+                    const dirtyImages: Array<{ previousImage: string, currentImage: string }> = [];
                     if (keys.includes(`${owner}/${repo}`)) {
                         spec.spec.template.spec.containers = _.reduce(
                             spec.spec.template.spec.containers, (acc, container) => {
@@ -134,11 +134,11 @@ export const updateK8Spec: SimpleProjectEditor = async (project: Project, ctx: H
                                     const nv = container.image.split("/")[1].split(":");
                                     if (nv[1] !== version) {
                                         dirty = true;
-                                        let newImage = `${repoWithName}:${version}`;
+                                        const newImage = `${repoWithName}:${version}`;
                                         dirtyImages.push({
                                             previousImage: container.image,
-                                            currentImage: newImage
-                                        })
+                                            currentImage: newImage,
+                                        });
                                         container.image = newImage;
                                     }
                                 }
@@ -150,7 +150,7 @@ export const updateK8Spec: SimpleProjectEditor = async (project: Project, ctx: H
                         logger.info("Spec updated, writing to " + f.path);
                         await f.setContent(JSON.stringify(spec, null, 2));
                         // send custom event to record deployment target
-                        await Promise.all(dirtyImages.map(async (dirtyImage) => {
+                        await Promise.all(dirtyImages.map(async dirtyImage => {
                             const previousSha = (await fetchDockerImage(ctx, dirtyImage.previousImage))[0].commits[0].sha;
                             const currentSha = (await fetchDockerImage(ctx, dirtyImage.currentImage))[0].commits[0].sha;
                             let targetReplicas = spec.spec.replicas;

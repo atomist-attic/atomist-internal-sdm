@@ -294,9 +294,9 @@ export function machine(configuration: SoftwareDeliveryMachineConfiguration): So
 
 export const apolloImageNamer: DockerImageNameCreator =
     async (p: GitProject,
-        sdmGoal: SdmGoalEvent,
-        options: DockerOptions,
-        ctx: HandlerContext) => {
+           sdmGoal: SdmGoalEvent,
+           options: DockerOptions,
+           ctx: HandlerContext) => {
         const projectclj = path.join(p.baseDir, "project.clj");
         const newversion = await readSdmVersion(
             sdmGoal.repo.owner,
