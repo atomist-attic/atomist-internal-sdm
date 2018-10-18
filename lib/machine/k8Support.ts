@@ -72,10 +72,14 @@ export async function addCacheHooks(p: Project): Promise<Project> {
     const files = await filesAsync(dotAtomist);
     await Promise.all(_.map(files, async file => {
         const target = path.join(".atomist/", path.relative(dotAtomist, file));
-        const content = await readFileAsync(file);
-        logger.info(`Copying file ${file} -> ${target}`);
-        await p.addFile(target, content);
-        return p.makeExecutable(target);
+        if (!p.fileExistsSync(target)) {
+            const content = await readFileAsync(file);
+            logger.info(`Copying file ${file} -> ${target}`);
+            await p.addFile(target, content);
+            return p.makeExecutable(target);
+        } else {
+            return Promise.resolve(); // this is silly. Checking gone mad!
+        }
     }));
     logger.info("Finished copying .atomist files");
     return p;
