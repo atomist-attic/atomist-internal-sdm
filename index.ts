@@ -17,10 +17,15 @@
 import { Configuration } from "@atomist/automation-client";
 import { configureLogzio } from "@atomist/automation-client-ext-logzio";
 import { configureRaven } from "@atomist/automation-client-ext-raven";
+import { MockGoalSize } from "@atomist/sdm";
 import {
     ConfigureOptions,
     configureSdm,
 } from "@atomist/sdm-core";
+import {
+    dockerBuild,
+    leinBuild,
+} from "@atomist/sdm-pack-clojure/lib/machine/goals";
 import { machine } from "./lib/machine/machine";
 
 const machineOptions: ConfigureOptions = {
@@ -53,6 +58,17 @@ export const configuration: Configuration = {
                     defaultBranch: true,
                 },
             },
+        },
+        mock: {
+            enabled: goal => goal.push.after.message.includes("[sdm:mock]"),
+            defaultSize: MockGoalSize.Small,
+            goals: [{
+                goal: leinBuild,
+                size: MockGoalSize.Medium,
+            }, {
+                goal: dockerBuild,
+                size: MockGoalSize.Medium,
+            }],
         },
     },
 };

@@ -24,7 +24,7 @@
     "@atomist/automation-client-ext-logzio": "1.0.0-RC.1",
     "@atomist/automation-client-ext-raven": "1.0.0-RC.1",
     "@atomist/clj-editors": "0.5.7",
-    "@atomist/sdm": "1.0.0-master.20181017081924",
+    "@atomist/sdm": "1.0.0-issue-551.20181023145323",
     "@atomist/sdm-core": "1.0.0-master.20181017084730",
     "@atomist/sdm-pack-clojure": "1.0.0-master.20181017122728",
     "@atomist/sdm-pack-docker": "1.0.0-RC.1",
