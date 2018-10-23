@@ -43,6 +43,12 @@ export class MakeSomePushesParams {
     })
     public repos: string = "pochta, automation-api, bruce, incoming-webhooks, org-service";
 
+    @Parameter({
+        required: false,
+        description: "Do it for real, not just mocking",
+    })
+    public forReal: boolean = false;
+
     @MappedParameter(MappedParameters.GitHubOwner)
     public readonly owner: string;
 
@@ -53,7 +59,7 @@ export class MakeSomePushesParams {
 export const MakeSomePushes: CommandHandlerRegistration<MakeSomePushesParams> = {
     name: "MakeSomePushes",
     description: "make some random pushes to start sdms",
-    intent: "make some pushes",
+    intent: ["make some pushes", "do some pushes", "make some noise", "make some commits", "do some commits"],
     paramsMaker: MakeSomePushesParams,
     listener: async cli => {
         const repos = _.map(cli.parameters.repos.split(","), repo => repo.trim());
@@ -69,7 +75,7 @@ export const MakeSomePushes: CommandHandlerRegistration<MakeSomePushesParams> = 
             },
                 async (prj: GitProject) => {
                     const result = await simpleChange(prj, cli.context);
-                    await prj.commit(`Add whitespace to project.clj`);
+                    await prj.commit(`${cli.parameters.forReal ? "" : "[sdm:mock] "}Add whitespace to project.clj`);
                     await prj.push();
                     return result;
                 },
