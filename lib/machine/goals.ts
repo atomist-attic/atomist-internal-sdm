@@ -110,7 +110,7 @@ export const neoApolloDockerBuild = new DockerBuild({
     uniqueName: "apollo-docker-build",
     displayName: "Apollo docker build",
     descriptions: {
-        inProcess: "Running Apollo docker build...",
+        inProcess: "Running Apollo docker build",
         completed: "Apollo docker build successful",
         failed: "Apollo docker build failed",
     },
