@@ -32,8 +32,8 @@ import {
     leinBuild,
     LeinBuildGoals,
     LeinDockerGoals,
+    tag,
 } from "@atomist/sdm-pack-clojure";
-import { tag } from "@atomist/sdm-pack-clojure";
 import { DockerBuild } from "@atomist/sdm-pack-docker";
 
 // GOALSET Definition

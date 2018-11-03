@@ -17,16 +17,20 @@
 // tslint:disable:max-file-line-count
 
 import {
+    ChildProcessResult,
+    configurationValue,
+    GitCommandGitProject,
+    GitHubRepoRef,
+    GitProject,
     logger,
+    RemoteRepoRef,
+    spawnAndWatch,
+    SpawnCommand,
     Success,
+    TokenCredentials,
 } from "@atomist/automation-client";
-import { GitHubRepoRef } from "@atomist/automation-client";
-import { TokenCredentials } from "@atomist/automation-client";
-import { RemoteRepoRef } from "@atomist/automation-client";
-import { GitCommandGitProject } from "@atomist/automation-client";
-import { GitProject } from "@atomist/automation-client";
-import { configurationValue } from "@atomist/automation-client";
 import {
+    DelimitedWriteProgressLogDecorator,
     ExecuteGoal,
     ExecuteGoalResult,
     GoalInvocation,
@@ -34,22 +38,14 @@ import {
     ProgressLog,
     ProjectLoader,
 } from "@atomist/sdm";
-import { DelimitedWriteProgressLogDecorator } from "@atomist/sdm";
-import { createTagForStatus } from "@atomist/sdm-core";
-import { ProjectIdentifier } from "@atomist/sdm-core";
-import { readSdmVersion } from "@atomist/sdm-core";
-
 import {
-    ChildProcessResult,
-    spawnAndWatch,
-    SpawnCommand,
-} from "@atomist/automation-client";
+    createTagForStatus,
+    github,
+    ProjectIdentifier,
+    readSdmVersion,
+} from "@atomist/sdm-core";
 import { DockerOptions } from "@atomist/sdm-pack-docker";
 import { SpawnOptions } from "child_process";
-
-import {
-    github,
-} from "@atomist/sdm-core";
 
 interface ProjectRegistryInfo {
     registry: string;
@@ -314,7 +310,7 @@ export function executeReleaseVersion(
             if (pi.version !== versionRelease) {
                 const message = `current master package version (${pi.version}) seems to have already been ` +
                     `incremented after ${releaseVersion} release`;
-                console.debug(message);
+                logger.debug(message);
                 const log = new DelimitedWriteProgressLogDecorator(rwlc.progressLog, "\n");
                 log.write(`${message}\n`);
                 await log.flush();

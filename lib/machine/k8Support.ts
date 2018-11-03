@@ -152,7 +152,7 @@ export const updateK8Spec: SimpleProjectEditor = async (project: Project, ctx: H
                     }
                     if (dirty) {
                         logger.info("Spec updated, writing to " + f.path);
-                        await f.setContent(JSON.stringify(spec, null, 2));
+                        await f.setContent(JSON.stringify(spec, undefined, 2));
                         // send custom event to record deployment target
                         await Promise.all(dirtyImages.map(async dirtyImage => {
                             const previousSha = (await fetchDockerImage(ctx, dirtyImage.previousImage))[0].commits[0].sha;

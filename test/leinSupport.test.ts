@@ -14,9 +14,11 @@
  * limitations under the License.
  */
 
-import { HandlerContext } from "@atomist/automation-client";
-import { SimpleRepoId } from "@atomist/automation-client";
-import { InMemoryProject } from "@atomist/automation-client";
+import {
+    HandlerContext,
+    InMemoryProject,
+    SimpleRepoId,
+} from "@atomist/automation-client";
 import * as fs from "fs";
 import * as assert from "power-assert";
 import { addCacheHooks, updateK8Spec } from "../lib/machine/k8Support";
@@ -35,22 +37,19 @@ describe("updateK8Specs", () => {
                 workspaceId: "",
                 correlationId: "",
                 graphClient: {
-                    endpoint: null,
-                    mutate: null,
-                    executeQuery: null,
-                    executeMutationFromFile: null,
-                    executeMutation: null,
+                    endpoint: undefined,
+                    mutate: undefined,
                     query: async a => {
                         return { DockerImage: [{ commits: [{ sha: "" }] }] } as any;
                     },
                 },
                 messageClient: {
-                    respond: null,
-                    send: (a, b) => null,
-                    addressUsers: null,
-                    addressChannels: null,
+                    respond: undefined,
+                    send: (a, b) => undefined,
+                    addressUsers: undefined,
+                    addressChannels: undefined,
                 },
-            } as HandlerContext, { owner: "atomisthq", repo: "pochta", version });
+            }, { owner: "atomisthq", repo: "pochta", version });
             const updatedSpec = await (await p.findFile(inProject)).getContent();
             const updatedSpecOjb = JSON.parse(updatedSpec);
             assert(updatedSpecOjb.spec.template.spec.containers[0].image === "sforzando-dockerv2-local.jfrog.io/pochta:1.2.3-123123123");
@@ -66,7 +65,7 @@ describe("updateK8Specs", () => {
             const version = "1.2.3-123123123";
             const p = InMemoryProject.from(new SimpleRepoId("atomist", "sdm"),
                 { path: inProject, content: contents });
-            await updateK8Spec(p, {} as HandlerContext, { owner: "atomista", repo: "bruce", version });
+            await updateK8Spec(p, {} as any, { owner: "atomista", repo: "bruce", version });
             const updatedSpec = await (await p.findFile(inProject)).getContent();
             assert(!updatedSpec.includes(version));
             done();

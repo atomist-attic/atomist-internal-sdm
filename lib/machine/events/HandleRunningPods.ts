@@ -16,16 +16,18 @@
 
 import {
     EventFired,
+    GitHubRepoRef,
     HandlerContext,
     logger,
+    NoParameters,
+    OnEvent,
     Success,
 } from "@atomist/automation-client";
-import { OnEvent } from "@atomist/automation-client";
-import { GitHubRepoRef } from "@atomist/automation-client";
-import { NoParameters } from "@atomist/automation-client";
-import { SdmGoalState } from "@atomist/sdm";
-import { findSdmGoalOnCommit } from "@atomist/sdm";
-import { updateGoal } from "@atomist/sdm";
+import {
+    findSdmGoalOnCommit,
+    SdmGoalState,
+    updateGoal,
+} from "@atomist/sdm";
 import {
     FetchDockerImage,
     PodDeployments,
@@ -109,9 +111,9 @@ export async function fetchDockerImage(ctx: HandlerContext, imageTag: string): P
         {
             name: "fetchDockerImage",
             variables:
-            {
-                imageName: imageTag,
-            },
+                {
+                    imageName: imageTag,
+                },
         });
     logger.info(`Found Docker images with tag ${imageTag}: ${JSON.stringify(images)}`);
     return images.DockerImage;

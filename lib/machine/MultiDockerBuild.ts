@@ -24,11 +24,11 @@ import {
     ImplementationRegistration,
     IndependentOfEnvironment,
 } from "@atomist/sdm";
-import { DockerProgressReporter } from "@atomist/sdm-pack-docker";
 import {
     DefaultDockerImageNameCreator,
     DockerImageNameCreator,
     DockerOptions,
+    DockerProgressReporter,
     executeDockerBuild,
 } from "@atomist/sdm-pack-docker";
 
