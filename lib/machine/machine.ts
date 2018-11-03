@@ -45,7 +45,8 @@ import {
     DisableDeploy,
     EnableDeploy,
     executeVersioner,
-    pack,
+    gitHubGoalStatus,
+    goalState,
     ProjectVersioner,
     readSdmVersion,
 } from "@atomist/sdm-core";
@@ -184,8 +185,8 @@ export function machine(configuration: SoftwareDeliveryMachineConfiguration): So
     sdm.addExtensionPacks(
         LeinSupport,
         // RccaSupport, removing for now as it has an incompatible subscription
-        pack.goalState.GoalState,
-        pack.githubGoalStatus.GitHubGoalStatus,
+        goalState(),
+        gitHubGoalStatus(),
     );
 
     sdm.addCommand(DisableDeploy);
