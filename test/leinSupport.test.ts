@@ -15,7 +15,6 @@
  */
 
 import {
-    HandlerContext,
     InMemoryProject,
     SimpleRepoId,
 } from "@atomist/automation-client";
