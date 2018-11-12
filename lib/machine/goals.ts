@@ -17,6 +17,7 @@
 // GOAL Definition
 
 import {
+    Cancel,
     Fingerprint,
     goals,
     Goals,
@@ -27,12 +28,15 @@ import {
 } from "@atomist/sdm";
 import { Tag } from "@atomist/sdm-core";
 import {
+    autofix,
     DefaultBranchGoals,
     dockerBuild,
     leinBuild,
     LeinBuildGoals,
     LeinDockerGoals,
+    publish,
     tag,
+    version,
 } from "@atomist/sdm-pack-clojure";
 import { DockerBuild } from "@atomist/sdm-pack-docker";
 
@@ -118,8 +122,20 @@ export const neoApolloDockerBuild = new DockerBuild({
 export const fingerprint = new Fingerprint();
 export const nodeTag = new Tag();
 
+export const nodeServiceCancel = new Cancel({
+    goals: [
+        autofix,
+        nodeVersion,
+        nodeTag,
+        nodeDockerBuild,
+        updateStagingK8Specs,
+        deployToStaging,
+        updateProdK8Specs,
+        deployToProd],
+});
+
 export const NodeServiceGoals: Goals = goals("Simple Node Service Goals")
-    .plan(nodeVersion)
+    .plan(nodeVersion, nodeServiceCancel)
     .plan(nodeDockerBuild).after(nodeVersion)
     .plan(nodeTag).after(nodeDockerBuild)
     .plan(updateStagingK8Specs).after(nodeTag)
@@ -132,8 +148,22 @@ export const BranchNodeServiceGoals: Goals = goals("Simple Node Service Goals")
     .plan(nodeDockerBuild).after(nodeVersion)
     .plan(nodeTag).after(nodeDockerBuild);
 
+export const leinServiceCancel = new Cancel({
+    goals: [
+        autofix,
+        leinBuild,
+        version,
+        tag,
+        publish,
+        dockerBuild,
+        updateStagingK8Specs,
+        deployToStaging,
+        updateProdK8Specs,
+        deployToProd],
+});
+
 export const LeinDefaultBranchDockerGoals: Goals = goals("Lein Docker Build")
-    .plan(DefaultBranchGoals, LeinDockerGoals)
+    .plan(leinServiceCancel, DefaultBranchGoals, LeinDockerGoals)
     .plan(updateStagingK8Specs).after(tag)
     .plan(deployToStaging).after(updateStagingK8Specs)
     .plan(updateProdK8Specs).after(deployToStaging)
