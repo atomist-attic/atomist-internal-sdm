@@ -33,8 +33,8 @@ import {
     ImmaterialGoals,
     isSdmEnabled,
     not,
-    PredicatePushTest,
     predicatePushTest,
+    PredicatePushTest,
     SdmGoalEvent,
     SoftwareDeliveryMachine,
     SoftwareDeliveryMachineConfiguration,
@@ -66,9 +66,12 @@ import {
     DockerOptions,
     HasDockerfile,
 } from "@atomist/sdm-pack-docker";
-import {fingerprintSupport, forFingerprints} from "@atomist/sdm-pack-fingerprints";
+import {
+    fingerprintSupport,
+    forFingerprints,
+} from "@atomist/sdm-pack-fingerprints";
 import * as fingerprints from "@atomist/sdm-pack-fingerprints/fingerprints";
-import {checkFingerprintTargets} from "@atomist/sdm-pack-fingerprints/lib/fingerprints/impact";
+import { checkFingerprintTargets } from "@atomist/sdm-pack-fingerprints/lib/fingerprints/impact";
 import {
     IsNode,
     NodeModulesProjectListener,
