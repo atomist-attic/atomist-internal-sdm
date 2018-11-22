@@ -28,7 +28,7 @@
     "@atomist/sdm-core": "1.1.0-cancel-goal.20181110135031",
     "@atomist/sdm-pack-clojure": "1.0.0-master.20181017122728",
     "@atomist/sdm-pack-docker": "1.0.0-RC.2",
-    "@atomist/sdm-pack-fingerprints": "1.1.1",
+    "@atomist/sdm-pack-fingerprints": "1.2.0-master.20181122025632",
     "@atomist/sdm-pack-node": "1.0.0-RC.2",
     "@atomist/sdm-pack-rcca": "0.0.5-master.20181011150101",
     "@atomist/slack-messages": "1.0.0",
