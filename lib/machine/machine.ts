@@ -67,11 +67,15 @@ import {
     HasDockerfile,
 } from "@atomist/sdm-pack-docker";
 import {
+    applyFingerprint,
     checkFingerprintTargets,
+    cljFunctionFingerprints,
+    depsFingerprints,
     fingerprintSupport,
     forFingerprints,
+    FP,
+    logbackFingerprints,
 } from "@atomist/sdm-pack-fingerprints";
-import * as fingerprints from "@atomist/sdm-pack-fingerprints/fingerprints";
 import {
     IsNode,
     NodeModulesProjectListener,
@@ -201,14 +205,16 @@ export function machine(configuration: SoftwareDeliveryMachineConfiguration): So
             // runs on every push!!
             async (p: GitProject) => {
                 return [].concat(
-                    await fingerprints.depsFingerprints(p.baseDir),
+                    await depsFingerprints(p.baseDir),
                 ).concat(
-                    await fingerprints.logbackFingerprints(p.baseDir),
+                    await logbackFingerprints(p.baseDir),
+                ).concat(
+                    await cljFunctionFingerprints(p.baseDir),
                 );
             },
             // currently scheduled only when a user chooses to apply the fingerprint
-            async (p: GitProject, fp: fingerprints.FP) => {
-                return fingerprints.applyFingerprint(p.baseDir, fp);
+            async (p: GitProject, fp: FP) => {
+                return applyFingerprint(p.baseDir, fp);
             },
             {
                 selector: forFingerprints(
