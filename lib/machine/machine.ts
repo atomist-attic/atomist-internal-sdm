@@ -66,7 +66,11 @@ import {
     DockerOptions,
     HasDockerfile,
 } from "@atomist/sdm-pack-docker";
-import {checkFingerprintTargets, fingerprintSupport, forFingerprints} from "@atomist/sdm-pack-fingerprints";
+import {
+    checkFingerprintTargets,
+    fingerprintSupport,
+    forFingerprints,
+} from "@atomist/sdm-pack-fingerprints";
 import * as fingerprints from "@atomist/sdm-pack-fingerprints/fingerprints";
 import {
     IsNode,
