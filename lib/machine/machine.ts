@@ -66,9 +66,8 @@ import {
     DockerOptions,
     HasDockerfile,
 } from "@atomist/sdm-pack-docker";
-import {fingerprintSupport, forFingerprints} from "@atomist/sdm-pack-fingerprints";
+import {checkFingerprintTargets, fingerprintSupport, forFingerprints} from "@atomist/sdm-pack-fingerprints";
 import * as fingerprints from "@atomist/sdm-pack-fingerprints/fingerprints";
-import {checkFingerprintTargets} from "@atomist/sdm-pack-fingerprints/lib/fingerprints/impact";
 import {
     IsNode,
     NodeModulesProjectListener,
@@ -197,14 +196,20 @@ export function machine(configuration: SoftwareDeliveryMachineConfiguration): So
             FingerprintGoal,
             // runs on every push!!
             async (p: GitProject) => {
-                return fingerprints.fingerprint(p.baseDir);
+                return [].concat(
+                    await fingerprints.depsFingerprints(p.baseDir),
+                ).concat(
+                    await fingerprints.logbackFingerprints(p.baseDir),
+                );
             },
             // currently scheduled only when a user chooses to apply the fingerprint
             async (p: GitProject, fp: fingerprints.FP) => {
                 return fingerprints.applyFingerprint(p.baseDir, fp);
             },
             {
-                selector: forFingerprints("logback"),
+                selector: forFingerprints(
+                    "elk-logback",
+                ),
                 handler: async (ctx, diff) => {
                     return checkFingerprintTargets(ctx, diff);
                 },
