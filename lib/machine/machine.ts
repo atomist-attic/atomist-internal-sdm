@@ -27,6 +27,7 @@ import {
     allSatisfied,
     CloningProjectLoader,
     DoNotSetAnyGoals,
+    Fingerprint,
     goals,
     hasFile,
     ImmaterialGoals,
@@ -65,6 +66,12 @@ import {
     DockerOptions,
     HasDockerfile,
 } from "@atomist/sdm-pack-docker";
+import {
+    checkFingerprintTargets,
+    fingerprintSupport,
+    forFingerprints,
+} from "@atomist/sdm-pack-fingerprints";
+import * as fingerprints from "@atomist/sdm-pack-fingerprints/fingerprints";
 import {
     IsNode,
     NodeModulesProjectListener,
@@ -138,6 +145,8 @@ const HasNeoApolloDockerfile: PredicatePushTest = predicatePushTest(
     "Has an apollo Dockerfile file",
     hasFile("apollo/Dockerfile").predicate);
 
+export const FingerprintGoal = new Fingerprint();
+
 export function machine(configuration: SoftwareDeliveryMachineConfiguration): SoftwareDeliveryMachine {
     const sdm = createSoftwareDeliveryMachine({
         name: "Atomist Software Delivery Machine",
@@ -154,7 +163,7 @@ export function machine(configuration: SoftwareDeliveryMachineConfiguration): So
 
         whenPushSatisfies(IsLein, HasAtomistFile, HasAtomistDockerfile, HasNeoApolloDockerfile, ToDefaultBranch)
             .itMeans("Build project with lein and npm parts")
-            .setGoals(goals("lein and npm project").plan(LeinAndNodeDockerGoals)),
+            .setGoals(goals("lein and npm project").plan(LeinAndNodeDockerGoals, FingerprintGoal)),
 
         whenPushSatisfies(IsLein, not(HasTravisFile), HasAtomistFile, HasAtomistDockerfile,
             ToDefaultBranch, MaterialChangeToClojureRepo, not(HasNeoApolloDockerfile))
@@ -163,7 +172,7 @@ export function machine(configuration: SoftwareDeliveryMachineConfiguration): So
 
         whenPushSatisfies(IsLein, not(HasTravisFile), HasAtomistFile, HasAtomistDockerfile, MaterialChangeToClojureRepo)
             .itMeans("Build a Clojure Service with Leiningen")
-            .setGoals(goals("service with fingerprints").plan(LeinDockerGoals)),
+            .setGoals(goals("service with fingerprints").plan(LeinDockerGoals, FingerprintGoal)),
 
         whenPushSatisfies(IsLein, not(HasTravisFile), HasAtomistFile, not(HasAtomistDockerfile), ToDefaultBranch, MaterialChangeToClojureRepo)
             .itMeans("Build a Clojure Library with Leiningen")
@@ -171,7 +180,7 @@ export function machine(configuration: SoftwareDeliveryMachineConfiguration): So
 
         whenPushSatisfies(IsLein, not(HasTravisFile), HasAtomistFile, not(HasAtomistDockerfile), MaterialChangeToClojureRepo)
             .itMeans("Build a Clojure Library with Leiningen")
-            .setGoals(goals("library with fingerprints").plan(LeinBuildGoals)),
+            .setGoals(goals("library with fingerprints").plan(LeinBuildGoals, FingerprintGoal)),
 
         whenPushSatisfies(not(IsLein), not(HasTravisFile), HasDockerfile, IsNode, ToDefaultBranch)
             .itMeans("Simple node based docker service")
@@ -187,6 +196,29 @@ export function machine(configuration: SoftwareDeliveryMachineConfiguration): So
         // RccaSupport, removing for now as it has an incompatible subscription
         goalState(),
         gitHubGoalStatus(),
+        fingerprintSupport(
+            FingerprintGoal,
+            // runs on every push!!
+            async (p: GitProject) => {
+                return [].concat(
+                    await fingerprints.depsFingerprints(p.baseDir),
+                ).concat(
+                    await fingerprints.logbackFingerprints(p.baseDir),
+                );
+            },
+            // currently scheduled only when a user chooses to apply the fingerprint
+            async (p: GitProject, fp: fingerprints.FP) => {
+                return fingerprints.applyFingerprint(p.baseDir, fp);
+            },
+            {
+                selector: forFingerprints(
+                    "elk-logback",
+                ),
+                handler: async (ctx, diff) => {
+                    return checkFingerprintTargets(ctx, diff);
+                },
+            },
+        ),
     );
 
     sdm.addCommand(DisableDeploy);
