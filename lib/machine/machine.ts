@@ -172,7 +172,7 @@ export function machine(configuration: SoftwareDeliveryMachineConfiguration): So
         whenPushSatisfies(IsLein, not(HasTravisFile), HasAtomistFile, HasAtomistDockerfile,
             ToDefaultBranch, MaterialChangeToClojureRepo, not(HasNeoApolloDockerfile))
             .itMeans("Build a Clojure Service with Leiningen")
-            .setGoals(goals("service with fingerprints on master").plan(LeinDefaultBranchDockerGoals)),
+            .setGoals(goals("service with fingerprints on master").plan(LeinDefaultBranchDockerGoals,FingerprintGoal)),
 
         whenPushSatisfies(IsLein, not(HasTravisFile), HasAtomistFile, HasAtomistDockerfile, MaterialChangeToClojureRepo)
             .itMeans("Build a Clojure Service with Leiningen")
@@ -180,7 +180,7 @@ export function machine(configuration: SoftwareDeliveryMachineConfiguration): So
 
         whenPushSatisfies(IsLein, not(HasTravisFile), HasAtomistFile, not(HasAtomistDockerfile), ToDefaultBranch, MaterialChangeToClojureRepo)
             .itMeans("Build a Clojure Library with Leiningen")
-            .setGoals(goals("library on master with fingerprints").plan(LeinDefaultBranchBuildGoals)),
+            .setGoals(goals("library on master with fingerprints").plan(LeinDefaultBranchBuildGoals, FingerprintGoal)),
 
         whenPushSatisfies(IsLein, not(HasTravisFile), HasAtomistFile, not(HasAtomistDockerfile), MaterialChangeToClojureRepo)
             .itMeans("Build a Clojure Library with Leiningen")
