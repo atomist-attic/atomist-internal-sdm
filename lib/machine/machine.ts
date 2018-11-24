@@ -210,7 +210,11 @@ export function machine(configuration: SoftwareDeliveryMachineConfiguration): So
                     await logbackFingerprints(p.baseDir),
                 ).concat(
                     cljFunctionFingerprints(p.baseDir)
-                    .then(result => result)
+                    .then(
+                        result => {
+                            logger.info("successfully ran clj function fingerprints");
+                            return result;
+                        })
                     .catch(error => {
                         logger.warn("unable to run clj function fingerprints");
                         return []; }),
