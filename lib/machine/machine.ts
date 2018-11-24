@@ -208,8 +208,6 @@ export function machine(configuration: SoftwareDeliveryMachineConfiguration): So
                     await depsFingerprints(p.baseDir),
                 ).concat(
                     await logbackFingerprints(p.baseDir),
-                ).concat(
-                    await cljFunctionFingerprints(p.baseDir),
                 );
             },
             // currently scheduled only when a user chooses to apply the fingerprint
