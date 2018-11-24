@@ -69,7 +69,6 @@ import {
 import {
     applyFingerprint,
     checkFingerprintTargets,
-    cljFunctionFingerprints,
     depsFingerprints,
     fingerprintSupport,
     forFingerprints,
