@@ -69,6 +69,7 @@ import {
 import {
     applyFingerprint,
     checkFingerprintTargets,
+    cljFunctionFingerprints,
     depsFingerprints,
     fingerprintSupport,
     forFingerprints,
@@ -207,6 +208,12 @@ export function machine(configuration: SoftwareDeliveryMachineConfiguration): So
                     await depsFingerprints(p.baseDir),
                 ).concat(
                     await logbackFingerprints(p.baseDir),
+                ).concat(
+                    cljFunctionFingerprints(p.baseDir)
+                    .then(result => result)
+                    .catch(error => {
+                        logger.warn("unable to run clj function fingerprints");
+                        return []; }),
                 );
             },
             // currently scheduled only when a user chooses to apply the fingerprint
