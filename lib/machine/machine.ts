@@ -214,10 +214,14 @@ export function machine(configuration: SoftwareDeliveryMachineConfiguration): So
                         result => {
                             logger.info("successfully ran clj function fingerprints");
                             return result;
-                        })
-                    .catch(error => {
-                        logger.warn("unable to run clj function fingerprints");
-                        return []; }),
+                        },
+                    )
+                    .catch(
+                        error => {
+                            logger.warn(`unable to run clj function fingerprints ${error}`);
+                            return [];
+                        },
+                    ),
                 );
             },
             // currently scheduled only when a user chooses to apply the fingerprint
