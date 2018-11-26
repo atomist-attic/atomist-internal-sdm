@@ -18,7 +18,6 @@
 
 import {
     Cancel,
-    Fingerprint,
     goals,
     Goals,
     GoalWithFulfillment,
@@ -39,6 +38,7 @@ import {
     version,
 } from "@atomist/sdm-pack-clojure";
 import { DockerBuild } from "@atomist/sdm-pack-docker";
+import { Artifact } from "@atomist/sdm-pack-build";
 
 // GOALSET Definition
 
@@ -119,8 +119,8 @@ export const neoApolloDockerBuild = new DockerBuild({
         failed: "Apollo docker build failed",
     },
 });
-export const fingerprint = new Fingerprint();
 export const nodeTag = new Tag();
+export const artifact = new Artifact();
 
 export const nodeServiceCancel = new Cancel({
     goals: [
@@ -138,7 +138,8 @@ export const NodeServiceGoals: Goals = goals("Simple Node Service Goals")
     .plan(nodeVersion, nodeServiceCancel)
     .plan(nodeDockerBuild).after(nodeVersion)
     .plan(nodeTag).after(nodeDockerBuild)
-    .plan(updateStagingK8Specs).after(nodeTag)
+    .plan(artifact).after(nodeTag)
+    .plan(updateStagingK8Specs).after(artifact)
     .plan(deployToStaging).after(updateStagingK8Specs)
     .plan(updateProdK8Specs).after(deployToStaging)
     .plan(deployToProd).after(updateProdK8Specs);
@@ -164,7 +165,8 @@ export const leinServiceCancel = new Cancel({
 
 export const LeinDefaultBranchDockerGoals: Goals = goals("Lein Docker Build")
     .plan(leinServiceCancel, DefaultBranchGoals, LeinDockerGoals)
-    .plan(updateStagingK8Specs).after(tag)
+    .plan(artifact).after(tag)
+    .plan(updateStagingK8Specs).after(artifact)
     .plan(deployToStaging).after(updateStagingK8Specs)
     .plan(updateProdK8Specs).after(deployToStaging)
     .plan(deployToProd).after(updateProdK8Specs);
@@ -173,7 +175,8 @@ export const LeinAndNodeDockerGoals: Goals = goals("Lein and npm combined goals"
     .plan(LeinBuildGoals, DefaultBranchGoals)
     .plan(neoApolloDockerBuild, dockerBuild).after(leinBuild)
     .plan(tag).after(neoApolloDockerBuild)
-    .plan(updateStagingK8Specs).after(tag)
+    .plan(artifact).after(tag)
+    .plan(updateStagingK8Specs).after(artifact)
     .plan(deployToStaging).after(updateStagingK8Specs)
     .plan(updateProdK8Specs).after(deployToStaging)
     .plan(deployToProd).after(updateProdK8Specs);
