@@ -26,6 +26,7 @@ import {
     StagingEnvironment,
 } from "@atomist/sdm";
 import { Tag } from "@atomist/sdm-core";
+import { Artifact } from "@atomist/sdm-pack-build";
 import {
     autofix,
     DefaultBranchGoals,
@@ -38,7 +39,6 @@ import {
     version,
 } from "@atomist/sdm-pack-clojure";
 import { DockerBuild } from "@atomist/sdm-pack-docker";
-import { Artifact } from "@atomist/sdm-pack-build";
 
 // GOALSET Definition
 
