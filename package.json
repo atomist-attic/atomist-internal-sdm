@@ -52,7 +52,6 @@
     "graphql-code-generator": "^0.8.19",
     "mocha": "^4.1.0",
     "npm-run-all": "^4.1.5",
-    "nyc": "^13.0.1",
     "power-assert": "^1.4.4",
     "prettier": "^1.14.2",
     "rimraf": "^2.6.2",
@@ -67,7 +66,6 @@
     "test": "test"
   },
   "scripts": {
-    "autostart": "nodemon --watch index.ts --watch lib --ext ts --delay 4 --exec ts-node -- node_modules/@atomist/automation-client/bin/start.js",
     "autotest": "supervisor --watch index.ts,lib,test --extensions ts --no-restart-on exit --quiet --exec npm -- test",
     "build": "run-s compile test lint doc",
     "clean": "run-p clean:compile clean:test clean:doc clean:run",
@@ -82,32 +80,15 @@
     "doc": "typedoc --mode modules --excludeExternals --ignoreCompilerErrors --exclude \"**/*.d.ts\" --out doc index.ts lib",
     "git:info": "atm-git-info",
     "gql:gen": "atm-gql-gen",
-    "lint": "tslint --format verbose --project . --exclude \"node_modules/**\" --exclude \"**/*.d.ts\" \"**/*.ts\"",
+    "lint": "tslint --config tslint.json --format verbose --project .",
     "lint:fix": "npm run lint -- --fix",
     "start": "atm-start",
-    "test": "nyc mocha --require espower-typescript/guess --require source-map-support/register \"test/**/*.test.ts\"",
+    "test": "mocha --require espower-typescript/guess \"test/**/*.test.ts\"",
     "test:one": "mocha --require espower-typescript/guess \"test/**/${TEST:-*.test.ts}\"",
     "typedoc": "npm run doc"
   },
   "engines": {
-    "node": "9.x.x",
-    "npm": "5.x.x"
-  },
-  "nyc": {
-    "include": [
-      "lib/**/*.*"
-    ],
-    "extension": [
-      ".ts"
-    ],
-    "exclude": [
-      "lib/typings",
-      "**/*.d.ts"
-    ],
-    "reporter": [
-      "html",
-      "text-summary"
-    ],
-    "all": true
+    "node": ">=8.1.0",
+    "npm": ">=6.0.0"
   }
 }
