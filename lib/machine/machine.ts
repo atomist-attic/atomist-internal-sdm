@@ -209,19 +209,7 @@ export function machine(configuration: SoftwareDeliveryMachineConfiguration): So
                 ).concat(
                     await logbackFingerprints(p.baseDir),
                 ).concat(
-                    cljFunctionFingerprints(p.baseDir)
-                    .then(
-                        result => {
-                            logger.info("successfully ran clj function fingerprints");
-                            return result;
-                        },
-                    )
-                    .catch(
-                        error => {
-                            logger.warn(`unable to run clj function fingerprints ${error}`);
-                            return [];
-                        },
-                    ),
+                    await cljFunctionFingerprints(p.baseDir),
                 );
             },
             // currently scheduled only when a user chooses to apply the fingerprint
