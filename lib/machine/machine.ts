@@ -163,7 +163,7 @@ export function machine(configuration: SoftwareDeliveryMachineConfiguration): So
         configuration,
     },
 
-       whenPushSatisfies(allSatisfied(isTeam(AtomistHQWorkspace), isNamed("fill", "in", "repos")))
+       whenPushSatisfies(allSatisfied(isTeam(AtomistHQWorkspace), isNamed("chatops-service")))
            .setGoals(DoNotSetAnyGoals),
 
         whenPushSatisfies(not(isSdmEnabled(configuration.name)), IsNode)
