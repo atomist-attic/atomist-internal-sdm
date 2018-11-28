@@ -104,10 +104,6 @@ import {
     updateStagingK8Specs,
 } from "./goals";
 import {
-    isNamed,
-    isTeam,
-} from "./identityPushTests";
-import {
     addCacheHooks,
     k8SpecUpdater,
     K8SpecUpdaterParameters,
@@ -155,16 +151,11 @@ const HasNeoApolloDockerfile: PredicatePushTest = predicatePushTest(
 
 export const FingerprintGoal = new Fingerprint();
 
-const AtomistHQWorkspace = "T095SFFBK";
-
 export function machine(configuration: SoftwareDeliveryMachineConfiguration): SoftwareDeliveryMachine {
     const sdm = createSoftwareDeliveryMachine({
         name: "Atomist Software Delivery Machine",
         configuration,
     },
-
-       whenPushSatisfies(allSatisfied(isTeam(AtomistHQWorkspace), isNamed("chatops-service")))
-           .setGoals(DoNotSetAnyGoals),
 
         whenPushSatisfies(not(isSdmEnabled(configuration.name)), IsNode)
             .itMeans("Default to not build Node.js projects")
