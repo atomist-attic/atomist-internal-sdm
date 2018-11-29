@@ -16,6 +16,7 @@
 
 // GOAL Definition
 
+import { QueryNoCacheOptions } from "@atomist/automation-client";
 import {
     Cancel,
     goals,
@@ -39,6 +40,7 @@ import {
     version,
 } from "@atomist/sdm-pack-clojure";
 import { DockerBuild } from "@atomist/sdm-pack-docker";
+import { FetchCommit } from "../typings/types";
 
 // GOALSET Definition
 
@@ -50,6 +52,20 @@ export const updateStagingK8Specs = new GoalWithFulfillment({
     workingDescription: "Updating `staging` K8 specs...",
     completedDescription: "Updated `staging` K8 specs",
     failedDescription: "Update `staging` K8 specs failed",
+    waitRules: {
+        condition: async gi => {
+            const images = await gi.context.graphClient.query<FetchCommit.Query, FetchCommit.Variables>({
+                name: "fetchCommit",
+                variables: {
+                    sha: gi.sdmGoal.sha,
+                },
+                options: QueryNoCacheOptions,
+            });
+            return images && images.Commit && images.Commit.length > 0;
+        },
+        retries: 5,
+        timeoutSeconds: 5,
+    },
 });
 
 export const deployToStaging = new GoalWithFulfillment({
