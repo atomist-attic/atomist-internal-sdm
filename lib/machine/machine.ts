@@ -15,13 +15,13 @@
  */
 
 import {
+    editModes,
     GitHubRepoRef,
     GitProject,
     GraphQL,
     HandlerContext,
     logger,
     spawnAndWatch,
-    editModes,
 } from "@atomist/automation-client";
 import * as clj from "@atomist/clj-editors";
 import {
@@ -69,15 +69,13 @@ import {
 } from "@atomist/sdm-pack-docker";
 import {
     applyFingerprint,
-    checkFingerprintTargets,
+    checkLibraryImpactHandler,
     cljFunctionFingerprints,
     depsFingerprints,
+    fingerprintImpactHandler,
     fingerprintSupport,
-    forFingerprints,
     FP,
     logbackFingerprints,
-    checkLibraryImpactHandler,
-    fingerprintImpactHandler,
     messageMaker,
 } from "@atomist/sdm-pack-fingerprints";
 import {
