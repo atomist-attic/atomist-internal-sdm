@@ -70,7 +70,6 @@ import {
 import {
     applyFingerprint,
     checkLibraryImpactHandler,
-    cljFunctionFingerprints,
     depsFingerprints,
     fingerprintImpactHandler,
     fingerprintSupport,
@@ -210,8 +209,6 @@ export function machine(configuration: SoftwareDeliveryMachineConfiguration): So
                     await depsFingerprints(p.baseDir),
                 ).concat(
                     await logbackFingerprints(p.baseDir),
-                ).concat(
-                    await cljFunctionFingerprints(p.baseDir),
                 );
             },
             fingerprintImpactHandler(
