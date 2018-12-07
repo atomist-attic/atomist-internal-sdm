@@ -52,7 +52,7 @@ export const updateStagingK8Specs = new GoalWithFulfillment({
     workingDescription: "Updating `staging` K8 specs...",
     completedDescription: "Updated `staging` K8 specs",
     failedDescription: "Update `staging` K8 specs failed",
-    waitRules: {
+    preCondition: {
         condition: async gi => {
             const images = await gi.context.graphClient.query<FetchCommit.Query, FetchCommit.Variables>({
                 name: "fetchCommit",
