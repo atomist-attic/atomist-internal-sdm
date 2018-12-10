@@ -27,7 +27,6 @@ import {
     StagingEnvironment,
 } from "@atomist/sdm";
 import { Tag } from "@atomist/sdm-core";
-import { Artifact } from "@atomist/sdm-pack-build";
 import {
     autofix,
     DefaultBranchGoals,
