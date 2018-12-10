@@ -351,6 +351,6 @@ export const apolloImageNamer: DockerImageNameCreator =
         return {
             name: `${projectName}-apollo`,
             registry: options.registry,
-            version: newversion,
+            tags: [newversion],
         };
     };
