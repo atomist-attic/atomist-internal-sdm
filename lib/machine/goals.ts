@@ -66,6 +66,7 @@ export const updateStagingK8Specs = new GoalWithFulfillment({
         retries: 5,
         timeoutSeconds: 5,
     },
+    isolated: true,
 });
 
 export const deployToStaging = new GoalWithFulfillment({
