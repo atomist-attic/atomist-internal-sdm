@@ -1,6 +1,7 @@
 subscription runningPods {
   K8Pod {
     environment
+    namespace
     containers(state: "running") @required {
       imageName
       state
