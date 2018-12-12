@@ -48,14 +48,14 @@ export function handleRuningPods(): OnEvent<RunningPods.Subscription, NoParamete
         let deployGoal;
         let desc;
 
-        if (pod.environment === "staging") {
+        if (pod.environment === "gke-int-production" && pod.namespace === "api-staging") {
             try {
                 deployGoal = await findSdmGoalOnCommit(context, id, commit.repo.org.provider.providerId, deployToStaging);
                 desc = deployToStaging.successDescription;
             } catch (err) {
                 logger.info(`No goal staging deploy goal found`);
             }
-        } else if (pod.environment === "prod") {
+        } else if (pod.environment === "prod" || (pod.environment === "gke-int-production" && pod.namespace === "api")) {
             try {
                 deployGoal = await findSdmGoalOnCommit(context, id, commit.repo.org.provider.providerId, deployToProd);
                 desc = deployToProd.successDescription;
