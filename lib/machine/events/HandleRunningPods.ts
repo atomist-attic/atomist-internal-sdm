@@ -25,6 +25,7 @@ import {
 } from "@atomist/automation-client";
 import {
     findSdmGoalOnCommit,
+    SdmGoalEvent,
     SdmGoalState,
     updateGoal,
 } from "@atomist/sdm";
@@ -38,31 +39,39 @@ import {
     deployToStaging,
 } from "../goals";
 
-export function handleRuningPods(): OnEvent<RunningPods.Subscription, NoParameters> {
-    return async (e: EventFired<RunningPods.Subscription>, context: HandlerContext) => {
+async function getGoal(pod: RunningPods.K8Pod, context: HandlerContext): Promise<[SdmGoalEvent, string]> {
+    const commit = pod.containers[0].image.commits[0];
+    const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
 
-        const pod = e.data.K8Pod[0];
-        const commit = pod.containers[0].image.commits[0];
-        const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
-
-        let deployGoal;
-        let desc;
-
-        if (pod.environment === "gke-int-production" && pod.namespace === "api-staging") {
+    if (pod.environment === "gke-int-production") {
+        if (pod.namespace === "api-staging") {
             try {
-                deployGoal = await findSdmGoalOnCommit(context, id, commit.repo.org.provider.providerId, deployToStaging);
-                desc = deployToStaging.successDescription;
+                return [
+                    await findSdmGoalOnCommit(context, id, commit.repo.org.provider.providerId, deployToStaging),
+                    deployToStaging.successDescription,
+                ];
             } catch (err) {
                 logger.info(`No goal staging deploy goal found`);
             }
-        } else if (pod.environment === "prod" || (pod.environment === "gke-int-production" && pod.namespace === "api")) {
+        } else if (pod.namespace === "api-production") {
             try {
-                deployGoal = await findSdmGoalOnCommit(context, id, commit.repo.org.provider.providerId, deployToProd);
-                desc = deployToProd.successDescription;
+                return [
+                    await findSdmGoalOnCommit(context, id, commit.repo.org.provider.providerId, deployToProd),
+                    deployToProd.successDescription,
+                ];
             } catch (err) {
                 logger.info(`No goal prod deploy goal found`);
             }
         }
+    }
+    return undefined;
+}
+
+export function handleRuningPods(): OnEvent<RunningPods.Subscription, NoParameters> {
+    return async (e: EventFired<RunningPods.Subscription>, context: HandlerContext) => {
+
+        const pod = e.data.K8Pod[0];
+        const[deployGoal, desc]: [SdmGoalEvent, string] = await getGoal(pod, context);
 
         if (deployGoal && desc) {
 
