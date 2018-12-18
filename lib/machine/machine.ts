@@ -90,7 +90,7 @@ import * as _ from "lodash";
 import * as path from "path";
 import { K8SpecKick } from "../handlers/commands/HandleK8SpecKick";
 import { MakeSomePushes } from "../handlers/commands/MakeSomePushes";
-import { handleRuningPods } from "./events/HandleRunningPods";
+import { handleRunningPods } from "./events/HandleRunningPods";
 import {
     BranchNodeServiceGoals,
     deployToProd,
@@ -304,7 +304,7 @@ export function machine(configuration: SoftwareDeliveryMachineConfiguration): So
         name: "handleRunningPod",
         description: "Update goal based on running pods in an environemnt",
         subscription: GraphQL.subscription("runningPods"),
-        listener: handleRuningPods(),
+        listener: handleRunningPods(),
     });
 
     sdm.addCommand<K8SpecUpdaterParameters>({
