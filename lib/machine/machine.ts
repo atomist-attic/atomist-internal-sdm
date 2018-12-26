@@ -76,7 +76,9 @@ import {
     logbackFingerprints,
     messageMaker,
 } from "@atomist/sdm-pack-fingerprints";
-import { cljFunctionFingerprints, renderClojureProjectDiff } from "@atomist/sdm-pack-fingerprints/fingerprints";
+import {
+    renderClojureProjectDiff,
+} from "@atomist/sdm-pack-fingerprints/fingerprints";
 import {
     applyDockerBaseFingerprint,
     dockerBaseFingerprint,
