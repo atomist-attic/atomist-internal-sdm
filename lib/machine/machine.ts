@@ -23,7 +23,10 @@ import {
     logger,
     spawnAndWatch,
 } from "@atomist/automation-client";
-import { AutoMergeMethod, AutoMergeMode } from "@atomist/automation-client/lib/operations/edit/editModes";
+import {
+    AutoMergeMethod,
+    AutoMergeMode,
+} from "@atomist/automation-client/lib/operations/edit/editModes";
 import * as clj from "@atomist/clj-editors";
 import {
     allSatisfied,
@@ -76,7 +79,10 @@ import {
     logbackFingerprints,
     messageMaker,
 } from "@atomist/sdm-pack-fingerprints";
-import { cljFunctionFingerprints, renderClojureProjectDiff } from "@atomist/sdm-pack-fingerprints/fingerprints";
+import {
+    cljFunctionFingerprints,
+    renderClojureProjectDiff,
+} from "@atomist/sdm-pack-fingerprints/fingerprints";
 import {
     applyDockerBaseFingerprint,
     dockerBaseFingerprint,
