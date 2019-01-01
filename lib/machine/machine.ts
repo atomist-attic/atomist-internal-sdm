@@ -72,20 +72,18 @@ import {
     HasDockerfile,
 } from "@atomist/sdm-pack-docker";
 import {
+    applyDockerBaseFingerprint,
     applyFingerprint,
+    checkCljCoordinatesImpactHandler,
+    cljFunctionFingerprints,
     depsFingerprints,
+    dockerBaseFingerprint,
     fingerprintImpactHandler,
     fingerprintSupport,
     logbackFingerprints,
     messageMaker,
-} from "@atomist/sdm-pack-fingerprints";
-import {
     renderClojureProjectDiff,
-} from "@atomist/sdm-pack-fingerprints/fingerprints";
-import {
-    applyDockerBaseFingerprint,
-    dockerBaseFingerprint,
-} from "@atomist/sdm-pack-fingerprints/lib/fingerprints/dockerFrom";
+} from "@atomist/sdm-pack-fingerprints";
 import {
     IsNode,
     NodeModulesProjectListener,
@@ -238,7 +236,13 @@ export function machine(configuration: SoftwareDeliveryMachineConfiguration): So
                     selector: fp => fp.name.startsWith("clojure-project"),
                     summary: renderClojureProjectDiff,
                 },
+                {
+                    extract: p => cljFunctionFingerprints(p.baseDir),
+                    apply: (p, fp) => applyFingerprint(p.baseDir, fp),
+                    selector: fp => fp.name.startsWith("public-defn-bodies"),
+                },
             ],
+            checkCljCoordinatesImpactHandler(),
             fingerprintImpactHandler(
                 {
                     transformPresentation: (ci, p) => {
