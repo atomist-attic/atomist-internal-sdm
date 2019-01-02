@@ -72,12 +72,10 @@ import {
     HasDockerfile,
 } from "@atomist/sdm-pack-docker";
 import {
-    applyDockerBaseFingerprint,
     applyFingerprint,
     checkCljCoordinatesImpactHandler,
     cljFunctionFingerprints,
     depsFingerprints,
-    dockerBaseFingerprint,
     fingerprintImpactHandler,
     fingerprintSupport,
     logbackFingerprints,
@@ -121,6 +119,7 @@ import {
     K8SpecUpdaterParameters,
     updateK8Spec,
 } from "./k8Support";
+import { applyDockerBaseFingerprint, dockerBaseFingerprint } from "../fingerprints/docker";
 
 export const NodeProjectVersioner: ProjectVersioner = async (sdmGoal, p, log) => {
     const pjFile = await p.getFile("package.json");
