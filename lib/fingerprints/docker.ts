@@ -26,10 +26,11 @@ export const dockerBaseFingerprint: ExtractFingerprint = async p => {
     const file = await p.getFile("docker/Dockerfile");
 
     if (file && await file.getContent() !== "") {
+
         const imageName: string[] = await astUtils.findValues(
-            p, DockerFileParser, "Dockerfile", "//FROM/image/name");
+            p, DockerFileParser, "docker/Dockerfile", "//FROM/image/name");
         const imageVersion: string[] = await astUtils.findValues(
-            p, DockerFileParser, "Dockerfile", "//FROM/image/tag");
+            p, DockerFileParser, "docker/Dockerfile", "//FROM/image/tag");
 
         const data = {image: imageName[0], version: imageVersion[0]};
         const fp: FP = {
@@ -39,9 +40,6 @@ export const dockerBaseFingerprint: ExtractFingerprint = async p => {
             data,
             sha: sha256(JSON.stringify(data)),
         };
-
-        // bug opened and fix coming
-        (fp as any).value = data;
 
         return fp;
     } else {
