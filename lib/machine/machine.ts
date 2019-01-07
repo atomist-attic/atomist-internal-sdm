@@ -114,7 +114,6 @@ import {
     updateStagingK8Specs,
 } from "./goals";
 import {
-    isNamed,
     isTeam,
 } from "./identityPushTests";
 import {
@@ -159,6 +158,10 @@ export const HasAtomistDockerfile: PredicatePushTest = predicatePushTest(
     "Has Atomist Dockerfile file",
     hasFile("docker/Dockerfile").predicate);
 
+export const HasMSTeamsMarkerFile: PredicatePushTest = predicatePushTest(
+    "Has an 'msteams' marker file, to indicate the project should be build on the MSTeams workspace.",
+    hasFile("msteams").predicate);
+
 const HasNeoApolloDockerfile: PredicatePushTest = predicatePushTest(
     "Has an apollo Dockerfile file",
     hasFile("apollo/Dockerfile").predicate);
@@ -173,7 +176,7 @@ export function machine(configuration: SoftwareDeliveryMachineConfiguration): So
         configuration,
     },
 
-       whenPushSatisfies(allSatisfied(isTeam(AtomistHQWorkspace), isNamed("chatops-service")))
+       whenPushSatisfies(allSatisfied(isTeam(AtomistHQWorkspace), HasMSTeamsMarkerFile))
            .setGoals(DoNotSetAnyGoals),
 
         whenPushSatisfies(not(isSdmEnabled(configuration.name)), IsNode)
