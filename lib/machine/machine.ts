@@ -256,7 +256,7 @@ export function machine(configuration: SoftwareDeliveryMachineConfiguration): So
                             "master",
                             {
                                 method: AutoMergeMethod.Squash,
-                                mode: AutoMergeMode.ApprovedReview,
+                                mode: AutoMergeMode.SuccessfulCheck,
                             });
                     },
                     messageMaker,
