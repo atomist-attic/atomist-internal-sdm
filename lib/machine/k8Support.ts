@@ -157,7 +157,7 @@ export const updateK8Spec: SimpleProjectEditor = async (project: Project, ctx: H
                         await Promise.all(dirtyImages.map(async dirtyImage => {
                             const previousSha = (await fetchDockerImage(ctx, dirtyImage.previousImage))[0].commits[0].sha;
                             const currentImage = (await fetchDockerImage(ctx, dirtyImage.currentImage));
-                            if (currentImage) {
+                            if (currentImage && currentImage.length > 0 && currentImage[0].commits && currentImage[0].commits.length > 0) {
                                 const currentSha = currentImage[0].commits[0].sha;
                                 let targetReplicas = spec.spec.replicas;
                                 if (params.branch === "prod" && f.path.indexOf("/us-east1") <= 0) {
