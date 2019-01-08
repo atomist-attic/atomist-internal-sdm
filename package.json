@@ -35,6 +35,7 @@
     "@atomist/slack-messages": "^1.1.0",
     "dateformat": "^3.0.3",
     "fs-extra": "^6.0.0",
+    "jaccard-similarity-sentences": "1.0.2",
     "lodash": "^4.17.10",
     "node-dir": "^0.1.17",
     "uuid": "^3.2.1"

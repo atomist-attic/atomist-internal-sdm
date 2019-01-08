@@ -100,6 +100,7 @@ import {
 import { K8SpecKick } from "../handlers/commands/HandleK8SpecKick";
 import { MakeSomePushes } from "../handlers/commands/MakeSomePushes";
 import { handleRunningPods } from "./events/HandleRunningPods";
+import { handlePullRequestIssues } from "./events/issues";
 import {
     BranchNodeServiceGoals,
     deployToProd,
@@ -334,6 +335,12 @@ export function machine(configuration: SoftwareDeliveryMachineConfiguration): So
         listener: handleRunningPods(),
     });
 
+    sdm.addEvent({
+        name: "handlePullRequestIssues",
+        description: "Try to match PR titles with issues",
+        subscription: GraphQL.subscription("pullRequests"),
+        listener: handlePullRequestIssues(),
+    });
     sdm.addCommand<K8SpecUpdaterParameters>({
         name: "k8SpecUpdater",
         description: "Update k8 specs",

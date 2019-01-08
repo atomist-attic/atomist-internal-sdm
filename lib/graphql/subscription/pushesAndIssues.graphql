@@ -1,0 +1,36 @@
+subscription pullRequests {
+  PullRequest(state: "open") {
+    id
+    name
+    body
+    title
+    comments {
+      body
+    }
+    repo {
+      owner
+      name
+      issues(state: open) @required {
+        id
+        assignees {
+          login
+          person {
+            chatId {
+              screenName
+            }
+          }
+        }
+        title
+        comments {
+          body
+        }
+      }
+    }
+    commits {
+      message
+      author {
+        login
+      }
+    }
+  }
+}
