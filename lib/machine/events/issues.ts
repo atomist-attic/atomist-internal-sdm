@@ -14,7 +14,13 @@
  * limitations under the License.
  */
 
-import { EventFired, HandlerContext, NoParameters, OnEvent, Success } from "@atomist/automation-client";
+import {
+    EventFired,
+    HandlerContext,
+    NoParameters,
+    OnEvent,
+    Success,
+} from "@atomist/automation-client";
 import _ = require("lodash");
 import { PullRequests } from "../../typings/types";
 
