@@ -149,6 +149,17 @@ export const nodeServiceCancel = new Cancel({
         deployToProd],
 });
 
+export const targetComplianceGoal = new GoalWithFulfillment(
+    {
+        uniqueName: "backpack-react-script-compliance",
+        displayName: "backpack-compliance",
+    },
+).with(
+    {
+        name: "backpack-react-waiting",
+    },
+);
+
 export const NodeServiceGoals: Goals = goals("Simple Node Service Goals")
     .plan(nodeVersion, nodeServiceCancel)
     .plan(nodeDockerBuild).after(nodeVersion)
