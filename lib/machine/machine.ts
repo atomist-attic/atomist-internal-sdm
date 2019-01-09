@@ -196,7 +196,7 @@ export function machine(configuration: SoftwareDeliveryMachineConfiguration): So
 
         whenPushSatisfies(IsLein, not(HasTravisFile), HasAtomistFile, HasAtomistDockerfile, MaterialChangeToClojureRepo)
             .itMeans("Build a Clojure Service with Leiningen")
-            .setGoals(goals("service with fingerprints").plan(LeinDockerGoals, FingerprintGoal)),
+            .setGoals(goals("service with fingerprints").plan(LeinDockerGoals, FingerprintGoal, targetComplianceGoal)),
 
         whenPushSatisfies(IsLein, not(HasTravisFile), HasAtomistFile, not(HasAtomistDockerfile), ToDefaultBranch, MaterialChangeToClojureRepo)
             .itMeans("Build a Clojure Library with Leiningen")
