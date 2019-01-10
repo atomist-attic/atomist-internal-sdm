@@ -110,7 +110,6 @@ import {
     nodeDockerBuild,
     NodeServiceGoals,
     nodeVersion,
-    targetComplianceGoal,
     updateProdK8Specs,
     updateStagingK8Specs,
 } from "./goals";
@@ -187,24 +186,24 @@ export function machine(configuration: SoftwareDeliveryMachineConfiguration): So
 
         whenPushSatisfies(IsLein, HasAtomistFile, HasAtomistDockerfile, HasNeoApolloDockerfile, ToDefaultBranch)
             .itMeans("Build project with lein and npm parts")
-            .setGoals(goals("lein and npm project").plan(LeinAndNodeDockerGoals, FingerprintGoal, targetComplianceGoal)),
+            .setGoals(goals("lein and npm project").plan(LeinAndNodeDockerGoals, FingerprintGoal)),
 
         whenPushSatisfies(IsLein, not(HasTravisFile), HasAtomistFile, HasAtomistDockerfile,
             ToDefaultBranch, MaterialChangeToClojureRepo, not(HasNeoApolloDockerfile))
             .itMeans("Build a Clojure Service with Leiningen")
-            .setGoals(goals("service with fingerprints on master").plan(LeinDefaultBranchDockerGoals, FingerprintGoal, targetComplianceGoal)),
+            .setGoals(goals("service with fingerprints on master").plan(LeinDefaultBranchDockerGoals, FingerprintGoal)),
 
         whenPushSatisfies(IsLein, not(HasTravisFile), HasAtomistFile, HasAtomistDockerfile, MaterialChangeToClojureRepo)
             .itMeans("Build a Clojure Service with Leiningen")
-            .setGoals(goals("service with fingerprints").plan(LeinDockerGoals, FingerprintGoal, targetComplianceGoal)),
+            .setGoals(goals("service with fingerprints").plan(LeinDockerGoals, FingerprintGoal)),
 
         whenPushSatisfies(IsLein, not(HasTravisFile), HasAtomistFile, not(HasAtomistDockerfile), ToDefaultBranch, MaterialChangeToClojureRepo)
             .itMeans("Build a Clojure Library with Leiningen")
-            .setGoals(goals("library on master with fingerprints").plan(LeinDefaultBranchBuildGoals, FingerprintGoal, targetComplianceGoal)),
+            .setGoals(goals("library on master with fingerprints").plan(LeinDefaultBranchBuildGoals, FingerprintGoal)),
 
         whenPushSatisfies(IsLein, not(HasTravisFile), HasAtomistFile, not(HasAtomistDockerfile), MaterialChangeToClojureRepo)
             .itMeans("Build a Clojure Library with Leiningen")
-            .setGoals(goals("library with fingerprints").plan(LeinBuildGoals, FingerprintGoal, targetComplianceGoal)),
+            .setGoals(goals("library with fingerprints").plan(LeinBuildGoals, FingerprintGoal)),
 
         whenPushSatisfies(not(IsLein), not(HasTravisFile), HasDockerfile, IsNode, ToDefaultBranch)
             .itMeans("Simple node based docker service")
@@ -248,7 +247,6 @@ export function machine(configuration: SoftwareDeliveryMachineConfiguration): So
             checkCljCoordinatesImpactHandler(),
             fingerprintImpactHandler(
                 {
-                    complianceGoal: targetComplianceGoal,
                     transformPresentation: (ci, p) => {
                         return new editModes.PullRequest(
                             `apply-target-fingerprint-${Date.now()}`,
