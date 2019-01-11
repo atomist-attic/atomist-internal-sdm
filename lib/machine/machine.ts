@@ -40,6 +40,8 @@ import {
     not,
     predicatePushTest,
     PredicatePushTest,
+    pushTest,
+    PushTest,
     SdmGoalEvent,
     SoftwareDeliveryMachine,
     SoftwareDeliveryMachineConfiguration,
@@ -114,10 +116,6 @@ import {
     updateStagingK8Specs,
 } from "./goals";
 import {
-    isNamed,
-    isTeam,
-} from "./identityPushTests";
-import {
     addCacheHooks,
     k8SpecUpdater,
     K8SpecUpdaterParameters,
@@ -166,6 +164,20 @@ const HasNeoApolloDockerfile: PredicatePushTest = predicatePushTest(
 export const FingerprintGoal = new Fingerprint();
 
 const AtomistHQWorkspace = "T095SFFBK";
+const WorkspacesFilename = "workspaces";
+
+const IsWorkspaceWhitelisted: PushTest =
+    pushTest(`project has workspaces file that contains the current workspace id`,
+        async pci => {
+            const file = await pci.project.getFile(WorkspacesFilename);
+            // we pretend that all projects by default have a file white-listing AtomistHQ
+            let fileContent = AtomistHQWorkspace;
+            if (file) {
+                fileContent = await file.getContent();
+            }
+            return fileContent.includes(pci.context.workspaceId);
+        },
+    );
 
 export function machine(configuration: SoftwareDeliveryMachineConfiguration): SoftwareDeliveryMachine {
     const sdm = createSoftwareDeliveryMachine({
@@ -173,8 +185,8 @@ export function machine(configuration: SoftwareDeliveryMachineConfiguration): So
         configuration,
     },
 
-       whenPushSatisfies(allSatisfied(isTeam(AtomistHQWorkspace), isNamed("chatops-service")))
-           .setGoals(DoNotSetAnyGoals),
+        whenPushSatisfies(not(IsWorkspaceWhitelisted))
+            .setGoals(DoNotSetAnyGoals),
 
         whenPushSatisfies(not(isSdmEnabled(configuration.name)), IsNode)
             .itMeans("Default to not build Node.js projects")
