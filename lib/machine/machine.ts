@@ -163,7 +163,7 @@ const HasNeoApolloDockerfile: PredicatePushTest = predicatePushTest(
 
 export const FingerprintGoal = new Fingerprint();
 
-const AtomistHQWorkspace = "T095SFFBK";
+const AtomistWorkspaces = "T095SFFBK,AK748NQC5";
 const WorkspacesFilename = "workspaces";
 
 const IsWorkspaceWhitelisted: PushTest =
@@ -171,7 +171,7 @@ const IsWorkspaceWhitelisted: PushTest =
         async pci => {
             const file = await pci.project.getFile(WorkspacesFilename);
             // we pretend that all projects by default have a file white-listing AtomistHQ
-            let fileContent = AtomistHQWorkspace;
+            let fileContent = AtomistWorkspaces;
             if (file) {
                 fileContent = await file.getContent();
             }
