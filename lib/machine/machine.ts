@@ -54,6 +54,7 @@ import {
     EnableDeploy,
     executeVersioner,
     gitHubGoalStatus,
+    goalScheduling,
     goalState,
     ProjectVersioner,
     readSdmVersion,
@@ -228,6 +229,7 @@ export function machine(configuration: SoftwareDeliveryMachineConfiguration): So
 
     sdm.addExtensionPacks(
         LeinSupport,
+        goalScheduling(),
         // RccaSupport, removing for now as it has an incompatible subscription
         goalState(),
         gitHubGoalStatus(),
