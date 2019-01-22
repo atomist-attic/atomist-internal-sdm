@@ -23,6 +23,16 @@ export function elasticsearch(tag: string = "latest", password: string = "MagicW
         name: "elasticsearch",
         image: `docker.elastic.co/elasticsearch/elasticsearch:${tag}`,
         imagePullPolicy: "IfNotPresent",
+        resources: {
+            limits: {
+                cpu: 0.5,
+                memory: "1024Mi",
+            },
+            requests: {
+                cpu: 0.5,
+                memory: "1024Mi",
+            },
+        },
         env: [{
             name: "discovery.type",
             value: "single-node",
@@ -37,7 +47,7 @@ export function elasticsearch(tag: string = "latest", password: string = "MagicW
             value: password,
         }, {
             name: "ES_JAVA_OPTS",
-            value: "-Xms256m -Xmx256m",
+            value: "-Xms512m -Xmx512m",
         },
         ],
     } as any;
