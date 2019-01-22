@@ -54,10 +54,10 @@ import {
     EnableDeploy,
     executeVersioner,
     gitHubGoalStatus,
+    goalScheduling,
     goalState,
     ProjectVersioner,
     readSdmVersion,
-    goalScheduling,
 } from "@atomist/sdm-core";
 import {
     autofix,
