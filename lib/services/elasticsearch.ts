@@ -26,11 +26,11 @@ export function elasticsearch(tag: string = "latest", password: string = "MagicW
         resources: {
             limits: {
                 cpu: 0.5,
-                memory: "1024Mi",
+                memory: "1536Mi",
             },
             requests: {
                 cpu: 0.5,
-                memory: "1024Mi",
+                memory: "1536Mi",
             },
         },
         env: [{
