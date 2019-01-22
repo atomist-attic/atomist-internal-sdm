@@ -45,9 +45,6 @@ export function elasticsearch(tag: string = "latest", password: string = "MagicW
         }, {
             name: "ELASTIC_PASSWORD",
             value: password,
-        }, {
-            name: "ES_JAVA_OPTS",
-            value: "-Xms512m -Xmx512m",
         },
         ],
     } as any;
