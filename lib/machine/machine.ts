@@ -57,6 +57,7 @@ import {
     goalState,
     ProjectVersioner,
     readSdmVersion,
+    goalScheduling,
 } from "@atomist/sdm-core";
 import {
     autofix,
@@ -228,6 +229,7 @@ export function machine(configuration: SoftwareDeliveryMachineConfiguration): So
 
     sdm.addExtensionPacks(
         LeinSupport,
+        goalScheduling(),
         // RccaSupport, removing for now as it has an incompatible subscription
         goalState(),
         gitHubGoalStatus(),
