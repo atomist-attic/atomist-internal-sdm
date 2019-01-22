@@ -40,6 +40,7 @@ import {
 } from "@atomist/sdm-pack-clojure";
 import { DockerBuild } from "@atomist/sdm-pack-docker";
 import { FetchCommit } from "../typings/types";
+import { elasticsearch } from "../services/elasticsearch";
 
 // GOALSET Definition
 
@@ -187,6 +188,8 @@ export const leinServiceCancel = new Cancel({
         updateProdK8Specs,
         deployToProd],
 });
+
+leinBuild.withService(elasticsearch("6.4.3"));
 
 export const LeinDefaultBranchDockerGoals: Goals = goals("Lein Docker Build")
     .plan(leinServiceCancel, DefaultBranchGoals, LeinDockerGoals)
