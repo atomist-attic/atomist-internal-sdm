@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import * as k8s from "@kubernetes/client-node";
 import { ServiceRegistration } from "@atomist/sdm";
+import * as k8s from "@kubernetes/client-node";
 
 export function elasticsearch(tag: string = "latest", password: string = "MagicWord"): ServiceRegistration<k8s.V1Container> {
 

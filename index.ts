@@ -15,6 +15,7 @@
  */
 
 import { Configuration } from "@atomist/automation-client";
+import { configureDashboardNotifications } from "@atomist/automation-client-ext-dashboard";
 import { configureLogzio } from "@atomist/automation-client-ext-logzio";
 import { configureRaven } from "@atomist/automation-client-ext-raven";
 import { MockGoalSize } from "@atomist/sdm";
@@ -46,6 +47,7 @@ export const configuration: Configuration = {
     postProcessors: [
         configureLogzio,
         configureRaven,
+        configureDashboardNotifications,
         configureSdm(machine, machineOptions),
     ],
     sdm: {

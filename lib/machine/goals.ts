@@ -39,8 +39,8 @@ import {
     version,
 } from "@atomist/sdm-pack-clojure";
 import { DockerBuild } from "@atomist/sdm-pack-docker";
-import { FetchCommit } from "../typings/types";
 import { elasticsearch } from "../services/elasticsearch";
+import { FetchCommit } from "../typings/types";
 
 // GOALSET Definition
 
