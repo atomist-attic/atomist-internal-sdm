@@ -14,8 +14,19 @@
  * limitations under the License.
  */
 
-import { CommandHandlerRegistration, SoftwareDeliveryMachine, spawnPromise, LoggingProgressLog } from "@atomist/sdm";
-import { GitHubRepoRef, GitProject, Parameters, Secret, Secrets } from "@atomist/automation-client";
+import {
+    CommandHandlerRegistration,
+    LoggingProgressLog,
+    SoftwareDeliveryMachine,
+    spawnPromise,
+} from "@atomist/sdm";
+import {
+    GitHubRepoRef,
+    GitProject,
+    Parameters,
+    Secret,
+    Secrets,
+} from "@atomist/automation-client";
 
 @Parameters()
 export class IntegrationTestParams {
