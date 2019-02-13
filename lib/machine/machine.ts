@@ -104,6 +104,7 @@ import {
 } from "../fingerprints/docker";
 import { K8SpecKick } from "../handlers/commands/HandleK8SpecKick";
 import { MakeSomePushes } from "../handlers/commands/MakeSomePushes";
+import { runIntegrationTests } from "../handlers/commands/RunIntegrationTests";
 import { handleRunningPods } from "./events/HandleRunningPods";
 import {
     BranchNodeServiceGoals,
@@ -124,7 +125,6 @@ import {
     K8SpecUpdaterParameters,
     updateK8Spec,
 } from "./k8Support";
-
 export const NodeProjectVersioner: ProjectVersioner = async (sdmGoal, p, log) => {
     const pjFile = await p.getFile("package.json");
     const pj = JSON.parse(await pjFile.getContent());
@@ -382,6 +382,7 @@ export function machine(configuration: SoftwareDeliveryMachineConfiguration): So
     });
 
     sdm.addCommand(MakeSomePushes);
+    sdm.addCommand(runIntegrationTests(sdm));
     return sdm;
 }
 

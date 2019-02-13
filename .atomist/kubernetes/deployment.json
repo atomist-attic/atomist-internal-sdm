@@ -64,6 +64,24 @@
               {
                 "name": "ATOMIST_CONFIG_PATH",
                 "value": "/opt/atm/atomist-config.json"
+              },
+              {
+                "name": "ITEST_GITHUB_PASSWORD",
+                "valueFrom": {
+                  "secretKeyRef": {
+                    "name": "integration-test",
+                    "key": "githubPassword"
+                  }
+                }
+              },
+              {
+                "name": "ITEST_ATOMIST_API_KEY",
+                "valueFrom": {
+                  "secretKeyRef": {
+                    "name": "integration-test",
+                    "key": "apiKey"
+                  }
+                }
               }
             ],
             "livenessProbe": {
