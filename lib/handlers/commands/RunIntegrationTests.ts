@@ -15,18 +15,18 @@
  */
 
 import {
-    CommandHandlerRegistration,
-    LoggingProgressLog,
-    SoftwareDeliveryMachine,
-    spawnPromise,
-} from "@atomist/sdm";
-import {
     GitHubRepoRef,
     GitProject,
     Parameters,
     Secret,
     Secrets,
 } from "@atomist/automation-client";
+import {
+    CommandHandlerRegistration,
+    LoggingProgressLog,
+    SoftwareDeliveryMachine,
+    spawnPromise,
+} from "@atomist/sdm";
 
 @Parameters()
 export class IntegrationTestParams {
@@ -43,12 +43,12 @@ export function runIntegrationTests(sdm: SoftwareDeliveryMachine): CommandHandle
         intent: "testinate",
         paramsMaker: IntegrationTestParams,
         listener: async cli => {
-            cli.addressChannels(`Running integration tests ...`);
+            await cli.addressChannels(`Running integration tests ...`);
             const testResult = await sdm.configuration.sdm.projectLoader.doWithProject({
                 id: GitHubRepoRef.from({owner: "atomisthq", repo: "org-service"}),
                 credentials: {token: cli.parameters.githubToken},
                 context: cli.context,
-                readOnly: true
+                readOnly: true,
 
             }, async (project: GitProject) => {
                 const result = await spawnPromise(
@@ -57,14 +57,13 @@ export function runIntegrationTests(sdm: SoftwareDeliveryMachine): CommandHandle
                 progressLog.write(result.stdout);
                 progressLog.write(result.stderr);
                 return result;
-            })
+            });
             if (testResult.status === 0) {
-                cli.addressChannels(`All tests passed!`);
+                await cli.addressChannels(`All tests passed!`);
             } else {
-                cli.addressChannels(`Boo! There were test failures. I wish I could tell you more.`);
+                await cli.addressChannels(`Boo! There were test failures. I wish I could tell you more.`);
             }
 
         },
-    }
-};
-
+    };
+}
