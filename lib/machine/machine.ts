@@ -381,8 +381,8 @@ export function machine(configuration: SoftwareDeliveryMachineConfiguration): So
         },
     });
 
-    sdm.addCommand(MakeSomePushes);
     sdm.addCommand(runIntegrationTests(sdm));
+    sdm.addCommand(MakeSomePushes);
     return sdm;
 }
 
