@@ -93,7 +93,6 @@ import {
     NpmCompileProjectListener,
     NpmVersionProjectListener,
 } from "@atomist/sdm-pack-node";
-// import { RccaSupport } from "@atomist/sdm-pack-rcca";
 import { HasTravisFile } from "@atomist/sdm/lib/api-helper/pushtest/ci/ciPushTests";
 import * as df from "dateformat";
 import * as _ from "lodash";
@@ -232,7 +231,6 @@ export function machine(configuration: SoftwareDeliveryMachineConfiguration): So
     sdm.addExtensionPacks(
         LeinSupport,
         goalScheduling(),
-        // RccaSupport, removing for now as it has an incompatible subscription
         goalState(),
         gitHubGoalStatus(),
         fingerprintSupport(

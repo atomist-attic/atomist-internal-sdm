@@ -32,6 +32,55 @@ source code repositories, continuous integration, chat platform, etc.
 [atomist-start]: https://docs.atomist.com/user/ (Atomist - Getting Started)
 [java]: http://openjdk.java.net/install/ (Java - Install)
 
+## How we deliver
+
+### Push Rules
+
+* supports the concept of some projects only configuring goals for certain workspaces (workspace white-listing)
+* we skip most npm projects unless explicitly configured to add them
+* "No material change" - we have specific rules for detecting no material change on clojure projects
+* "Build a project with lein and npm parts" - we support setting goals across Leiningen and Npm when they're both present
+* "Build a Clojure Service with Leiningen" - Leiningen and Docker on the master branch
+* Leiningen and Docker not on the master branch skips kubernetes
+* "Build a Clojure Library with Leiningen" - Leiningen libraries on the master branch automatically publish
+* Leiningen libraries on other branches do not publish
+* "Simple node based docker service" - Node.js services with docker containers automatically update k8 specs on master branch
+* Non-master branch Node services do not update k8 specs
+
+### Packs
+
+1.  LeinSupport - Goals for our leiningen projects
+2.  fingerprintSupport - we use Fingerprints to manage shared traits like leiningen and npm dependencies
+3.  goalScheduling, goalState, and githubGoalStatus are enabled
+
+### Events and Ingestors
+
+* PodDeployments - we have a custom ingestion for new PodDeployments
+* HandleRunningPods - we have a custom event handler for the above ingestion
+
+### Commands
+
+* "kick service" - does nothing
+* "make some noise" - generates some Pushes on Repos
+* "testinate" - run platform integration tests
+* "update spec" - update a k8 spec to rollback a change
+* "enable deploy"
+* "disable deploy"
+
+### Goals
+
+* NodeDockerBuild - our assumptions for dockerizing simple Node.js builds
+* neoApolloDockerBuild - some additional rules for 
+* deployToStaging - goal without approval 
+* deployToProd - goal with approval
+
+### Fingerprints
+
+* docker-base-image
+* elk-logback
+* leiningen dependencies
+* public defn bodies
+
 ## Running
 
 See the [Atomist Developer documentation][atomist-dev] for details on
