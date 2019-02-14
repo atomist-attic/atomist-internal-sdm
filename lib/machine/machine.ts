@@ -33,7 +33,6 @@ import * as clj from "@atomist/clj-editors";
 import {
     allSatisfied,
     CloningProjectLoader,
-    DoNotSetAnyGoals,
     Fingerprint,
     goals,
     hasFile,
