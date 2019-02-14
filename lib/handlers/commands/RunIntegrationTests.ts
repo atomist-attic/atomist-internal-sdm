@@ -27,6 +27,7 @@ import {
     SoftwareDeliveryMachine,
     spawnPromise,
 } from "@atomist/sdm";
+import { enrich } from "@atomist/sdm-pack-clojure/lib/machine/leinSupport";
 
 @Parameters()
 export class IntegrationTestParams {
@@ -51,8 +52,12 @@ export function runIntegrationTests(sdm: SoftwareDeliveryMachine): CommandHandle
                 readOnly: true,
 
             }, async (project: GitProject) => {
+                const spawnOptions = await enrich({}, project);
                 const result = await spawnPromise(
-                    "./integration.sh", [], { cwd: project.baseDir });
+                    "./integration.sh", [], {
+                        env: spawnOptions.env,
+                        cwd: project.baseDir,
+                    });
                 const progressLog = new LoggingProgressLog("console-log");
                 progressLog.write(result.stdout);
                 progressLog.write(result.stderr);
@@ -63,7 +68,6 @@ export function runIntegrationTests(sdm: SoftwareDeliveryMachine): CommandHandle
             } else {
                 await cli.addressChannels(`Boo! There were test failures. I wish I could tell you more.`);
             }
-
         },
     };
 }
