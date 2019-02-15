@@ -33,7 +33,6 @@ import * as clj from "@atomist/clj-editors";
 import {
     allSatisfied,
     CloningProjectLoader,
-    DoNotSetAnyGoals,
     Fingerprint,
     goals,
     hasFile,
@@ -188,11 +187,11 @@ export function machine(configuration: SoftwareDeliveryMachineConfiguration): So
     },
 
         whenPushSatisfies(not(IsWorkspaceWhitelisted))
-            .setGoals(DoNotSetAnyGoals),
+            .setGoals(goals("no goals")),
 
         whenPushSatisfies(not(isSdmEnabled(configuration.name)), IsNode)
             .itMeans("Default to not build Node.js projects")
-            .setGoals(DoNotSetAnyGoals),
+            .setGoals(goals("no goals")),
 
         whenPushSatisfies(IsLein, not(HasTravisFile), not(MaterialChangeToClojureRepo))
             .itMeans("No material change")

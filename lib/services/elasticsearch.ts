@@ -14,12 +14,16 @@
  * limitations under the License.
  */
 
-import { ServiceRegistration } from "@atomist/sdm";
+import {
+    K8sServiceRegistration,
+    K8sServiceSpec,
+} from "@atomist/sdm-core";
+import { K8sServiceRegistrationType } from "@atomist/sdm-core/lib/pack/k8s/service";
 import * as k8s from "@kubernetes/client-node";
 
-export function elasticsearch(tag: string = "latest", password: string = "MagicWord"): ServiceRegistration<k8s.V1Container> {
+export function elasticsearch(tag: string = "latest", password: string = "MagicWord"): K8sServiceRegistration {
 
-    const spec: k8s.V1Container = {
+    const container: k8s.V1Container = {
         name: "elasticsearch",
         image: `docker.elastic.co/elasticsearch/elasticsearch:${tag}`,
         imagePullPolicy: "IfNotPresent",
@@ -49,12 +53,16 @@ export function elasticsearch(tag: string = "latest", password: string = "MagicW
         ],
     } as any;
 
+    const spec: K8sServiceSpec = {
+        container,
+    };
+
     return {
         name: "elasticsearch",
         service: async goalEvent => {
             if (goalEvent.repo.name === "pochta") {
                 return {
-                    type: "kubernetes",
+                    type: K8sServiceRegistrationType.K8sService,
                     spec,
                 };
             }
