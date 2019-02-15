@@ -34,9 +34,9 @@ const machineOptions: ConfigureOptions = {
         "sdm.npm.npmrc",
         "sdm.npm.registry",
         "sdm.npm.access",
-        "sdm.docker.hub.registry",
-        "sdm.docker.hub.user",
-        "sdm.docker.hub.password",
+        "sdm.docker.jfrog.registry",
+        "sdm.docker.jfrog.user",
+        "sdm.docker.jfrog.password",
     ],
 };
 
