@@ -25,9 +25,9 @@ import {
     ExecuteGoal,
     ExecuteGoalResult,
     GoalInvocation,
+    ProgressLog,
     SoftwareDeliveryMachineConfiguration,
     spawnPromise,
-    ProgressLog,
 } from "@atomist/sdm";
 import { enrich } from "@atomist/sdm-pack-clojure/lib/machine/leinSupport";
 
