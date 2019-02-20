@@ -102,14 +102,16 @@ import {
 } from "../fingerprints/docker";
 import { K8SpecKick } from "../handlers/commands/HandleK8SpecKick";
 import { MakeSomePushes } from "../handlers/commands/MakeSomePushes";
-import { runIntegrationTests } from "../handlers/commands/RunIntegrationTests";
+import { runIntegrationTestsCommand } from "../handlers/commands/RunIntegrationTests";
 import { handleRunningPods } from "./events/HandleRunningPods";
 import {
     BranchNodeServiceGoals,
     deployToProd,
     deployToStaging,
+    integrationTest,
     LeinAndNodeDockerGoals,
     LeinDefaultBranchDockerGoals,
+    LeinDefaultBranchIntegrationTestDockerGoals,
     neoApolloDockerBuild,
     nodeDockerBuild,
     NodeServiceGoals,
@@ -117,6 +119,7 @@ import {
     updateProdK8Specs,
     updateStagingK8Specs,
 } from "./goals";
+import { goalRunIntegrationTests } from "./integrationTests";
 import {
     addCacheHooks,
     k8SpecUpdater,
@@ -157,6 +160,10 @@ export const HasAtomistFile: PredicatePushTest = predicatePushTest(
 export const HasAtomistDockerfile: PredicatePushTest = predicatePushTest(
     "Has Atomist Dockerfile file",
     hasFile("docker/Dockerfile").predicate);
+
+const HasIntegrationTestMarkerFile: PredicatePushTest = predicatePushTest(
+        "Has marker file to run integration tests",
+        hasFile("requires-integration-test").predicate);
 
 const HasNeoApolloDockerfile: PredicatePushTest = predicatePushTest(
     "Has an apollo Dockerfile file",
@@ -206,6 +213,12 @@ export function machine(configuration: SoftwareDeliveryMachineConfiguration): So
             .itMeans("Build a Clojure Service with Leiningen")
             .setGoals(goals("service with fingerprints on master").plan(LeinDefaultBranchDockerGoals, FingerprintGoal)),
 
+        whenPushSatisfies(IsLein, not(HasTravisFile), HasAtomistFile, HasAtomistDockerfile, HasIntegrationTestMarkerFile,
+            ToDefaultBranch, MaterialChangeToClojureRepo, not(HasNeoApolloDockerfile))
+            .itMeans("Build a Clojure Service with Leiningen, and run integration tests")
+            .setGoals(goals("service with integration tests and fingerprints on master")
+                .plan(LeinDefaultBranchIntegrationTestDockerGoals, FingerprintGoal)),
+
         whenPushSatisfies(IsLein, not(HasTravisFile), HasAtomistFile, HasAtomistDockerfile, MaterialChangeToClojureRepo)
             .itMeans("Build a Clojure Service with Leiningen")
             .setGoals(goals("service with fingerprints").plan(LeinDockerGoals, FingerprintGoal)),
@@ -225,6 +238,7 @@ export function machine(configuration: SoftwareDeliveryMachineConfiguration): So
         whenPushSatisfies(not(IsLein), not(HasTravisFile), HasDockerfile, IsNode, not(ToDefaultBranch))
             .itMeans("Simple node based docker service")
             .setGoals(goals("simple node service").plan(BranchNodeServiceGoals)),
+
     );
 
     sdm.addExtensionPacks(
@@ -330,6 +344,11 @@ export function machine(configuration: SoftwareDeliveryMachineConfiguration): So
         },
     );
 
+    integrationTest.with({
+        name: "integrationTest",
+        goalExecutor: goalRunIntegrationTests,
+    });
+
     deployToStaging.with({
         name: "deployToStaging",
         pushTest: allSatisfied(IsLein, not(HasTravisFile), ToDefaultBranch),
@@ -378,7 +397,7 @@ export function machine(configuration: SoftwareDeliveryMachineConfiguration): So
         },
     });
 
-    sdm.addCommand(runIntegrationTests(sdm));
+    sdm.addCommand(runIntegrationTestsCommand(sdm));
     sdm.addCommand(MakeSomePushes);
     return sdm;
 }
