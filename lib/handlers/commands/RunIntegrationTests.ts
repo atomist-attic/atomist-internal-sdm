@@ -15,8 +15,6 @@
  */
 
 import {
-    GitHubRepoRef,
-    GitProject,
     Parameters,
     Secret,
     Secrets,
@@ -25,9 +23,8 @@ import {
     CommandHandlerRegistration,
     LoggingProgressLog,
     SoftwareDeliveryMachine,
-    spawnPromise,
 } from "@atomist/sdm";
-import { enrich } from "@atomist/sdm-pack-clojure/lib/machine/leinSupport";
+import { runIntegrationTests } from "../../machine/integrationTests";
 
 @Parameters()
 export class IntegrationTestParams {
@@ -37,7 +34,7 @@ export class IntegrationTestParams {
 
 }
 
-export function runIntegrationTests(sdm: SoftwareDeliveryMachine): CommandHandlerRegistration<IntegrationTestParams> {
+export function runIntegrationTestsCommand(sdm: SoftwareDeliveryMachine): CommandHandlerRegistration<IntegrationTestParams> {
     return {
         name: "RunIntegrationTests",
         description: "run platform integration tests",
@@ -45,25 +42,15 @@ export function runIntegrationTests(sdm: SoftwareDeliveryMachine): CommandHandle
         paramsMaker: IntegrationTestParams,
         listener: async cli => {
             await cli.addressChannels(`Running integration tests ...`);
-            const testResult = await sdm.configuration.sdm.projectLoader.doWithProject({
-                id: GitHubRepoRef.from({owner: "atomisthq", repo: "org-service"}),
-                credentials: {token: cli.parameters.githubToken},
-                context: cli.context,
-                readOnly: true,
+            const progressLog = new LoggingProgressLog("console-log");
+            const testResult = await runIntegrationTests(
+                sdm.configuration,
+                {token: cli.parameters.githubToken},
+                cli.context,
+                progressLog,
+            );
 
-            }, async (project: GitProject) => {
-                const spawnOptions = await enrich({}, project);
-                const result = await spawnPromise(
-                    "./integration.sh", [], {
-                        env: spawnOptions.env,
-                        cwd: project.baseDir,
-                    });
-                const progressLog = new LoggingProgressLog("console-log");
-                progressLog.write(result.stdout);
-                progressLog.write(result.stderr);
-                return result;
-            });
-            if (testResult.status === 0) {
+            if (testResult.code === 0) {
                 await cli.addressChannels(`All tests passed!`);
             } else {
                 await cli.addressChannels(`Boo! There were test failures. I wish I could tell you more.`);

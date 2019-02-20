@@ -81,17 +81,14 @@ export const deployToStaging = new GoalWithFulfillment({
 });
 
 export const integrationTest = new GoalWithFulfillment({
-    uniqueName: "IntegrationTest",
+    uniqueName: "integrationTest",
     environment: StagingEnvironment,
-    orderedName: "6-integration-test",
-    displayName: "integration test",
-    workingDescription: "Running integration tests...",
+    orderedName: "6-integration-tests",
+    displayName: "integration tests",
+    workingDescription: "Integration tests running ...",
     completedDescription: "Integration tests passed",
     failedDescription: "Integration tests failed",
-    waitingForApprovalDescription: "Promote to `prod`",
-    approvalRequired: true,
     retryFeasible: true,
-    isolated: true,
 });
 
 export const updateProdK8Specs = new GoalWithFulfillment({
@@ -185,6 +182,7 @@ export const leinServiceCancel = new Cancel({
         dockerBuild,
         updateStagingK8Specs,
         deployToStaging,
+        integrationTest,
         updateProdK8Specs,
         deployToProd],
 });
@@ -196,6 +194,14 @@ export const LeinDefaultBranchDockerGoals: Goals = goals("Lein Docker Build")
     .plan(updateStagingK8Specs).after(tag)
     .plan(deployToStaging).after(updateStagingK8Specs)
     .plan(updateProdK8Specs).after(deployToStaging)
+    .plan(deployToProd).after(updateProdK8Specs);
+
+export const LeinDefaultBranchIntegrationTestDockerGoals: Goals = goals("Lein Docker Build with Integration Test")
+    .plan(leinServiceCancel, DefaultBranchGoals, LeinDockerGoals)
+    .plan(updateStagingK8Specs).after(tag)
+    .plan(deployToStaging).after(updateStagingK8Specs)
+    .plan(integrationTest).after(deployToStaging)
+    .plan(updateProdK8Specs).after(integrationTest)
     .plan(deployToProd).after(updateProdK8Specs);
 
 export const LeinAndNodeDockerGoals: Goals = goals("Lein and npm combined goals")
