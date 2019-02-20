@@ -57,9 +57,8 @@ export async function runIntegrationTests(
     });
 }
 
-export function goalRunIntegrationTests(): ExecuteGoal {
-    return async (rwlc: GoalInvocation): Promise<ExecuteGoalResult> => {
+export const goalRunIntegrationTests: ExecuteGoal =
+    async (rwlc: GoalInvocation): Promise<ExecuteGoalResult> => {
         const { configuration, credentials, context, progressLog } = rwlc;
         return runIntegrationTests(configuration, credentials, context, progressLog);
     };
-}
