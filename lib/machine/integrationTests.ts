@@ -50,9 +50,8 @@ export async function runIntegrationTests(
             "./integration.sh", [], {
                 env: spawnOptions.env,
                 cwd: project.baseDir,
+                log: progressLog,
             });
-        progressLog.write(result.stdout);
-        progressLog.write(result.stderr);
         return {code: result.status};
     });
 }
