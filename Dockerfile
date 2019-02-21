@@ -12,6 +12,7 @@ RUN curl -s -L -O https://github.com/Yelp/dumb-init/releases/download/v$DUMB_INI
     && rm -f dumb-init_${DUMB_INIT_VERSION}_amd64.deb
 
 RUN apt-get update && apt-get install -y \
+    build-essential \
     default-jdk \
     docker.io \
     git \
