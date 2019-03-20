@@ -17,15 +17,12 @@
 // tslint:disable:max-file-line-count
 
 import {
-    ChildProcessResult,
     configurationValue,
     GitCommandGitProject,
     GitHubRepoRef,
     GitProject,
     logger,
     RemoteRepoRef,
-    spawnAndWatch,
-    SpawnCommand,
     Success,
     TokenCredentials,
 } from "@atomist/automation-client";
@@ -37,6 +34,9 @@ import {
     PrepareForGoalExecution,
     ProgressLog,
     ProjectLoader,
+    spawnLog,
+    SpawnLogResult,
+    SpawnLogOptions,
 } from "@atomist/sdm";
 import {
     createTagForStatus,
@@ -54,13 +54,13 @@ interface ProjectRegistryInfo {
 }
 
 export async function rwlcVersion(gi: GoalInvocation): Promise<string> {
-    const sdmGoal = gi.sdmGoal;
+    const goalEvent = gi.goalEvent;
     const version = await readSdmVersion(
-        sdmGoal.repo.owner,
-        sdmGoal.repo.name,
-        sdmGoal.repo.providerId,
-        sdmGoal.sha,
-        sdmGoal.branch,
+        goalEvent.repo.owner,
+        goalEvent.repo.name,
+        goalEvent.repo.providerId,
+        goalEvent.sha,
+        goalEvent.branch,
         gi.context);
     return version;
 }
@@ -76,7 +76,10 @@ function dockerImage(p: ProjectRegistryInfo): string {
 type ExecuteLogger = (l: ProgressLog) => Promise<ExecuteGoalResult>;
 
 interface SpawnWatchCommand {
-    cmd: SpawnCommand;
+    cmd: {
+        command: string,
+        args: string[]
+    };
     cwd?: string;
 }
 
@@ -91,23 +94,15 @@ interface SpawnWatchCommand {
 function spawnExecuteLogger(swc: SpawnWatchCommand): ExecuteLogger {
 
     return async (log: ProgressLog) => {
-        const opts: SpawnOptions = {
-            ...swc.cmd.options,
-        };
+        
+        const opts: SpawnLogOptions = {log};
+        
         if (swc.cwd) {
             opts.cwd = swc.cwd;
         }
-        let res: ChildProcessResult;
-        try {
-            res = await spawnAndWatch(swc.cmd, opts, log);
-        } catch (e) {
-            res = {
-                error: true,
-                code: -1,
-                message: `Spawned command errored: ${swc.cmd.command} ${swc.cmd.args.join(" ")}: ${e.message}`,
-                childProcess: res.childProcess,
-            };
-        }
+        
+        const res = await spawnLog(swc.cmd.command, swc.cmd.args, opts);
+        
         if (res.error) {
             if (!res.message) {
                 res.message = `Spawned command failed (status:${res.code}): ${swc.cmd.command} ${swc.cmd.args.join(" ")}`;
@@ -115,6 +110,7 @@ function spawnExecuteLogger(swc: SpawnWatchCommand): ExecuteLogger {
             logger.error(res.message);
             log.write(res.message);
         }
+        
         return res;
     };
 }
@@ -259,7 +255,7 @@ export function executeReleaseTag(projectLoader: ProjectLoader): ExecuteGoal {
         return projectLoader.doWithProject({ credentials, id, context, readOnly: true }, async p => {
             const version = await rwlcVersion(rwlc);
             const versionRelease = releaseVersion(version);
-            const message = rwlc.sdmGoal.push.commits[0].message;
+            const message = rwlc.goalEvent.push.commits[0].message;
             await createTagForStatus(id, id.sha, message, versionRelease, credentials);
             const commitTitle = message.replace(/\n[\S\s]*/, "");
             const release = {

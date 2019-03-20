@@ -57,7 +57,7 @@ export const updateStagingK8Specs = new GoalWithFulfillment({
             const images = await gi.context.graphClient.query<FetchCommit.Query, FetchCommit.Variables>({
                 name: "fetchCommit",
                 variables: {
-                    sha: gi.sdmGoal.sha,
+                    sha: gi.goalEvent.sha,
                 },
                 options: QueryNoCacheOptions,
             });

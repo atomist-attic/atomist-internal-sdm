@@ -23,7 +23,6 @@ import {
     GraphQL,
     HandlerContext,
     logger,
-    spawnAndWatch,
 } from "@atomist/automation-client";
 import {
     AutoMergeMethod,
@@ -48,6 +47,8 @@ import {
     SoftwareDeliveryMachineConfiguration,
     ToDefaultBranch,
     whenPushSatisfies,
+    spawnLog,
+    LoggingProgressLog,
 } from "@atomist/sdm";
 import {
     createSoftwareDeliveryMachine,
@@ -126,6 +127,7 @@ import {
     K8SpecUpdaterParameters,
     updateK8Spec,
 } from "./k8Support";
+
 export const NodeProjectVersioner: ProjectVersioner = async (sdmGoal, p, log) => {
     const pjFile = await p.getFile("package.json");
     const pj = JSON.parse(await pjFile.getContent());
@@ -138,17 +140,13 @@ export const NodeProjectVersioner: ProjectVersioner = async (sdmGoal, p, log) =>
 
     const version = `${pj.version}-${branchSuffix}${df(new Date(), "yyyymmddHHMMss")}`;
 
-    await spawnAndWatch({
-        command: "npm",
-        args: ["--no-git-tag-version", "version", version],
-    },
+    await spawnLog(
+        "npm",
+        ["--no-git-tag-version", "version", version],
         {
-            cwd: p.baseDir,
-        },
-        log,
-        {
-            errorFinder: code => code !== 0,
-        });
+            log,
+        }
+    );
 
     return version;
 };
