@@ -35,7 +35,6 @@ import {
     ProgressLog,
     ProjectLoader,
     spawnLog,
-    SpawnLogResult,
     SpawnLogOptions,
 } from "@atomist/sdm";
 import {
@@ -45,7 +44,6 @@ import {
     readSdmVersion,
 } from "@atomist/sdm-core";
 import { DockerOptions } from "@atomist/sdm-pack-docker";
-import { SpawnOptions } from "child_process";
 
 interface ProjectRegistryInfo {
     registry: string;

@@ -48,7 +48,6 @@ import {
     ToDefaultBranch,
     whenPushSatisfies,
     spawnLog,
-    LoggingProgressLog,
 } from "@atomist/sdm";
 import {
     createSoftwareDeliveryMachine,
