@@ -45,9 +45,9 @@ import {
     SdmGoalEvent,
     SoftwareDeliveryMachine,
     SoftwareDeliveryMachineConfiguration,
+    spawnLog,
     ToDefaultBranch,
     whenPushSatisfies,
-    spawnLog,
 } from "@atomist/sdm";
 import {
     createSoftwareDeliveryMachine,
@@ -144,7 +144,7 @@ export const NodeProjectVersioner: ProjectVersioner = async (sdmGoal, p, log) =>
         ["--no-git-tag-version", "version", version],
         {
             log,
-        }
+        },
     );
 
     return version;

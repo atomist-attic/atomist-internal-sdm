@@ -1,5 +1,5 @@
 /*
- * Copyright © 2018 Atomist, Inc.
+ * Copyright © 2019 Atomist, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,6 +36,7 @@ import {
     ProjectLoader,
     spawnLog,
     SpawnLogOptions,
+    SpawnLogResult,
 } from "@atomist/sdm";
 import {
     createTagForStatus,
@@ -76,7 +77,7 @@ type ExecuteLogger = (l: ProgressLog) => Promise<ExecuteGoalResult>;
 interface SpawnWatchCommand {
     cmd: {
         command: string,
-        args: string[]
+        args: string[],
     };
     cwd?: string;
 }
@@ -92,15 +93,15 @@ interface SpawnWatchCommand {
 function spawnExecuteLogger(swc: SpawnWatchCommand): ExecuteLogger {
 
     return async (log: ProgressLog) => {
-        
+
         const opts: SpawnLogOptions = {log};
-        
+
         if (swc.cwd) {
             opts.cwd = swc.cwd;
         }
-        
+
         const res = await spawnLog(swc.cmd.command, swc.cmd.args, opts);
-        
+
         if (res.error) {
             if (!res.message) {
                 res.message = `Spawned command failed (status:${res.code}): ${swc.cmd.command} ${swc.cmd.args.join(" ")}`;
@@ -108,7 +109,7 @@ function spawnExecuteLogger(swc: SpawnWatchCommand): ExecuteLogger {
             logger.error(res.message);
             log.write(res.message);
         }
-        
+
         return res;
     };
 }
