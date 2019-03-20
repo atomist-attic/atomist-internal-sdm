@@ -36,7 +36,6 @@ import {
     ProjectLoader,
     spawnLog,
     SpawnLogOptions,
-    SpawnLogResult,
 } from "@atomist/sdm";
 import {
     createTagForStatus,
