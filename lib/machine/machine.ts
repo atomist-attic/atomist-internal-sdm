@@ -37,6 +37,7 @@ import {
     hasFile,
     ImmaterialGoals,
     isSdmEnabled,
+    LoggingProgressLog,
     not,
     predicatePushTest,
     PredicatePushTest,
@@ -45,10 +46,9 @@ import {
     SdmGoalEvent,
     SoftwareDeliveryMachine,
     SoftwareDeliveryMachineConfiguration,
+    spawnLog,
     ToDefaultBranch,
     whenPushSatisfies,
-    spawnLog,
-    LoggingProgressLog,
 } from "@atomist/sdm";
 import {
     createSoftwareDeliveryMachine,
@@ -145,7 +145,7 @@ export const NodeProjectVersioner: ProjectVersioner = async (sdmGoal, p, log) =>
         ["--no-git-tag-version", "version", version],
         {
             log,
-        }
+        },
     );
 
     return version;
