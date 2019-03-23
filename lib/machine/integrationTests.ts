@@ -29,7 +29,7 @@ import {
     SoftwareDeliveryMachineConfiguration,
     spawnPromise,
 } from "@atomist/sdm";
-import { enrich } from "@atomist/sdm-pack-clojure/lib/machine/leinSupport";
+import { enrich } from "@atomist/sdm-pack-clojure/lib/machine/enrich";
 
 export async function runIntegrationTests(
     configuration: SoftwareDeliveryMachineConfiguration,

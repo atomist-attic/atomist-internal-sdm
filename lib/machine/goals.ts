@@ -25,22 +25,23 @@ import {
     IndependentOfEnvironment,
     ProductionEnvironment,
     StagingEnvironment,
+    AutoCodeInspection,
+    Autofix,
 } from "@atomist/sdm";
-import { Tag } from "@atomist/sdm-core";
+import { Tag, Version } from "@atomist/sdm-core";
 import {
-    autofix,
-    DefaultBranchGoals,
-    dockerBuild,
     leinBuild,
-    LeinBuildGoals,
-    LeinDockerGoals,
     publish,
-    tag,
-    version,
 } from "@atomist/sdm-pack-clojure";
 import { DockerBuild } from "@atomist/sdm-pack-docker";
 import { elasticsearch } from "../services/elasticsearch";
 import { FetchCommit } from "../typings/types";
+
+export const autoCodeInspection = new AutoCodeInspection({ isolate: true });
+export const autofix = new Autofix();
+export const version = new Version();
+export const tag = new Tag();
+export const dockerBuild = new DockerBuild();
 
 // GOALSET Definition
 
@@ -189,16 +190,38 @@ export const leinServiceCancel = new Cancel({
 
 leinBuild.withService(elasticsearch("6.4.3"));
 
+// Just running review and autofix
+export const CheckGoals: Goals = goals("Check")
+    .plan(version, autoCodeInspection).after(autofix);
+
+export const DefaultBranchGoals: Goals = goals("Default Branch")
+    .plan(autofix);
+
+// Build including docker build
+export const LeinBuildGoals: Goals = goals("Lein Build")
+    .plan(CheckGoals)
+    .plan(leinBuild).after(version);
+
+export const LeinDefaultBranchBuildGoals: Goals = goals("Lein Build")
+    .plan(DefaultBranchGoals, LeinBuildGoals)
+    .plan(publish).after(leinBuild, autoCodeInspection)
+    .plan(tag).after(publish);
+
+export const LeinDockerGoals: Goals = goals("Lein Docker Build")
+    .plan(LeinBuildGoals)
+    .plan(dockerBuild).after(leinBuild)
+    .plan(tag).after(dockerBuild);
+
 export const LeinDefaultBranchDockerGoals: Goals = goals("Lein Docker Build")
     .plan(leinServiceCancel, DefaultBranchGoals, LeinDockerGoals)
-    .plan(updateStagingK8Specs).after(tag)
+    .plan(updateStagingK8Specs).after(tag, autoCodeInspection)
     .plan(deployToStaging).after(updateStagingK8Specs)
     .plan(updateProdK8Specs).after(deployToStaging)
     .plan(deployToProd).after(updateProdK8Specs);
 
 export const LeinDefaultBranchIntegrationTestDockerGoals: Goals = goals("Lein Docker Build with Integration Test")
     .plan(leinServiceCancel, DefaultBranchGoals, LeinDockerGoals)
-    .plan(updateStagingK8Specs).after(tag)
+    .plan(updateStagingK8Specs).after(tag, autoCodeInspection)
     .plan(deployToStaging).after(updateStagingK8Specs)
     .plan(integrationTest).after(deployToStaging)
     .plan(updateProdK8Specs).after(integrationTest)
