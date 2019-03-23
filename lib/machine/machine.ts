@@ -32,6 +32,7 @@ import * as clj from "@atomist/clj-editors";
 import {
     allSatisfied,
     ApproveGoalIfErrorComments,
+    ApproveGoalIfWarnComments,
     CloningProjectLoader,
     Fingerprint,
     goals,
@@ -49,7 +50,6 @@ import {
     spawnLog,
     ToDefaultBranch,
     whenPushSatisfies,
-    ApproveGoalIfWarnComments,
 } from "@atomist/sdm";
 import {
     createSoftwareDeliveryMachine,
@@ -64,8 +64,8 @@ import {
 } from "@atomist/sdm-core";
 import {
     IsLein,
-    MaterialChangeToClojureRepo,
     leinSupport,
+    MaterialChangeToClojureRepo,
 } from "@atomist/sdm-pack-clojure";
 import {
     DefaultDockerImageNameCreator,

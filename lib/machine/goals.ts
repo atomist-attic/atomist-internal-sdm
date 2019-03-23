@@ -18,6 +18,8 @@
 
 import { QueryNoCacheOptions } from "@atomist/automation-client";
 import {
+    AutoCodeInspection,
+    Autofix,
     Cancel,
     goals,
     Goals,
@@ -25,10 +27,11 @@ import {
     IndependentOfEnvironment,
     ProductionEnvironment,
     StagingEnvironment,
-    AutoCodeInspection,
-    Autofix,
 } from "@atomist/sdm";
-import { Tag, Version } from "@atomist/sdm-core";
+import {
+    Tag,
+    Version,
+} from "@atomist/sdm-core";
 import {
     leinBuild,
     publish,
