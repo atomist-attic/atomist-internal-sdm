@@ -131,6 +131,11 @@
               {
                 "name": "data",
                 "mountPath": "/opt/data"
+              },
+              {
+                "name": "integration-test",
+                "mountPath": "/opt/integration-test/secret",
+                "readOnly": true
               }
             ]
           }
@@ -153,6 +158,12 @@
             "hostPath": {
               "path": "/mnt/disks/ssd0/data/clojure-sdm",
               "type": "DirectoryOrCreate"
+            }
+          },
+          {
+            "name": "integration-test",
+            "secret": {
+              "secretName": "integration-test"
             }
           }
         ],
