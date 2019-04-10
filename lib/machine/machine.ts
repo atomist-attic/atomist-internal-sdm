@@ -104,9 +104,12 @@ import { MakeSomePushes } from "../handlers/commands/MakeSomePushes";
 import { runIntegrationTestsCommand } from "../handlers/commands/RunIntegrationTests";
 import { handleRunningPods } from "./events/HandleRunningPods";
 import {
+    autoCodeInspection,
+    autofix,
     BranchNodeServiceGoals,
     deployToProd,
     deployToStaging,
+    dockerBuild,
     integrationTest,
     LeinAndNodeDockerGoals,
     LeinBuildGoals,
@@ -120,9 +123,6 @@ import {
     nodeVersion,
     updateProdK8Specs,
     updateStagingK8Specs,
-    dockerBuild,
-    autofix,
-    autoCodeInspection,
     version,
 } from "./goals";
 import { goalRunIntegrationTests } from "./integrationTests";
@@ -143,17 +143,17 @@ export const NodeProjectVersioner: ProjectVersioner = async (sdmGoal, p, log) =>
         branchSuffix = "master.";
     }
 
-    const version = `${pj.version}-${branchSuffix}${df(new Date(), "yyyymmddHHMMss")}`;
+    const newVersion = `${pj.version}-${branchSuffix}${df(new Date(), "yyyymmddHHMMss")}`;
 
     await spawnLog(
         "npm",
-        ["--no-git-tag-version", "version", version],
+        ["--no-git-tag-version", "version", newVersion],
         {
             log,
         },
     );
 
-    return version;
+    return newVersion;
 };
 
 export const HasAtomistFile: PredicatePushTest = predicatePushTest(
@@ -248,8 +248,8 @@ export function machine(configuration: SoftwareDeliveryMachineConfiguration): So
         leinSupport({
             autofixGoal: autofix,
             inspectGoal: autoCodeInspection,
-            dockerBuild: dockerBuild,
-            version: version,
+            dockerBuild,
+            version,
         }),
         goalScheduling(),
         goalState(),
@@ -297,8 +297,8 @@ export function machine(configuration: SoftwareDeliveryMachineConfiguration): So
                         },
                         messageMaker,
                     },
-                )
-            ]
+                ),
+            ],
         }),
     );
 
@@ -419,9 +419,9 @@ export function machine(configuration: SoftwareDeliveryMachineConfiguration): So
 
 export const apolloImageNamer: DockerImageNameCreator =
     async (p: GitProject,
-        sdmGoal: SdmGoalEvent,
-        options: DockerOptions,
-        ctx: HandlerContext) => {
+           sdmGoal: SdmGoalEvent,
+           options: DockerOptions,
+           ctx: HandlerContext) => {
         const projectclj = path.join(p.baseDir, "project.clj");
         const newversion = await readSdmVersion(
             sdmGoal.repo.owner,
