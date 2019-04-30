@@ -42,11 +42,6 @@ spec:
           value: '1'
         - name: ATOMIST_GOAL_LAUNCHER
           value: kubernetes
-        - name: GITHUB_TOKEN
-          valueFrom:
-            secretKeyRef:
-              name: atomist
-              key: token
         - name: ATOMIST_CONFIG
           valueFrom:
             secretKeyRef:
