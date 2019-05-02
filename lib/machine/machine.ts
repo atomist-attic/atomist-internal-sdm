@@ -199,8 +199,8 @@ export function machine(configuration: SoftwareDeliveryMachineConfiguration): So
         whenPushSatisfies(not(IsWorkspaceWhitelisted))
             .setGoals(goals("no goals")),
 
-        whenPushSatisfies(not(isSdmEnabled(configuration.name)), IsNode)
-            .itMeans("Default to not build Node.js projects")
+        whenPushSatisfies(not(isSdmEnabled(configuration.name)), IsNode, not(IsLein))
+            .itMeans("Default to not build Node.js projects unless they are cljs ones")
             .setGoals(goals("no goals")),
 
         whenPushSatisfies(IsLein, not(HasTravisFile), not(MaterialChangeToClojureRepo))
