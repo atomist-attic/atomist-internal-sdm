@@ -17,17 +17,12 @@
 /* tslint:disable:max-file-line-count */
 
 import {
-    editModes,
     GitHubRepoRef,
     GitProject,
     GraphQL,
     HandlerContext,
     logger,
 } from "@atomist/automation-client";
-import {
-    AutoMergeMethod,
-    AutoMergeMode,
-} from "@atomist/automation-client/lib/operations/edit/editModes";
 import * as clj from "@atomist/clj-editors";
 import {
     allSatisfied,
@@ -73,17 +68,6 @@ import {
     DockerOptions,
     HasDockerfile,
 } from "@atomist/sdm-pack-docker";
-import {
-    applyFingerprint,
-    checkCljCoordinatesImpactHandler,
-    cljFunctionFingerprints,
-    depsFingerprints,
-    fingerprintImpactHandler,
-    fingerprintSupport,
-    logbackFingerprints,
-    messageMaker,
-    renderClojureProjectDiff,
-} from "@atomist/sdm-pack-fingerprints";
 import { singleIssuePerCategoryManaging } from "@atomist/sdm-pack-issue";
 import {
     IsNode,
@@ -95,10 +79,6 @@ import { HasTravisFile } from "@atomist/sdm/lib/api-helper/pushtest/ci/ciPushTes
 import * as df from "dateformat";
 import * as _ from "lodash";
 import * as path from "path";
-import {
-    applyDockerBaseFingerprint,
-    dockerBaseFingerprint,
-} from "../fingerprints/docker";
 import { K8SpecKick } from "../handlers/commands/HandleK8SpecKick";
 import { MakeSomePushes } from "../handlers/commands/MakeSomePushes";
 import { runIntegrationTestsCommand } from "../handlers/commands/RunIntegrationTests";
@@ -254,7 +234,7 @@ export function machine(configuration: SoftwareDeliveryMachineConfiguration): So
         goalScheduling(),
         goalState(),
         gitHubGoalStatus(),
-        fingerprintSupport({
+        /*fingerprintSupport({
             fingerprintGoal: FingerprintGoal,
             fingerprints: [
                 {
@@ -299,7 +279,7 @@ export function machine(configuration: SoftwareDeliveryMachineConfiguration): So
                     },
                 ),
             ],
-        }),
+        }),*/
     );
 
     autoCodeInspection
