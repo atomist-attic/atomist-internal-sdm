@@ -232,7 +232,7 @@ export function machine(configuration: SoftwareDeliveryMachineConfiguration): So
 
         whenPushSatisfies(IsLein, not(HasTravisFile), HasAtomistFile, not(HasAtomistDockerfile), MaterialChangeToClojureRepo)
             .itMeans("Build a Clojure Library with Leiningen")
-            .setGoals(goals("library with fingerprints").plan(LeinBuildGoals, FingerprintGoal)),
+            .setGoals(goals("library").plan(LeinBuildGoals, FingerprintGoal)),
 
         whenPushSatisfies(not(IsLein), not(HasTravisFile), HasDockerfile, IsNode, ToDefaultBranch)
             .itMeans("Simple node based docker service")
@@ -419,9 +419,9 @@ export function machine(configuration: SoftwareDeliveryMachineConfiguration): So
 
 export const apolloImageNamer: DockerImageNameCreator =
     async (p: GitProject,
-           sdmGoal: SdmGoalEvent,
-           options: DockerOptions,
-           ctx: HandlerContext) => {
+        sdmGoal: SdmGoalEvent,
+        options: DockerOptions,
+        ctx: HandlerContext) => {
         const projectclj = path.join(p.baseDir, "project.clj");
         const newversion = await readSdmVersion(
             sdmGoal.repo.owner,
