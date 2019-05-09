@@ -37,6 +37,8 @@ RUN curl -sL -o /usr/local/bin/lein https://raw.githubusercontent.com/technomanc
     && chmod 755 /usr/local/bin/lein \
     && lein version
 
+RUN update-java-alternatives -s java-1.8.0-openjdk-amd64
+
 # Create app directory
 RUN mkdir -p /opt/app
 WORKDIR /opt/app
