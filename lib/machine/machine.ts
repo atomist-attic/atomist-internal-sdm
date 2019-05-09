@@ -74,18 +74,13 @@ import {
     HasDockerfile,
 } from "@atomist/sdm-pack-docker";
 import {
-    applyFingerprint,
-    cljFunctionFingerprints,
     CljFunctions,
-    depsFingerprints,
     DockerFrom,
     fingerprintImpactHandler,
     fingerprintSupport,
     LeinMavenDeps,
     Logback,
-    logbackFingerprints,
     messageMaker,
-    renderClojureProjectDiff,
 } from "@atomist/sdm-pack-fingerprints";
 import { singleIssuePerCategoryManaging } from "@atomist/sdm-pack-issue";
 import {
@@ -98,10 +93,6 @@ import { HasTravisFile } from "@atomist/sdm/lib/api-helper/pushtest/ci/ciPushTes
 import * as df from "dateformat";
 import * as _ from "lodash";
 import * as path from "path";
-import {
-    applyDockerBaseFingerprint,
-    dockerBaseFingerprint,
-} from "../fingerprints/docker";
 import { K8SpecKick } from "../handlers/commands/HandleK8SpecKick";
 import { MakeSomePushes } from "../handlers/commands/MakeSomePushes";
 import { runIntegrationTestsCommand } from "../handlers/commands/RunIntegrationTests";
@@ -268,7 +259,7 @@ export function machine(configuration: SoftwareDeliveryMachineConfiguration): So
             handlers: [
                 fingerprintImpactHandler(
                     {
-                        transformPresentation: (ci, p) => {
+                        transformPresentation:ci => {
                             return new editModes.PullRequest(
                                 `apply-target-fingerprint-${Date.now()}`,
                                 ci.parameters.title,
