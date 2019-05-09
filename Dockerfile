@@ -13,7 +13,7 @@ RUN curl -s -L -O https://github.com/Yelp/dumb-init/releases/download/v$DUMB_INI
 
 RUN apt-get update && apt-get install -y \
     build-essential \
-    default-jdk \
+    openjdk-8-jdk \
     docker.io \
     git \
     maven \
