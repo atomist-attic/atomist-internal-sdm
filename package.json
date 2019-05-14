@@ -30,7 +30,7 @@
     "@atomist/sdm-pack-build": "1.0.4-master.20181217220011",
     "@atomist/sdm-pack-clojure": "1.0.11",
     "@atomist/sdm-pack-docker": "1.0.3-parse.20181212031606",
-    "@atomist/sdm-pack-fingerprints": "3.0.1-master.20190509202631",
+    "@atomist/sdm-pack-fingerprints": "3.0.2",
     "@atomist/sdm-pack-issue": "1.1.0",
     "@atomist/sdm-pack-node": "1.0.3-master.20190110120831",
     "@atomist/slack-messages": "^1.1.0",
