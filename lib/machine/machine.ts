@@ -63,12 +63,12 @@ import {
     readSdmVersion,
 } from "@atomist/sdm-core";
 import {
-    IsLein,
-    leinSupport,
-    MaterialChangeToClojureRepo,
-    Logback,
-    LeinDeps,
     CljFunctions,
+    IsLein,
+    LeinDeps,
+    leinSupport,
+    Logback,
+    MaterialChangeToClojureRepo,
 } from "@atomist/sdm-pack-clojure";
 import {
     DefaultDockerImageNameCreator,
