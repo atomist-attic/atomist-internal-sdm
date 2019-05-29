@@ -19,42 +19,52 @@ import {
     logger,
 } from "@atomist/automation-client";
 import { DockerFileParser } from "@atomist/sdm-pack-docker";
-import { ApplyFingerprint, ExtractFingerprint, FP, renderData, sha256 } from "@atomist/sdm-pack-fingerprints";
+import { ApplyFingerprint, ExtractFingerprint, FP, sha256, Feature } from "@atomist/sdm-pack-fingerprints";
+import { renderData } from "@atomist/clj-editors";
+
+/**
+ * Construct a Docker base image fingerprint from the given image and version
+ * @param {string} image
+ * @param {string} version
+ * @return {FP}
+ */
+export function getDockerBaseFingerprint(image: string, version: string): FP {
+    const data = { image, version };
+    return {
+        name: `docker-base-image-${image}`,
+        abbreviation: `dbi-${image}`,
+        version: "0.0.1",
+        data,
+        sha: sha256(JSON.stringify(data)),
+    };
+}
 
 export const dockerBaseFingerprint: ExtractFingerprint = async p => {
-
     const file = await p.getFile("docker/Dockerfile");
-
     if (file && await file.getContent() !== "") {
-
         const imageName: string[] = await astUtils.findValues(
-            p, DockerFileParser, "docker/Dockerfile", "//FROM/image/name");
+            p, DockerFileParser, "Dockerfile", "//FROM/image/name");
         const imageVersion: string[] = await astUtils.findValues(
-            p, DockerFileParser, "docker/Dockerfile", "//FROM/image/tag");
+            p, DockerFileParser, "Dockerfile", "//FROM/image/tag");
 
-        const data = {image: imageName[0], version: imageVersion[0]};
-        const fp: FP = {
-            name: `docker-base-image-${imageName[0]}`,
-            abbreviation: `dbi-${imageName[0]}`,
-            version: "0.0.1",
-            data,
-            sha: sha256(JSON.stringify(data)),
-        };
+        const fp: FP = getDockerBaseFingerprint(imageName[0], imageVersion[0]);
 
+        // bug opened and fix coming
+        (fp as any).value = fp.data;
         return fp;
     } else {
-
         return undefined;
     }
 };
 
 export const applyDockerBaseFingerprint: ApplyFingerprint = async (p, fp) => {
-    logger.info(`apply ${renderData(fp)} to ${p.baseDir}`);
+    logger.info(`apply ${renderData(fp)} to ${p.id.url}`);
 
     interface DockerFP {
         name: string;
         version: string;
     }
+
     const newFP = fp.data as DockerFP;
 
     try {
@@ -65,9 +75,17 @@ export const applyDockerBaseFingerprint: ApplyFingerprint = async (p, fp) => {
             "//FROM/image/tag",
             n => n.$value = newFP.version,
         );
-        return(true);
+        return (true);
     } catch (e) {
         logger.error(e);
         return false;
     }
+};
+
+export const DockerFrom: Feature = {
+    displayName: "Docker base image",
+    apply: applyDockerBaseFingerprint,
+    extract: dockerBaseFingerprint,
+    selector: myFp => myFp.name.startsWith("docker-base-image"),
+    toDisplayableFingerprint: fp => fp.data.version,
 };

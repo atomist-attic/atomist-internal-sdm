@@ -66,6 +66,9 @@ import {
     IsLein,
     leinSupport,
     MaterialChangeToClojureRepo,
+    Logback,
+    LeinDeps,
+    CljFunctions,
 } from "@atomist/sdm-pack-clojure";
 import {
     DefaultDockerImageNameCreator,
@@ -74,12 +77,8 @@ import {
     HasDockerfile,
 } from "@atomist/sdm-pack-docker";
 import {
-    CljFunctions,
-    DockerFrom,
     fingerprintImpactHandler,
     fingerprintSupport,
-    LeinMavenDeps,
-    Logback,
     messageMaker,
 } from "@atomist/sdm-pack-fingerprints";
 import { singleIssuePerCategoryManaging } from "@atomist/sdm-pack-issue";
@@ -126,6 +125,7 @@ import {
     K8SpecUpdaterParameters,
     updateK8Spec,
 } from "./k8Support";
+import { DockerFrom } from "../fingerprints/docker";
 
 export const NodeProjectVersioner: ProjectVersioner = async (sdmGoal, p, log) => {
     const pjFile = await p.getFile("package.json");
@@ -250,16 +250,16 @@ export function machine(configuration: SoftwareDeliveryMachineConfiguration): So
         gitHubGoalStatus(),
         fingerprintSupport({
             fingerprintGoal: FingerprintGoal,
-            fingerprints: [
+            features: [
                 DockerFrom,
                 Logback,
                 CljFunctions,
-                LeinMavenDeps,
+                LeinDeps,
             ],
             handlers: [
                 fingerprintImpactHandler(
                     {
-                        transformPresentation:ci => {
+                        transformPresentation: ci => {
                             return new editModes.PullRequest(
                                 `apply-target-fingerprint-${Date.now()}`,
                                 ci.parameters.title,
@@ -395,9 +395,9 @@ export function machine(configuration: SoftwareDeliveryMachineConfiguration): So
 
 export const apolloImageNamer: DockerImageNameCreator =
     async (p: GitProject,
-           sdmGoal: SdmGoalEvent,
-           options: DockerOptions,
-           ctx: HandlerContext) => {
+        sdmGoal: SdmGoalEvent,
+        options: DockerOptions,
+        ctx: HandlerContext) => {
         const projectclj = path.join(p.baseDir, "project.clj");
         const newversion = await readSdmVersion(
             sdmGoal.repo.owner,
