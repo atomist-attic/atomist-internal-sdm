@@ -45,7 +45,7 @@ const expectedResult = {
     name: "docker-base-image-sforzando-dockerv2-local.jfrog.io/java-atomist",
     abbreviation: "dbi-sforzando-dockerv2-local.jfrog.io/java-atomist",
     version: "0.0.1",
-    data: { image: "sforzando-dockerv2-local.jfrog.io/java-atomist", version: "0.11.1-20181115141152"},
+    data: { image: "sforzando-dockerv2-local.jfrog.io/java-atomist", version: "0.11.1-20181115141152" },
     sha: "8c81bef863e2ea2bde5d5e0567f8abba3c325eecd21135559b945c05dbf91da2",
 };
 
@@ -73,7 +73,7 @@ describe("dockerBaseFingerprint", () => {
                 branch: "master",
                 owner: "foo",
                 url: "https://fake.com/foo/foo.git",
-            }, ({ path: "Dockerfile", content: "" })) as any;
+            }, ({ path: "docker/Dockerfile", content: "" })) as any;
 
             const result = await dockerBaseFingerprint(p);
             assert.strictEqual(result, undefined);

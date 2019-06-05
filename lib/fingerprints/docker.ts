@@ -15,8 +15,7 @@
  */
 
 import {
-    astUtils,
-    logger,
+    astUtils, logger,
 } from "@atomist/automation-client";
 import { DockerFileParser } from "@atomist/sdm-pack-docker";
 import { ApplyFingerprint, ExtractFingerprint, FP, sha256, Feature } from "@atomist/sdm-pack-fingerprints";
@@ -43,14 +42,13 @@ export const dockerBaseFingerprint: ExtractFingerprint = async p => {
     const file = await p.getFile("docker/Dockerfile");
     if (file && await file.getContent() !== "") {
         const imageName: string[] = await astUtils.findValues(
-            p, DockerFileParser, "Dockerfile", "//FROM/image/name");
+            p, DockerFileParser, "docker/Dockerfile", "//FROM/image/name");
         const imageVersion: string[] = await astUtils.findValues(
-            p, DockerFileParser, "Dockerfile", "//FROM/image/tag");
+            p, DockerFileParser, "docker/Dockerfile", "//FROM/image/tag");
 
         const fp: FP = getDockerBaseFingerprint(imageName[0], imageVersion[0]);
+        console.log(`image Name ${imageName}`);
 
-        // bug opened and fix coming
-        (fp as any).value = fp.data;
         return fp;
     } else {
         return undefined;
