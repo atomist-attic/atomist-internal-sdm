@@ -15,7 +15,8 @@
  */
 
 import {
-    astUtils, logger,
+    astUtils,
+    logger,
 } from "@atomist/automation-client";
 import { DockerFileParser } from "@atomist/sdm-pack-docker";
 import { ApplyFingerprint, ExtractFingerprint, FP, sha256, Feature } from "@atomist/sdm-pack-fingerprints";
