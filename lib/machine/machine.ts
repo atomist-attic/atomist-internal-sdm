@@ -57,8 +57,11 @@ import {
     EnableDeploy,
     executeVersioner,
     gitHubGoalStatus,
+    githubGoalStatusSupport,
     goalScheduling,
     goalState,
+    goalStateSupport,
+    k8sGoalSchedulingSupport,
     ProjectVersioner,
     readSdmVersion,
 } from "@atomist/sdm-core";
@@ -92,6 +95,7 @@ import { HasTravisFile } from "@atomist/sdm/lib/api-helper/pushtest/ci/ciPushTes
 import * as df from "dateformat";
 import * as _ from "lodash";
 import * as path from "path";
+import { DockerFrom } from "../fingerprints/docker";
 import { K8SpecKick } from "../handlers/commands/HandleK8SpecKick";
 import { MakeSomePushes } from "../handlers/commands/MakeSomePushes";
 import { runIntegrationTestsCommand } from "../handlers/commands/RunIntegrationTests";
@@ -125,7 +129,6 @@ import {
     K8SpecUpdaterParameters,
     updateK8Spec,
 } from "./k8Support";
-import { DockerFrom } from "../fingerprints/docker";
 
 export const NodeProjectVersioner: ProjectVersioner = async (sdmGoal, p, log) => {
     const pjFile = await p.getFile("package.json");
@@ -245,9 +248,9 @@ export function machine(configuration: SoftwareDeliveryMachineConfiguration): So
             dockerBuild,
             version,
         }),
-        goalScheduling(),
-        goalState(),
-        gitHubGoalStatus(),
+        k8sGoalSchedulingSupport(),
+        goalStateSupport(),
+        githubGoalStatusSupport(),
         fingerprintSupport({
             fingerprintGoal: FingerprintGoal,
             features: [
@@ -395,9 +398,9 @@ export function machine(configuration: SoftwareDeliveryMachineConfiguration): So
 
 export const apolloImageNamer: DockerImageNameCreator =
     async (p: GitProject,
-        sdmGoal: SdmGoalEvent,
-        options: DockerOptions,
-        ctx: HandlerContext) => {
+           sdmGoal: SdmGoalEvent,
+           options: DockerOptions,
+           ctx: HandlerContext) => {
         const projectclj = path.join(p.baseDir, "project.clj");
         const newversion = await readSdmVersion(
             sdmGoal.repo.owner,

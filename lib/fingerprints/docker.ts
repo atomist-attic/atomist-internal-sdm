@@ -17,9 +17,9 @@
 import {
     astUtils, logger,
 } from "@atomist/automation-client";
-import { DockerFileParser } from "@atomist/sdm-pack-docker";
-import { ApplyFingerprint, ExtractFingerprint, FP, sha256, Feature } from "@atomist/sdm-pack-fingerprints";
 import { renderData } from "@atomist/clj-editors";
+import { DockerFileParser } from "@atomist/sdm-pack-docker";
+import { ApplyFingerprint, ExtractFingerprint, Feature, FP, sha256 } from "@atomist/sdm-pack-fingerprints";
 
 /**
  * Construct a Docker base image fingerprint from the given image and version
@@ -47,7 +47,6 @@ export const dockerBaseFingerprint: ExtractFingerprint = async p => {
             p, DockerFileParser, "docker/Dockerfile", "//FROM/image/tag");
 
         const fp: FP = getDockerBaseFingerprint(imageName[0], imageVersion[0]);
-        console.log(`image Name ${imageName}`);
 
         return fp;
     } else {
@@ -82,8 +81,9 @@ export const applyDockerBaseFingerprint: ApplyFingerprint = async (p, fp) => {
 
 export const DockerFrom: Feature = {
     displayName: "Docker base image",
+    name: "docker-base-image",
     apply: applyDockerBaseFingerprint,
     extract: dockerBaseFingerprint,
-    selector: myFp => myFp.name.startsWith("docker-base-image"),
+    selector: myFp => myFp.name.startsWith(DockerFrom.name),
     toDisplayableFingerprint: fp => fp.data.version,
 };
