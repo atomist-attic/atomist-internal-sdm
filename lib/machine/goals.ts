@@ -191,7 +191,7 @@ export const leinServiceCancel = new Cancel({
         deployToProd],
 });
 
-leinBuild.withService(elasticsearch("6.4.3"));
+leinBuild.withService(elasticsearch("6.7.1"));
 
 // Just running review and autofix
 export const CheckGoals: Goals = goals("Check")

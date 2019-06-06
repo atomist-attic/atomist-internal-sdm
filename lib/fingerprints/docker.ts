@@ -15,7 +15,8 @@
  */
 
 import {
-    astUtils, logger,
+    astUtils,
+    logger,
 } from "@atomist/automation-client";
 import { renderData } from "@atomist/clj-editors";
 import { DockerFileParser } from "@atomist/sdm-pack-docker";
