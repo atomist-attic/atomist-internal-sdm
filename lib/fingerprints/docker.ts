@@ -28,10 +28,11 @@ import { ApplyFingerprint, ExtractFingerprint, Feature, FP, sha256 } from "@atom
  * @param {string} version
  * @return {FP}
  */
-export function getDockerBaseFingerprint(image: string, version: string): FP {
+export function createDockerBaseFingerprint(image: string, version: string): FP {
     const data = { image, version };
     return {
-        name: `docker-base-image-${image}`,
+        type: DockerFrom.name,
+        name: image,
         abbreviation: `dbi-${image}`,
         version: "0.0.1",
         data,
@@ -47,7 +48,7 @@ export const dockerBaseFingerprint: ExtractFingerprint = async p => {
         const imageVersion: string[] = await astUtils.findValues(
             p, DockerFileParser, "docker/Dockerfile", "//FROM/image/tag");
 
-        const fp: FP = getDockerBaseFingerprint(imageName[0], imageVersion[0]);
+        const fp: FP = createDockerBaseFingerprint(imageName[0], imageVersion[0]);
 
         return fp;
     } else {
@@ -85,6 +86,6 @@ export const DockerFrom: Feature = {
     name: "docker-base-image",
     apply: applyDockerBaseFingerprint,
     extract: dockerBaseFingerprint,
-    selector: myFp => myFp.name.startsWith(DockerFrom.name),
+    selector: myFp => myFp.type && myFp.type === DockerFrom.name,
     toDisplayableFingerprint: fp => fp.data.version,
 };
