@@ -17,7 +17,7 @@
 import { InMemoryProject } from "@atomist/automation-client";
 import assert = require("power-assert");
 import {
-    dockerBaseFingerprint, applyDockerBaseFingerprint,
+    applyDockerBaseFingerprint, dockerBaseFingerprint,
 } from "../../lib/fingerprints/docker";
 
 const dummyDockerFile = `
@@ -61,7 +61,6 @@ CMD ["-Djava.net.preferIPv4Stack=true", "-jar", "/usr/src/app/incoming-webhooks.
 EXPOSE 8080
 
 `;
-
 
 const expectedResult = {
     type: "docker-base-image",
