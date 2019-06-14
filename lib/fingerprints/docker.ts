@@ -48,7 +48,7 @@ export const dockerBaseFingerprint: ExtractFingerprint = async p => {
         const imageVersion: string[] = await astUtils.findValues(
             p, DockerFileParser, "docker/Dockerfile", "//FROM/image/tag");
 
-        const fp: FP = createDockerBaseFingerprint(imageName[0], imageVersion[0]);
+        const fp: FP = createDockerBaseFingerprint(imageName[0], imageVersion[0] || "latest");
 
         return fp;
     } else {
