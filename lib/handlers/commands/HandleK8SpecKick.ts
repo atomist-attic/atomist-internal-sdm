@@ -26,7 +26,7 @@ export const K8SpecKick: CommandHandlerRegistration<K8SpecKickParameters> = {
     intent: "kick service",
     parameters: {
         message: {
-            default: "Kicking the service",
+            description: "Kicking the service",
             required: false,
         },
     },
