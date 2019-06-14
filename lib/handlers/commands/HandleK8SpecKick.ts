@@ -1,5 +1,5 @@
 /*
- * Copyright © 2018 Atomist, Inc.
+ * Copyright © 2019 Atomist, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ export const K8SpecKick: CommandHandlerRegistration<K8SpecKickParameters> = {
     intent: "kick service",
     parameters: {
         message: {
-            default: "Kicking the service",
+            description: "Kicking the service",
             required: false,
         },
     },

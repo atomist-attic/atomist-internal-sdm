@@ -34,7 +34,6 @@ import {
     ApproveGoalIfErrorComments,
     ApproveGoalIfWarnComments,
     CloningProjectLoader,
-    Fingerprint,
     goals,
     hasFile,
     ImmaterialGoals,
@@ -42,6 +41,7 @@ import {
     not,
     predicatePushTest,
     PredicatePushTest,
+    PushImpact,
     pushTest,
     PushTest,
     SdmGoalEvent,
@@ -166,7 +166,7 @@ const HasNeoApolloDockerfile: PredicatePushTest = predicatePushTest(
     "Has an apollo Dockerfile file",
     hasFile("apollo/Dockerfile").predicate);
 
-export const FingerprintGoal = new Fingerprint();
+export const FingerprintGoal = new PushImpact();
 
 const AtomistWorkspaces = "T095SFFBK,AK748NQC5";
 const WorkspacesFilename = "workspaces";
@@ -249,7 +249,7 @@ export function machine(configuration: SoftwareDeliveryMachineConfiguration): So
         goalStateSupport(),
         githubGoalStatusSupport(),
         fingerprintSupport({
-            fingerprintGoal: FingerprintGoal,
+            pushImpactGoal: FingerprintGoal,
             features: [
                 DockerFrom,
                 Logback,
