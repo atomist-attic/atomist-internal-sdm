@@ -136,35 +136,35 @@ describe("applyDockerBaseFingerprint", async () => {
     });
 });
 
-// const nginxDockerFile = `
-// FROM nginx
+const nginxDockerFile = `
+FROM nginx
 
-// COPY docker/nginx.conf /etc/nginx/nginx.conf
-// COPY resources/public /usr/share/nginx/html
+COPY docker/nginx.conf /etc/nginx/nginx.conf
+COPY resources/public /usr/share/nginx/html
 
-// EXPOSE 8080
-// `;
+EXPOSE 8080
+`;
 
-// const nginxResult = {
-//     type: "docker-base-image",
-//     name: undefined,
-//     abbreviation: "dbi-undefined",
-//     version: "0.0.1",
-//     data: { image: undefined, version: "latest" },
-//     sha: "454f05213dac2bccb21bc399ed9c5fe03a2acb968e06bd90596d13e093266bf6",
-// };
+const nginxResult = {
+    type: "docker-base-image",
+    name: "nginx",
+    abbreviation: "dbi-nginx",
+    version: "0.0.1",
+    data: { image: "nginx", version: "latest" },
+    sha: "3c855b8c9009bebf98335d7abd056377e23e0363c068c96eb90cb3807e4f3bbf",
+};
 
-// describe("taglessImage", async () => {
-//     it("should work with a latest image", async () => {
-//         const p = InMemoryProject.from({
-//             repo: "foo",
-//             sha: "26e18ee3e30c0df0f0f2ff0bc42a4bd08a7024b9",
-//             branch: "master",
-//             owner: "foo",
-//             url: "https://fake.com/foo/foo.git",
-//         }, ({ path: "docker/Dockerfile", content: nginxDockerFile })) as any;
+describe("taglessImage", async () => {
+    it("should work with a latest image", async () => {
+        const p = InMemoryProject.from({
+            repo: "foo",
+            sha: "26e18ee3e30c0df0f0f2ff0bc42a4bd08a7024b9",
+            branch: "master",
+            owner: "foo",
+            url: "https://fake.com/foo/foo.git",
+        }, ({ path: "docker/Dockerfile", content: nginxDockerFile })) as any;
 
-//         const result = await dockerBaseFingerprint(p);
-//         assert.strictEqual(result, nginxResult);
-//     });
-// });
+        const result = await dockerBaseFingerprint(p);
+        assert.deepEqual(result, nginxResult);
+    });
+});

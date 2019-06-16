@@ -313,11 +313,9 @@ export function machine(configuration: SoftwareDeliveryMachineConfiguration): So
     });
 
     nodeDockerBuild.with({
-        imageNameCreator: DefaultDockerImageNameCreator,
-        options: {
-            ...sdm.configuration.sdm.docker.jfrog as DockerOptions,
-            push: true,
-        },
+        dockerImageNameCreator: DefaultDockerImageNameCreator,
+        ...sdm.configuration.sdm.docker.jfrog as DockerOptions,
+        push: true,
     })
         .withProjectListener(NodeModulesProjectListener)
         .withProjectListener(NpmVersionProjectListener)
@@ -326,12 +324,10 @@ export function machine(configuration: SoftwareDeliveryMachineConfiguration): So
     neoApolloDockerBuild.with(
         {
             // note that I've just made this public locally for the moment
-            imageNameCreator: apolloImageNamer,
-            options: {
-                dockerfileFinder: async () => "apollo/Dockerfile",
-                ...sdm.configuration.sdm.docker.jfrog as DockerOptions,
-                push: true,
-            },
+            dockerImageNameCreator: apolloImageNamer,
+            dockerfileFinder: async () => "apollo/Dockerfile",
+            ...sdm.configuration.sdm.docker.jfrog as DockerOptions,
+            push: true,
         },
     );
 
@@ -408,9 +404,9 @@ export const apolloImageNamer: DockerImageNameCreator =
             ctx);
         const projectName = _.last(clj.getName(projectclj).split("/"));
         logger.info(`Docker Image name is generated from ${projectclj} name and version ${projectName} ${newversion}`);
-        return {
+        return [{
             name: `${projectName}-apollo`,
-            registry: options.registry,
+            registry: options.registry[0].name,
             tags: [newversion],
-        };
+        }];
     };

@@ -43,7 +43,7 @@ import {
     ProjectIdentifier,
     readSdmVersion,
 } from "@atomist/sdm-core";
-import { DockerOptions } from "@atomist/sdm-pack-docker";
+import { DockerOptions, DockerRegistry } from "@atomist/sdm-pack-docker";
 
 interface ProjectRegistryInfo {
     registry: string;
@@ -93,7 +93,7 @@ function spawnExecuteLogger(swc: SpawnWatchCommand): ExecuteLogger {
 
     return async (log: ProgressLog) => {
 
-        const opts: SpawnLogOptions = {log};
+        const opts: SpawnLogOptions = { log };
 
         if (swc.cwd) {
             opts.cwd = swc.cwd;
@@ -171,16 +171,18 @@ export async function dockerReleasePreparation(p: GitProject, rwlc: GoalInvocati
     const version = await rwlcVersion(rwlc);
     const dockerOptions = configurationValue<DockerOptions>("sdm.docker.hub");
     const image = dockerImage({
-        registry: dockerOptions.registry,
+        registry: dockerOptions.registry[0].name,
         name: p.name,
         version,
     });
+
+    const registry: DockerRegistry = dockerOptions.registry instanceof Array ? dockerOptions.registry[0] : dockerOptions.registry;
 
     const cmds: SpawnWatchCommand[] = [
         {
             cmd: {
                 command: "docker",
-                args: ["login", "--username", dockerOptions.user, "--password", dockerOptions.password],
+                args: ["login", "--username", registry.user, "--password", registry.password],
             },
         },
         {
@@ -216,12 +218,12 @@ export function executeReleaseDocker(
             const version = await rwlcVersion(rwlc);
             const versionRelease = releaseVersion(version);
             const image = dockerImage({
-                registry: options.registry,
+                registry: options.registry[0].name,
                 name: rwlc.id.repo,
                 version,
             });
             const tag = dockerImage({
-                registry: options.registry,
+                registry: options.registry[0].name,
                 name: rwlc.id.repo,
                 version: versionRelease,
             });
