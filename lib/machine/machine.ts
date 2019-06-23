@@ -72,11 +72,11 @@ import {
 } from "@atomist/sdm-pack-clojure";
 import {
     DefaultDockerImageNameCreator,
+    DockerFrom,
     DockerImageNameCreator,
     DockerOptions,
     HasDockerfile,
 } from "@atomist/sdm-pack-docker";
-import { DockerFrom } from "@atomist/sdm-pack-docker/lib/fingerprints/docker";
 import {
     fingerprintImpactHandler,
     fingerprintSupport,
