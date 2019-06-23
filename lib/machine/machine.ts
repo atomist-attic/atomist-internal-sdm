@@ -76,6 +76,7 @@ import {
     DockerOptions,
     HasDockerfile,
 } from "@atomist/sdm-pack-docker";
+import { DockerFrom } from "@atomist/sdm-pack-docker/lib/fingerprints/docker";
 import {
     fingerprintImpactHandler,
     fingerprintSupport,
@@ -92,7 +93,6 @@ import { HasTravisFile } from "@atomist/sdm/lib/api-helper/pushtest/ci/ciPushTes
 import * as df from "dateformat";
 import * as _ from "lodash";
 import * as path from "path";
-import { DockerFrom } from "../fingerprints/docker";
 import { K8SpecKick } from "../handlers/commands/HandleK8SpecKick";
 import { MakeSomePushes } from "../handlers/commands/MakeSomePushes";
 import { runIntegrationTestsCommand } from "../handlers/commands/RunIntegrationTests";
