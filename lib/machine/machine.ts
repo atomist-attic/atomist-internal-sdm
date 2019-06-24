@@ -97,6 +97,7 @@ import { K8SpecKick } from "../handlers/commands/HandleK8SpecKick";
 import { MakeSomePushes } from "../handlers/commands/MakeSomePushes";
 import { runIntegrationTestsCommand } from "../handlers/commands/RunIntegrationTests";
 import { handleRunningPods } from "./events/HandleRunningPods";
+import { LogzioPresence } from "./fingerprints/RemoveLogzio";
 import {
     autoCodeInspection,
     autofix,
@@ -255,6 +256,7 @@ export function machine(configuration: SoftwareDeliveryMachineConfiguration): So
                 Logback,
                 CljFunctions,
                 LeinDeps,
+                LogzioPresence,
             ],
             handlers: [
                 fingerprintImpactHandler(
