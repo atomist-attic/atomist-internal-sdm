@@ -121,7 +121,7 @@
       "severity": "warning"
     },
     "no-unsafe-finally": true,
-    "no-unused-expression": false,
+    "no-unused-expression": true,
     "no-use-before-declare": false,
     "no-var-keyword": true,
     "no-var-requires": true,
