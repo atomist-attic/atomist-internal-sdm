@@ -107,7 +107,7 @@
     "no-parameter-properties": false,
     "no-parameter-reassignment": true,
     "no-reference": true,
-    "no-reference-import": true,
+    "no-reference-import": false,
     "no-return-await": true,
     "no-shadowed-variable": true,
     "no-string-literal": true,
