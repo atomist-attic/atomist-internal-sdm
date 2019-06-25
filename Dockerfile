@@ -55,7 +55,6 @@ CMD [ "node_modules/.bin/atm-start" ]
 # Install app dependencies
 COPY package.json package-lock.json ./
 RUN npm ci
-RUN npm run git:info
 
 # Bundle app source
 COPY . .
