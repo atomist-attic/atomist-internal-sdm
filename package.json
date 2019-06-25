@@ -72,7 +72,7 @@
   },
   "scripts": {
     "autotest": "supervisor --watch index.ts,lib,test --extensions ts --no-restart-on exit --quiet --exec npm -- test",
-    "build": "npm-run-all gql:gen compile:ts test lint doc",
+    "build": "npm-run-all git:info gql:gen compile:ts test lint doc",
     "clean": "npm-run-all clean:compile clean:doc clean:run",
     "clean:compile": "rimraf git-info.json \"index.{d.ts,js{,.map}}\" \"{lib,test}/**/*.{d.ts,js{,.map}}\" lib/typings/types.ts",
     "clean:dist": "run-s clean clean:npm",
