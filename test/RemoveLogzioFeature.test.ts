@@ -43,6 +43,7 @@ describe("RemoveLogzioFeature", () => {
         const p = InMemoryProject.from(new SimpleRepoId("atomist", "sdm"),
             { path: "resources/logback.xml", content });
         const result = await logzio.createFingerprints(p);
+        assert(true === (await (await p.getFile("resources/logback.xml")).getContent()).includes("io.logz"), "Should include io.logz");
         assert.deepEqual(result, [{
             type: "logzio-presence",
             data: true,
@@ -55,6 +56,7 @@ describe("RemoveLogzioFeature", () => {
         assert(true === await logzio.applyFingerprint(p, targetfp));
         const after = await logzio.createFingerprints(p);
         assert(false === after[0].data);
+        assert(false === (await (await p.getFile("resources/logback.xml")).getContent()).includes("io.logz"), "Should not include io.logz");
         assert(false === await logzio.applyFingerprint(p, targetfp));
     });
 });

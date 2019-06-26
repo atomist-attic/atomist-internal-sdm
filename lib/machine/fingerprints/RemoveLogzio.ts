@@ -81,8 +81,10 @@ export const applyFingerprint: ApplyFingerprint = async (p, fp) => {
                     return R.append(e, acc);
                 }
             }, [], jsonData.elements[0].elements);
-            if (newElements.length !== jsonData.elements[0].elements.length) {
-                jsonData.elements[0].elements = newElements;
+            //  <logger name="io.logz.sender.com.bluejeans" level="OFF"/>
+            const withoutLoggerConfig = R.filter((e: any) => e.attributes.name !== "io.logz.sender.com.bluejeans", newElements);
+            if (withoutLoggerConfig.length !== jsonData.elements[0].elements.length) {
+                jsonData.elements[0].elements = withoutLoggerConfig;
                 await file.setContent(xml.js2xml(jsonData, {spaces: 2}));
                 return true;
             }
