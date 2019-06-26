@@ -72,7 +72,6 @@ import {
 } from "@atomist/sdm-pack-clojure";
 import {
     DefaultDockerImageNameCreator,
-    DockerFrom,
     DockerImageNameCreator,
     DockerOptions,
     HasDockerfile,
@@ -97,6 +96,7 @@ import { K8SpecKick } from "../handlers/commands/HandleK8SpecKick";
 import { MakeSomePushes } from "../handlers/commands/MakeSomePushes";
 import { runIntegrationTestsCommand } from "../handlers/commands/RunIntegrationTests";
 import { handleRunningPods } from "./events/HandleRunningPods";
+import { DockerFrom } from "./fingerprints/DockerFrom";
 import { LogzioPresence } from "./fingerprints/RemoveLogzio";
 import {
     autoCodeInspection,
@@ -315,9 +315,11 @@ export function machine(configuration: SoftwareDeliveryMachineConfiguration): So
     });
 
     nodeDockerBuild.with({
-        dockerImageNameCreator: DefaultDockerImageNameCreator,
-        ...sdm.configuration.sdm.docker.jfrog as DockerOptions,
-        push: true,
+        imageNameCreator: DefaultDockerImageNameCreator,
+        options: {
+            ...sdm.configuration.sdm.docker.jfrog as DockerOptions,
+            push: true,
+        },
     })
         .withProjectListener(NodeModulesProjectListener)
         .withProjectListener(NpmVersionProjectListener)
@@ -326,10 +328,12 @@ export function machine(configuration: SoftwareDeliveryMachineConfiguration): So
     neoApolloDockerBuild.with(
         {
             // note that I've just made this public locally for the moment
-            dockerImageNameCreator: apolloImageNamer,
-            dockerfileFinder: async () => "apollo/Dockerfile",
-            ...sdm.configuration.sdm.docker.jfrog as DockerOptions,
-            push: true,
+            imageNameCreator: apolloImageNamer,
+            options: {
+                dockerfileFinder: async () => "apollo/Dockerfile",
+                ...sdm.configuration.sdm.docker.jfrog as DockerOptions,
+                push: true,
+            },
         },
     );
 
@@ -392,10 +396,12 @@ export function machine(configuration: SoftwareDeliveryMachineConfiguration): So
 }
 
 export const apolloImageNamer: DockerImageNameCreator =
-    async (p: GitProject,
-           sdmGoal: SdmGoalEvent,
-           options: DockerOptions,
-           ctx: HandlerContext) => {
+    async (
+        p: GitProject,
+        sdmGoal: SdmGoalEvent,
+        options: DockerOptions,
+        ctx: HandlerContext) => {
+
         const projectclj = path.join(p.baseDir, "project.clj");
         const newversion = await readSdmVersion(
             sdmGoal.repo.owner,
@@ -405,10 +411,12 @@ export const apolloImageNamer: DockerImageNameCreator =
             sdmGoal.branch,
             ctx);
         const projectName = _.last(clj.getName(projectclj).split("/"));
+
         logger.info(`Docker Image name is generated from ${projectclj} name and version ${projectName} ${newversion}`);
-        return [{
+
+        return {
             name: `${projectName}-apollo`,
-            registry: options.registry[0].name,
+            registry: options.registry,
             tags: [newversion],
-        }];
+        };
     };

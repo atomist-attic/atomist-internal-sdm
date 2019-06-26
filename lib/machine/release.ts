@@ -45,7 +45,6 @@ import {
 } from "@atomist/sdm-core";
 import {
     DockerOptions,
-    DockerRegistry,
 } from "@atomist/sdm-pack-docker";
 
 interface ProjectRegistryInfo {
@@ -174,18 +173,16 @@ export async function dockerReleasePreparation(p: GitProject, rwlc: GoalInvocati
     const version = await rwlcVersion(rwlc);
     const dockerOptions = configurationValue<DockerOptions>("sdm.docker.hub");
     const image = dockerImage({
-        registry: dockerOptions.registry[0].name,
+        registry: dockerOptions.registry,
         name: p.name,
         version,
     });
-
-    const registry: DockerRegistry = dockerOptions.registry instanceof Array ? dockerOptions.registry[0] : dockerOptions.registry;
 
     const cmds: SpawnWatchCommand[] = [
         {
             cmd: {
                 command: "docker",
-                args: ["login", "--username", registry.user, "--password", registry.password],
+                args: ["login", "--username", dockerOptions.user, "--password", dockerOptions.password],
             },
         },
         {
@@ -221,12 +218,12 @@ export function executeReleaseDocker(
             const version = await rwlcVersion(rwlc);
             const versionRelease = releaseVersion(version);
             const image = dockerImage({
-                registry: options.registry[0].name,
+                registry: options.registry,
                 name: rwlc.id.repo,
                 version,
             });
             const tag = dockerImage({
-                registry: options.registry[0].name,
+                registry: options.registry,
                 name: rwlc.id.repo,
                 version: versionRelease,
             });
