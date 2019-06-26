@@ -17,11 +17,11 @@
 import {
     ApplyFingerprint,
     DiffSummaryFingerprint,
-     ExtractFingerprint,
-     Feature,
-      FP,
-      sha256,
- } from "@atomist/sdm-pack-fingerprints";
+    ExtractFingerprint,
+    Feature,
+    FP,
+    sha256,
+} from "@atomist/sdm-pack-fingerprints";
 
 import { logger } from "@atomist/automation-client";
 import * as R from "ramda";
@@ -44,7 +44,7 @@ const isAppender = (e: any) => e.name === "appender" && e.attributes.class === "
 
 const getAppenders = (jsonData: any) => {
     return R.map((e: any) => e.attributes.name,
-            R.filter(isAppender, jsonData.elements[0].elements));
+        R.filter(isAppender, jsonData.elements[0].elements));
 };
 
 export const createFingerprints: ExtractFingerprint = async p => {
@@ -63,36 +63,37 @@ export const createFingerprints: ExtractFingerprint = async p => {
 };
 
 export const applyFingerprint: ApplyFingerprint = async (p, fp) => {
-        const file = await p.getFile("resources/logback.xml");
-        if (file) {
-            const jsonData = xml.xml2js(await file.getContent());
-            const appenders = getAppenders(jsonData);
-            logger.info(`Applying Fingerprint: found ${appenders.length} logzio appenders`);
-            const newElements = R.reduce((acc, e: any) => {
-                if (isAppender(e)) {
-                    return acc;
-                } else if (e.name === "root") {
-                    e.elements = R.filter((ee: any) => {
-                        return R.none((a: string) => {
-                            return a === ee.attributes.ref;
-                        }, appenders);
-                    }, e.elements);
-                    return R.append(e, acc);
-                } else {
-                    return R.append(e, acc);
-                }
-            }, [], jsonData.elements[0].elements);
-            const withoutLoggerConfig = R.filter((e: any) => e.attributes.name !== "io.logz.sender.com.bluejeans", newElements);
-            if (withoutLoggerConfig.length !== jsonData.elements[0].elements.length) {
-                logger.info(`Removed ${jsonData.elements[0].elements.length - withoutLoggerConfig.length} XML elements`);
-                jsonData.elements[0].elements = withoutLoggerConfig;
-                await file.setContent(xml.js2xml(jsonData, {spaces: 2}));
-                return true;
+    logger.info(`Applying ${JSON.stringify(fp)} to ${p.id.url}`);
+    const file = await p.getFile("resources/logback.xml");
+    if (file) {
+        const jsonData = xml.xml2js(await file.getContent());
+        const appenders = getAppenders(jsonData);
+        logger.info(`Applying Fingerprint: found ${appenders.length} logzio appenders`);
+        const newElements = R.reduce((acc, e: any) => {
+            if (isAppender(e)) {
+                return acc;
+            } else if (e.name === "root") {
+                e.elements = R.filter((ee: any) => {
+                    return R.none((a: string) => {
+                        return a === ee.attributes.ref;
+                    }, appenders);
+                }, e.elements);
+                return R.append(e, acc);
+            } else {
+                return R.append(e, acc);
             }
-            logger.info(`Did not make any changes to project`);
-            return false;
+        }, [], jsonData.elements[0].elements);
+        const withoutLoggerConfig = R.filter((e: any) => e.attributes.name !== "io.logz.sender.com.bluejeans", newElements);
+        if (withoutLoggerConfig.length !== jsonData.elements[0].elements.length) {
+            logger.info(`Removed ${jsonData.elements[0].elements.length - withoutLoggerConfig.length} XML elements`);
+            jsonData.elements[0].elements = withoutLoggerConfig;
+            await file.setContent(xml.js2xml(jsonData, { spaces: 2 }));
+            return true;
         }
+        logger.info(`Did not make any changes to project`);
         return false;
+    }
+    return false;
 };
 
 /* tslint:disable:max-line-length */
@@ -108,7 +109,7 @@ export const LogzioPresence: Feature = {
     displayName: "logzio config removal",
     name: "logzio-removal",
     extract: createFingerprints,
-    selector:  myFp => myFp.type && myFp.type === LogzioPresence.name,
+    selector: myFp => myFp.type && myFp.type === LogzioPresence.name,
     summary: fingerpintSummary,
     toDisplayableFingerprint: fp => fp.data,
 };
