@@ -23,6 +23,8 @@ import {
     sha256,
 } from "@atomist/sdm-pack-fingerprints";
 
+import * as clj from "@atomist/clj-editors";
+
 import { logger } from "@atomist/automation-client";
 import * as R from "ramda";
 import * as xml from "xml-js";
@@ -65,6 +67,7 @@ export const createFingerprints: ExtractFingerprint = async p => {
 export const applyFingerprint: ApplyFingerprint = async (p, fp) => {
     logger.info(`Applying ${JSON.stringify(fp)} to ${p.id.url}`);
     const file = await p.getFile("resources/logback.xml");
+    let modified = false;
     if (file) {
         const jsonData = xml.xml2js(await file.getContent());
         const appenders = getAppenders(jsonData);
@@ -88,12 +91,11 @@ export const applyFingerprint: ApplyFingerprint = async (p, fp) => {
             logger.info(`Removed ${jsonData.elements[0].elements.length - withoutLoggerConfig.length} XML elements`);
             jsonData.elements[0].elements = withoutLoggerConfig;
             await file.setContent(xml.js2xml(jsonData, { spaces: 2 }));
-            return true;
+            modified = true;
         }
-        logger.info(`Did not make any changes to project`);
-        return false;
     }
-    return false;
+    logger.info(`Made ${modified === true ? "" : "no "}changes ${JSON.stringify(fp)} to ${p.id.url}`);
+    return modified;
 };
 
 /* tslint:disable:max-line-length */
@@ -109,6 +111,7 @@ export const LogzioPresence: Feature = {
     displayName: "logzio config removal",
     name: "logzio-removal",
     extract: createFingerprints,
+    apply: applyFingerprint,
     selector: myFp => myFp.type && myFp.type === LogzioPresence.name,
     summary: fingerpintSummary,
     toDisplayableFingerprint: fp => fp.data,
