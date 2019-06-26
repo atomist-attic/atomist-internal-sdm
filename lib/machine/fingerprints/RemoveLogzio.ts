@@ -106,9 +106,9 @@ export const fingerpintSummary: DiffSummaryFingerprint = (diff, target) => {
 
 export const LogzioPresence: Feature = {
     displayName: "logzio config presence",
-    name: "logzio-detected",
+    name: "logzio-presence",
     extract: createFingerprints,
-    selector: fp => fp.name.startsWith(LogzioPresence.name),
+    selector:  myFp => myFp.type && myFp.type === LogzioPresence.name,
     summary: fingerpintSummary,
     toDisplayableFingerprint: fp => fp.data,
 };
