@@ -23,6 +23,7 @@ import {
       sha256,
  } from "@atomist/sdm-pack-fingerprints";
 
+import { logger } from "@atomist/automation-client";
 import * as R from "ramda";
 import * as xml from "xml-js";
 /**
@@ -62,11 +63,11 @@ export const createFingerprints: ExtractFingerprint = async p => {
 };
 
 export const applyFingerprint: ApplyFingerprint = async (p, fp) => {
-
         const file = await p.getFile("resources/logback.xml");
         if (file) {
             const jsonData = xml.xml2js(await file.getContent());
             const appenders = getAppenders(jsonData);
+            logger.info(`Applying Fingerprint: found ${appenders.length} logzio appenders`);
             const newElements = R.reduce((acc, e: any) => {
                 if (isAppender(e)) {
                     return acc;
@@ -81,13 +82,14 @@ export const applyFingerprint: ApplyFingerprint = async (p, fp) => {
                     return R.append(e, acc);
                 }
             }, [], jsonData.elements[0].elements);
-            //  <logger name="io.logz.sender.com.bluejeans" level="OFF"/>
             const withoutLoggerConfig = R.filter((e: any) => e.attributes.name !== "io.logz.sender.com.bluejeans", newElements);
             if (withoutLoggerConfig.length !== jsonData.elements[0].elements.length) {
+                logger.info(`Removed ${jsonData.elements[0].elements.length - withoutLoggerConfig.length} XML elements`);
                 jsonData.elements[0].elements = withoutLoggerConfig;
                 await file.setContent(xml.js2xml(jsonData, {spaces: 2}));
                 return true;
             }
+            logger.info(`Did not make any changes to project`);
             return false;
         }
         return false;
