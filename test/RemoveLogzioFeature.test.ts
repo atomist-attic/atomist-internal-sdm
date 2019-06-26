@@ -56,6 +56,7 @@ describe("RemoveLogzioFeature", () => {
         assert(true === await logzio.applyFingerprint(p, targetfp));
         const after = await logzio.createFingerprints(p);
         assert(false === after[0].data);
+        assert("7d2488246b6cc7ec838d6c25b25731d5d7c005085c391aa511e760150030d616" === after[0].sha);
         assert(false === (await (await p.getFile("resources/logback.xml")).getContent()).includes("io.logz"), "Should not include io.logz");
         assert(false === await logzio.applyFingerprint(p, targetfp));
     });

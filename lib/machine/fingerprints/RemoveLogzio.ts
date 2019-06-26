@@ -62,7 +62,7 @@ export const createFingerprints: ExtractFingerprint = async p => {
 };
 
 export const applyFingerprint: ApplyFingerprint = async (p, fp) => {
-    if (fp.data === false) {
+    if (fp.data === false || fp.data === "false") {
         const file = await p.getFile("resources/logback.xml");
         if (file) {
             const jsonData = xml.xml2js(await file.getContent());
