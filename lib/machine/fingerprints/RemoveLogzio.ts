@@ -31,9 +31,9 @@ import * as xml from "xml-js";
  */
 export function createFP(found: boolean): FP {
     return {
-        type: "logzio-presence",
+        type: "logzio-removal",
         name: "logzio-detected",
-        abbreviation: "logzio-presence",
+        abbreviation: "logzio-removal",
         version: "0.0.1",
         data: found,
         sha: sha256(`logzio-detected:${found}`),
@@ -62,7 +62,7 @@ export const createFingerprints: ExtractFingerprint = async p => {
 };
 
 export const applyFingerprint: ApplyFingerprint = async (p, fp) => {
-    if (fp.data === false || fp.data === "false") {
+
         const file = await p.getFile("resources/logback.xml");
         if (file) {
             const jsonData = xml.xml2js(await file.getContent());
@@ -91,8 +91,6 @@ export const applyFingerprint: ApplyFingerprint = async (p, fp) => {
             return false;
         }
         return false;
-    }
-    return false;
 };
 
 /* tslint:disable:max-line-length */
@@ -105,8 +103,8 @@ export const fingerpintSummary: DiffSummaryFingerprint = (diff, target) => {
 };
 
 export const LogzioPresence: Feature = {
-    displayName: "logzio config presence",
-    name: "logzio-presence",
+    displayName: "logzio config removal",
+    name: "logzio-removal",
     extract: createFingerprints,
     selector:  myFp => myFp.type && myFp.type === LogzioPresence.name,
     summary: fingerpintSummary,

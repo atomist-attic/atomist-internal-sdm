@@ -86,7 +86,7 @@ export const applyDockerBaseFingerprint: ApplyFingerprint = async (p, fp) => {
             "//FROM/image/tag",
             n => n.$value = newFP.version,
         );
-        return (true);
+        return (true); // <--- lolz
     } catch (e) {
         logger.error(e);
         return false;
