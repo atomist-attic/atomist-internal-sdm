@@ -48,7 +48,7 @@ export const configuration: Configuration = {
     postProcessors: [
         configureLogzio,
         configureHumio,
-        configureRaven,
+        // configureRaven,
         configureDashboardNotifications,
         configureSdm(machine, machineOptions),
     ],
