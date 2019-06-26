@@ -65,10 +65,8 @@ export class MultiDockerBuild extends FulfillableGoalWithRegistrations<MultiDock
                 // to create an approprate response for the goalExecturo
                 registration.forEach(element => {
                     executeDockerBuild(
-                        {
-                            ...element.options,
-                            dockerImageNameCreator: element.imageNameCreator ? element.imageNameCreator : DefaultDockerImageNameCreator,
-                        },
+                        element.imageNameCreator ? element.imageNameCreator : DefaultDockerImageNameCreator,
+                        element.options,
                     );
                 });
             },
