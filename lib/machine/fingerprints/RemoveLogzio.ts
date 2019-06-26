@@ -49,25 +49,31 @@ const getAppenders = (jsonData: any) => {
         R.filter(isAppender, jsonData.elements[0].elements));
 };
 
+const libName = "io.logz.logback/logzio-logback-appender";
+
 export const createFingerprints: ExtractFingerprint = async p => {
     const file = await p.getFile("resources/logback.xml");
+    let hasLogzio = false;
     if (file) {
-
         const jsonData = xml.xml2js(await file.getContent());
 
         const appenders = getAppenders(jsonData);
-        if (R.isEmpty(appenders)) {
-            return [createFP(false)];
+        if (!R.isEmpty(appenders)) {
+            hasLogzio = true;
         }
-        return [createFP(true)];
     }
-    return undefined;
+    const prj = await p.getFile("project.clj");
+    if (!hasLogzio && prj) {
+        hasLogzio = (await prj.getContent()).includes(libName);
+    }
+    return [createFP(hasLogzio)];
 };
 
 export const applyFingerprint: ApplyFingerprint = async (p, fp) => {
     logger.info(`Applying ${JSON.stringify(fp)} to ${p.id.url}`);
     const file = await p.getFile("resources/logback.xml");
     let modified = false;
+
     if (file) {
         const jsonData = xml.xml2js(await file.getContent());
         const appenders = getAppenders(jsonData);
@@ -94,6 +100,15 @@ export const applyFingerprint: ApplyFingerprint = async (p, fp) => {
             modified = true;
         }
     }
+    const prj = await p.getFile("project.clj");
+    if (prj) {
+        const content = await prj.getContent();
+        const newContent = clj.rmProjectDep(content, libName) as any;
+        if (newContent !== content) {
+            await prj.setContent(newContent);
+            modified = true;
+        }
+    }
     logger.info(`Made ${modified === true ? "" : "no "}changes ${JSON.stringify(fp)} to ${p.id.url}`);
     return modified;
 };
@@ -102,8 +117,7 @@ export const applyFingerprint: ApplyFingerprint = async (p, fp) => {
 export const fingerpintSummary: DiffSummaryFingerprint = (diff, target) => {
     return {
         title: "Logzio Configuration Found",
-        description:
-            `Logzio is deprecated and should be removed`,
+        description: `Logzio is deprecated and should be removed`,
     };
 };
 
@@ -114,5 +128,5 @@ export const LogzioPresence: Feature = {
     apply: applyFingerprint,
     selector: myFp => myFp.type && myFp.type === LogzioPresence.name,
     summary: fingerpintSummary,
-    toDisplayableFingerprint: fp => fp.data,
+    toDisplayableFingerprint: fp => "Removing logzio configuration from logback.xml and project.clj",
 };
