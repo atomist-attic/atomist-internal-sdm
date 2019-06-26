@@ -103,7 +103,7 @@ export const applyFingerprint: ApplyFingerprint = async (p, fp) => {
     const prj = await p.getFile("project.clj");
     if (prj) {
         const content = await prj.getContent();
-        const newContent = clj.rmProjectDep(content, libName) as any;
+        const newContent = clj.rmProjectDep(content, libName);
         if (newContent !== content) {
             await prj.setContent(newContent);
             modified = true;
