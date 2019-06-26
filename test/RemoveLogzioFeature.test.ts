@@ -16,7 +16,6 @@
 
 import {
     InMemoryProject,
-   // logger,
     SimpleRepoId,
 } from "@atomist/automation-client";
 import * as fs from "fs";
@@ -25,19 +24,37 @@ import * as logzio from "../lib/machine/fingerprints/RemoveLogzio";
 
 describe("RemoveLogzioFeature", () => {
 
-    it("should exract fingerprints if there's a logzio appender and apply it", async () => {
+    it("should exract fingerprints if there's a logzio appender and not apply it", async () => {
         const content = fs.readFileSync("test/logzio-logback.xml").toLocaleString();
         const p = InMemoryProject.from(new SimpleRepoId("atomist", "sdm"),
             { path: "resources/logback.xml", content });
         const result = await logzio.createFingerprints(p);
         assert.deepEqual(result, [{
             type: "logzio-presence",
-            data: undefined,
+            data: true,
             name: "logzio-detected",
              abbreviation: "logzio-presence",
              version: "0.0.1", sha:
-             "7991b7f32d46efd8eccf66a1f1a19cbaa8449335b069b92065f72110a146e444"}]);
-        assert(true === await logzio.applyFingerprint(p, result[0]));
-        assert(fs.readFileSync("test/logzio-logback-fixed.xml").toLocaleString() === await (await p.getFile("resources/logback.xml")).getContent());
+             "ee8c5cdc8aa140033be7fe8ebfba79d9ce1e28b23dd1e94c390ee14b106ec40a"}]);
+        assert(false === await logzio.applyFingerprint(p, result[0]));
+    });
+    it("should apply the target fingerprint if not currently the target", async () => {
+        const content = fs.readFileSync("test/logzio-logback.xml").toLocaleString();
+        const p = InMemoryProject.from(new SimpleRepoId("atomist", "sdm"),
+            { path: "resources/logback.xml", content });
+        const result = await logzio.createFingerprints(p);
+        assert.deepEqual(result, [{
+            type: "logzio-presence",
+            data: true,
+            name: "logzio-detected",
+             abbreviation: "logzio-presence",
+             version: "0.0.1", sha:
+             "ee8c5cdc8aa140033be7fe8ebfba79d9ce1e28b23dd1e94c390ee14b106ec40a"}]);
+        const targetfp = result[0];
+        targetfp.data = false;
+        assert(true === await logzio.applyFingerprint(p, targetfp));
+        const after = await logzio.createFingerprints(p);
+        assert(false === after[0].data);
+        assert(false === await logzio.applyFingerprint(p, targetfp));
     });
 });

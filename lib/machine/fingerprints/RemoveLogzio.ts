@@ -29,14 +29,14 @@ import * as xml from "xml-js";
  * Construct an FP indicating presence of logzio configuration
  * @return {FP}
  */
-export function createFP(): FP {
+export function createFP(found: boolean): FP {
     return {
         type: "logzio-presence",
         name: "logzio-detected",
         abbreviation: "logzio-presence",
         version: "0.0.1",
-        data: undefined,
-        sha: sha256("logzio-detected"),
+        data: found,
+        sha: sha256(`logzio-detected:${found}`),
     };
 }
 const isAppender = (e: any) => e.name === "appender" && e.attributes.class === "io.logz.logback.LogzioLogbackAppender";
@@ -53,39 +53,44 @@ export const createFingerprints: ExtractFingerprint = async p => {
         const jsonData = xml.xml2js(await file.getContent());
 
         const appenders = getAppenders(jsonData);
-        if (!R.isEmpty(appenders)) {
-            return [createFP()];
+        if (R.isEmpty(appenders)) {
+            return [createFP(false)];
         }
-        return undefined;
-    } else {
-        return undefined;
+        return [createFP(true)];
     }
+    return undefined;
 };
 
 export const applyFingerprint: ApplyFingerprint = async (p, fp) => {
-    const file = await p.getFile("resources/logback.xml");
-    if (file) {
-        const jsonData = xml.xml2js(await file.getContent());
-        const appenders = getAppenders(jsonData);
-        jsonData.elements[0].elements = R.reduce((acc, e: any) => {
-            if (isAppender(e)) {
-                return acc;
-            } else if (e.name === "root") {
-                e.elements = R.filter((ee: any) => {
-                    return R.none((a: string) => {
-                        return a === ee.attributes.ref;
-                    }, appenders);
-                }, e.elements);
-                return R.append(e, acc);
-            } else {
-                return R.append(e, acc);
+    if (fp.data === false) {
+        const file = await p.getFile("resources/logback.xml");
+        if (file) {
+            const jsonData = xml.xml2js(await file.getContent());
+            const appenders = getAppenders(jsonData);
+            const newElements = R.reduce((acc, e: any) => {
+                if (isAppender(e)) {
+                    return acc;
+                } else if (e.name === "root") {
+                    e.elements = R.filter((ee: any) => {
+                        return R.none((a: string) => {
+                            return a === ee.attributes.ref;
+                        }, appenders);
+                    }, e.elements);
+                    return R.append(e, acc);
+                } else {
+                    return R.append(e, acc);
+                }
+            }, [], jsonData.elements[0].elements);
+            if (newElements.length !== jsonData.elements[0].elements.length) {
+                jsonData.elements[0].elements = newElements;
+                await file.setContent(xml.js2xml(jsonData, {spaces: 2}));
+                return true;
             }
-        }, [], jsonData.elements[0].elements);
-        await file.setContent(xml.js2xml(jsonData, {spaces: 2}));
-        return true;
-    } else {
+            return false;
+        }
         return false;
     }
+    return false;
 };
 
 /* tslint:disable:max-line-length */
