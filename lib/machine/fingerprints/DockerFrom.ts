@@ -22,7 +22,7 @@ import {
 import { File } from "@atomist/automation-client/lib/project/File";
 import { Project } from "@atomist/automation-client/lib/project/Project";
 import { DockerFileParser } from "@atomist/sdm-pack-docker";
-import { ApplyFingerprint, ExtractFingerprint, Feature, FP, sha256 } from "@atomist/sdm-pack-fingerprints";
+import { ApplyFingerprint, DefaultTargetDiffHandler, ExtractFingerprint, Feature, FP, sha256 } from "@atomist/sdm-pack-fingerprints";
 
 /**
  * Construct a Docker base image fingerprint from the given image and version
@@ -100,4 +100,7 @@ export const DockerFrom: Feature = {
     extract: dockerBaseFingerprint,
     selector: myFp => myFp.type && myFp.type === DockerFrom.name,
     toDisplayableFingerprint: fp => fp.data.version,
+    workflows: [
+        DefaultTargetDiffHandler,
+    ],
 };

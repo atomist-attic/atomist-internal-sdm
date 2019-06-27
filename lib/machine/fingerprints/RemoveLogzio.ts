@@ -16,6 +16,7 @@
 
 import {
     ApplyFingerprint,
+    DefaultTargetDiffHandler,
     DiffSummaryFingerprint,
     ExtractFingerprint,
     Feature,
@@ -129,4 +130,7 @@ export const LogzioPresence: Feature = {
     selector: myFp => myFp.type && myFp.type === LogzioPresence.name,
     summary: fingerpintSummary,
     toDisplayableFingerprint: fp => "Removing logzio configuration from logback.xml and project.clj",
+    workflows: [
+        DefaultTargetDiffHandler,
+    ],
 };
