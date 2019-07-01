@@ -43,7 +43,7 @@ export function neo4j(): K8sServiceRegistration {
         }, {
             name: "NEO4J_dbms_memory_heap_max__size",
             value: "1024M",
-        },],
+        }],
     } as any;
 
     const spec: K8sServiceSpec = {
