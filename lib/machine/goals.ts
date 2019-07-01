@@ -38,6 +38,7 @@ import {
 } from "@atomist/sdm-pack-clojure";
 import { DockerBuild } from "@atomist/sdm-pack-docker";
 import { elasticsearch } from "../services/elasticsearch";
+import { neo4j } from "../services/neo4j";
 import { FetchCommit } from "../typings/types";
 
 export const autoCodeInspection = new AutoCodeInspection({ isolate: true });
@@ -192,6 +193,7 @@ export const leinServiceCancel = new Cancel({
 });
 
 leinBuild.withService(elasticsearch("6.7.1"));
+leinBuild.withService(neo4j());
 
 // Just running review and autofix
 export const CheckGoals: Goals = goals("Check")
