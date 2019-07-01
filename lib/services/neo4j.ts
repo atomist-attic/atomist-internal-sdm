@@ -29,11 +29,11 @@ export function neo4j(): K8sServiceRegistration {
         imagePullPolicy: "IfNotPresent",
         resources: {
             limits: {
-                cpu: 0.5,
+                cpu: 1.5,
                 memory: "1536Mi",
             },
             requests: {
-                cpu: 0.5,
+                cpu: 1.5,
                 memory: "1536Mi",
             },
         },
