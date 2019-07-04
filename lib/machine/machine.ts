@@ -250,7 +250,6 @@ export function machine(configuration: SoftwareDeliveryMachineConfiguration): So
         fingerprintSupport({
             pushImpactGoal: FingerprintGoal,
             features: [
-                DockerFrom,
                 Logback,
                 CljFunctions,
                 LeinDeps,

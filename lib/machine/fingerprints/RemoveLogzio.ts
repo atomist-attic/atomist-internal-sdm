@@ -35,7 +35,7 @@ import * as xml from "xml-js";
  */
 export function createFP(found: boolean): FP {
     return {
-        type: "logzio-removal",
+        type: LogzioPresence.name,
         name: "logzio-detected",
         abbreviation: "logzio-removal",
         version: "0.0.1",
@@ -127,7 +127,6 @@ export const LogzioPresence: Feature = {
     name: "logzio-removal",
     extract: createFingerprints,
     apply: applyFingerprint,
-    selector: myFp => myFp.type && myFp.type === LogzioPresence.name,
     summary: fingerpintSummary,
     toDisplayableFingerprint: fp => "Removing logzio configuration from logback.xml and project.clj",
     workflows: [
