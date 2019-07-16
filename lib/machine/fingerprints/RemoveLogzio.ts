@@ -16,10 +16,10 @@
 
 import {
     ApplyFingerprint,
+    Aspect,
     DefaultTargetDiffHandler,
     DiffSummaryFingerprint,
     ExtractFingerprint,
-    Feature,
     FP,
     sha256,
 } from "@atomist/sdm-pack-fingerprints";
@@ -122,7 +122,7 @@ export const fingerpintSummary: DiffSummaryFingerprint = (diff, target) => {
     };
 };
 
-export const LogzioPresence: Feature = {
+export const LogzioPresence: Aspect = {
     displayName: "logzio config removal",
     name: "logzio-removal",
     extract: createFingerprints,
