@@ -267,7 +267,7 @@ export function machine(configuration: SoftwareDeliveryMachineConfiguration): So
         githubGoalStatusSupport(),
         fingerprintSupport({
             pushImpactGoal: FingerprintGoal,
-            features: [
+            aspects: [
                 Logback,
                 CljFunctions,
                 LeinDeps,
