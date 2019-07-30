@@ -43,7 +43,7 @@ async function getGoal(pod: RunningPods.K8Pod, context: HandlerContext): Promise
     const commit = pod.containers[0].image.commits[0];
     const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
 
-    if (pod.environment === "gke-int-production") {
+    if (pod.environment === "k8s-internal-production") {
         if (pod.namespace === "api-staging") {
             try {
                 return [
@@ -51,7 +51,7 @@ async function getGoal(pod: RunningPods.K8Pod, context: HandlerContext): Promise
                     deployToStaging.successDescription,
                 ];
             } catch (err) {
-                logger.info(`No goal staging deploy goal found`);
+                logger.info("No goal staging deploy goal found");
             }
         } else if (pod.namespace === "api-production") {
             try {
@@ -60,11 +60,20 @@ async function getGoal(pod: RunningPods.K8Pod, context: HandlerContext): Promise
                     deployToProd.successDescription,
                 ];
             } catch (err) {
-                logger.info(`No goal prod deploy goal found`);
+                logger.info("No goal prod deploy goal found");
             }
         }
+    } else if (pod.environment === "k8s-internal-staging" && pod.namespace === "api-staging") {
+        try {
+            return [
+                await findSdmGoalOnCommit(context, id, commit.repo.org.provider.providerId, deployToStaging),
+                deployToStaging.successDescription,
+            ];
+        } catch (err) {
+            logger.info("No goal staging deploy goal found");
+        }
     }
-    return undefined;
+    return [undefined, undefined];
 }
 
 export function handleRunningPods(): OnEvent<RunningPods.Subscription, NoParameters> {
@@ -107,7 +116,9 @@ export function handleRunningPods(): OnEvent<RunningPods.Subscription, NoParamet
                 });
             }
 
-            logger.info("Updated deploy goal '%s'", deployGoal.name);
+            logger.info(`Updated deploy goal '${deployGoal.name}'`);
+        } else {
+            logger.debug(`Ignoring running pod event for environment '${pod.environment}' and namespace '${pod.namespace}'`);
         }
 
         return Success;
