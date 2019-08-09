@@ -49,6 +49,7 @@ import {
     SoftwareDeliveryMachineConfiguration,
     spawnLog,
     ToDefaultBranch,
+    TransformPresentation,
     whenPushSatisfies,
 } from "@atomist/sdm";
 import {
@@ -79,7 +80,7 @@ import {
 import {
     fingerprintSupport,
 } from "@atomist/sdm-pack-fingerprints";
-import { EditModeMaker } from "@atomist/sdm-pack-fingerprints/lib/machine/fingerprintSupport";
+import { ApplyTargetParameters } from "@atomist/sdm-pack-fingerprints/lib/handlers/commands/applyFingerprint";
 import { singleIssuePerCategoryManaging } from "@atomist/sdm-pack-issue";
 import {
     IsNode,
@@ -183,7 +184,7 @@ const IsWorkspaceWhitelisted: PushTest =
         },
     );
 
-export const AutoApproveEditModeMaker: EditModeMaker = (ci, p) => {
+export const AutoApproveEditModeMaker: TransformPresentation<ApplyTargetParameters> = (ci, p) => {
     // name the branch apply-target-fingerprint with a Date
     // title can be derived from ApplyTargetParameters
     // body can be derived from ApplyTargetParameters
