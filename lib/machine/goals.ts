@@ -177,21 +177,6 @@ export const BranchNodeServiceGoals: Goals = goals("Simple Node Service Goals")
     .plan(nodeDockerBuild).after(nodeVersion)
     .plan(nodeTag).after(nodeDockerBuild);
 
-export const leinServiceCancel = new Cancel({
-    goals: [
-        autofix,
-        leinBuild,
-        version,
-        tag,
-        publish,
-        dockerBuild,
-        updateStagingK8Specs,
-        deployToStaging,
-        integrationTest,
-        updateProdK8Specs,
-        deployToProd],
-});
-
 leinBuild.withService(elasticsearch("6.7.1"));
 leinBuild.withService(neo4j());
 
@@ -218,14 +203,14 @@ export const LeinDockerGoals: Goals = goals("Lein Docker Build")
     .plan(tag).after(dockerBuild);
 
 export const LeinDefaultBranchDockerGoals: Goals = goals("Lein Docker Build")
-    .plan(leinServiceCancel, DefaultBranchGoals, LeinDockerGoals)
+    .plan(DefaultBranchGoals, LeinDockerGoals)
     .plan(updateStagingK8Specs).after(tag, autoCodeInspection)
     .plan(deployToStaging).after(updateStagingK8Specs)
     .plan(updateProdK8Specs).after(deployToStaging)
     .plan(deployToProd).after(updateProdK8Specs);
 
 export const LeinDefaultBranchIntegrationTestDockerGoals: Goals = goals("Lein Docker Build with Integration Test")
-    .plan(leinServiceCancel, DefaultBranchGoals, LeinDockerGoals)
+    .plan(DefaultBranchGoals, LeinDockerGoals)
     .plan(updateStagingK8Specs).after(tag, autoCodeInspection)
     .plan(deployToStaging).after(updateStagingK8Specs)
     .plan(integrationTest).after(deployToStaging)
