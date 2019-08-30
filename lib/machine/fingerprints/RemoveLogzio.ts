@@ -70,8 +70,8 @@ export const createFingerprints: ExtractFingerprint = async p => {
     return [createFP(hasLogzio)];
 };
 
-export const applyFingerprint: ApplyFingerprint = async (p, fp) => {
-    logger.info(`Applying ${JSON.stringify(fp)} to ${p.id.url}`);
+export const applyFingerprint: ApplyFingerprint = async (p, api) => {
+    logger.info(`Applying ${JSON.stringify(api.parameters.fp)} to ${p.id.url}`);
     const file = await p.getFile("resources/logback.xml");
     let modified = false;
 
@@ -110,8 +110,12 @@ export const applyFingerprint: ApplyFingerprint = async (p, fp) => {
             modified = true;
         }
     }
-    logger.info(`Made ${modified === true ? "" : "no "}changes ${JSON.stringify(fp)} to ${p.id.url}`);
-    return modified;
+    logger.info(`Made ${modified === true ? "" : "no "}changes ${JSON.stringify(api.parameters.fp)} to ${p.id.url}`);
+    return {
+        success: true,
+        edited: modified,
+        target: p,
+    };
 };
 
 /* tslint:disable:max-line-length */
