@@ -34,7 +34,7 @@ describe("RemoveLogzioFeature", () => {
             data: true,
             name: "logzio-detected",
             abbreviation: "logzio-removal",
-            version: "0.0.1", sha: "ee8c5cdc8aa140033be7fe8ebfba79d9ce1e28b23dd1e94c390ee14b106ec40a"
+            version: "0.0.1", sha: "ee8c5cdc8aa140033be7fe8ebfba79d9ce1e28b23dd1e94c390ee14b106ec40a",
         }]);
     });
     it("should apply the target fingerprint if not currently the target", async () => {
@@ -49,7 +49,7 @@ describe("RemoveLogzioFeature", () => {
             name: "logzio-detected",
             abbreviation: "logzio-removal",
             version: "0.0.1",
-            sha: "ee8c5cdc8aa140033be7fe8ebfba79d9ce1e28b23dd1e94c390ee14b106ec40a"
+            sha: "ee8c5cdc8aa140033be7fe8ebfba79d9ce1e28b23dd1e94c390ee14b106ec40a",
         }]);
         const targetfp = {
             type: "logzio-removal",
@@ -59,12 +59,12 @@ describe("RemoveLogzioFeature", () => {
             version: "0.0.1",
             sha: "7d2488246b6cc7ec838d6c25b25731d5d7c005085c391aa511e760150030d616",
         };
-        //assert(true === await logzio.applyFingerprint(p, papi));
+        // assert(true === await logzio.applyFingerprint(p, papi));
         const after = await logzio.createFingerprints(p);
         assert(false === after[0].data);
         assert("7d2488246b6cc7ec838d6c25b25731d5d7c005085c391aa511e760150030d616" === after[0].sha);
         assert(false === (await (await p.getFile("resources/logback.xml")).getContent()).includes("io.logz"), "Should not include io.logz");
-        //assert(false === await logzio.applyFingerprint(p, papi));
+        // assert(false === await logzio.applyFingerprint(p, papi));
     });
     it("should exract fingerprints if there's a logzio dependency", async () => {
         const content = fs.readFileSync("test/project-with-logzio.clj").toLocaleString();
@@ -76,7 +76,7 @@ describe("RemoveLogzioFeature", () => {
             data: true,
             name: "logzio-detected",
             abbreviation: "logzio-removal",
-            version: "0.0.1", sha: "ee8c5cdc8aa140033be7fe8ebfba79d9ce1e28b23dd1e94c390ee14b106ec40a"
+            version: "0.0.1", sha: "ee8c5cdc8aa140033be7fe8ebfba79d9ce1e28b23dd1e94c390ee14b106ec40a",
         }]);
     });
     it("should apply the target fingerprint if not currently the target dependency", async () => {
@@ -91,7 +91,7 @@ describe("RemoveLogzioFeature", () => {
             name: "logzio-detected",
             abbreviation: "logzio-removal",
             version: "0.0.1",
-            sha: "ee8c5cdc8aa140033be7fe8ebfba79d9ce1e28b23dd1e94c390ee14b106ec40a"
+            sha: "ee8c5cdc8aa140033be7fe8ebfba79d9ce1e28b23dd1e94c390ee14b106ec40a",
         }]);
         const targetfp = {
             type: "logzio-removal",
@@ -99,13 +99,13 @@ describe("RemoveLogzioFeature", () => {
             name: "logzio-detected",
             abbreviation: "logzio-removal",
             version: "0.0.1",
-            sha: "7d2488246b6cc7ec838d6c25b25731d5d7c005085c391aa511e760150030d616"
+            sha: "7d2488246b6cc7ec838d6c25b25731d5d7c005085c391aa511e760150030d616",
         };
-        //assert(true === await logzio.applyFingerprint(p, papi));
+        // assert(true === await logzio.applyFingerprint(p, papi));
         const after = await logzio.createFingerprints(p);
         assert(false === after[0].data);
         assert("7d2488246b6cc7ec838d6c25b25731d5d7c005085c391aa511e760150030d616" === after[0].sha);
         assert(false === (await (await p.getFile("project.clj")).getContent()).includes("io.logz"), "Should not include io.logz");
-        //assert(false === await logzio.applyFingerprint(p, papi));
+        // assert(false === await logzio.applyFingerprint(p, papi));
     });
 });
