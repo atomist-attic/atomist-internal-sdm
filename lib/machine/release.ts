@@ -44,7 +44,8 @@ import {
     readSdmVersion,
 } from "@atomist/sdm-core";
 import {
-    DockerOptions, DockerRegistry,
+    DockerOptions,
+    DockerRegistry,
 } from "@atomist/sdm-pack-docker";
 
 interface ProjectRegistryInfo {
