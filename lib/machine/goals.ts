@@ -163,20 +163,6 @@ export const targetComplianceGoal = new GoalWithFulfillment(
     },
 );
 
-export const NodeServiceGoals: Goals = goals("Simple Node Service Goals")
-    .plan(nodeVersion, nodeServiceCancel)
-    .plan(nodeDockerBuild).after(nodeVersion)
-    .plan(nodeTag).after(nodeDockerBuild)
-    .plan(updateStagingK8Specs).after(nodeTag)
-    .plan(deployToStaging).after(updateStagingK8Specs)
-    .plan(updateProdK8Specs).after(deployToStaging)
-    .plan(deployToProd).after(updateProdK8Specs);
-
-export const BranchNodeServiceGoals: Goals = goals("Simple Node Service Goals")
-    .plan(nodeVersion)
-    .plan(nodeDockerBuild).after(nodeVersion)
-    .plan(nodeTag).after(nodeDockerBuild);
-
 leinBuild.withService(elasticsearch("6.7.1"));
 leinBuild.withService(neo4j());
 

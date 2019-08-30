@@ -75,7 +75,6 @@ import {
     DefaultDockerImageNameCreator,
     DockerImageNameCreator,
     DockerOptions,
-    HasDockerfile,
 } from "@atomist/sdm-pack-docker";
 import {
     fingerprintSupport,
@@ -84,9 +83,6 @@ import { ApplyTargetParameters } from "@atomist/sdm-pack-fingerprints/lib/handle
 import { singleIssuePerCategoryManaging } from "@atomist/sdm-pack-issue";
 import {
     IsNode,
-    NodeModulesProjectListener,
-    NpmCompileProjectListener,
-    NpmVersionProjectListener,
 } from "@atomist/sdm-pack-node";
 import { HasTravisFile } from "@atomist/sdm/lib/api-helper/pushtest/ci/ciPushTests";
 import * as df from "dateformat";
@@ -100,7 +96,6 @@ import { LogzioPresence } from "./fingerprints/RemoveLogzio";
 import {
     autoCodeInspection,
     autofix,
-    BranchNodeServiceGoals,
     deployToProd,
     deployToStaging,
     dockerBuild,
@@ -112,8 +107,6 @@ import {
     LeinDefaultBranchIntegrationTestDockerGoals,
     LeinDockerGoals,
     neoApolloDockerBuild,
-    nodeDockerBuild,
-    NodeServiceGoals,
     nodeVersion,
     updateProdK8Specs,
     updateStagingK8Specs,
@@ -245,15 +238,6 @@ export function machine(configuration: SoftwareDeliveryMachineConfiguration): So
         whenPushSatisfies(IsLein, not(HasTravisFile), HasAtomistFile, not(HasAtomistDockerfile), MaterialChangeToClojureRepo)
             .itMeans("Build a Clojure Library with Leiningen")
             .setGoals(goals("library").plan(LeinBuildGoals, FingerprintGoal)),
-
-        whenPushSatisfies(not(IsLein), not(HasTravisFile), HasDockerfile, IsNode, ToDefaultBranch)
-            .itMeans("Simple node based docker service")
-            .setGoals(goals("simple node service").plan(NodeServiceGoals)),
-
-        whenPushSatisfies(not(IsLein), not(HasTravisFile), HasDockerfile, IsNode, not(ToDefaultBranch))
-            .itMeans("Simple node based docker service")
-            .setGoals(goals("simple node service").plan(BranchNodeServiceGoals)),
-
     );
 
     sdm.addExtensionPacks(
@@ -321,17 +305,6 @@ export function machine(configuration: SoftwareDeliveryMachineConfiguration): So
             },
         },
     );
-
-    nodeDockerBuild.with({
-        dockerImageNameCreator: DefaultDockerImageNameCreator,
-        push: true,
-        registry: {
-            ...sdm.configuration.sdm.docker.jfrog,
-        },
-    })
-        .withProjectListener(NodeModulesProjectListener)
-        .withProjectListener(NpmVersionProjectListener)
-        .withProjectListener(NpmCompileProjectListener);
 
     neoApolloDockerBuild.with(
         {
