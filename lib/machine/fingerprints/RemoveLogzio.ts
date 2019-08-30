@@ -111,11 +111,7 @@ export const applyFingerprint: ApplyFingerprint = async (p, api) => {
         }
     }
     logger.info(`Made ${modified === true ? "" : "no "}changes ${JSON.stringify(api.parameters.fp)} to ${p.id.url}`);
-    return {
-        success: true,
-        edited: modified,
-        target: p,
-    };
+    return p;
 };
 
 /* tslint:disable:max-line-length */

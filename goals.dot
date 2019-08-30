@@ -6,9 +6,7 @@ graph {
     autofix [fillcolor="green", style="filled"]
     autoCodeInspection [fillcolor=green,style=filled]
     tag [fillcolor=grey,style=filled]
-    nodeTag [fillcolor=grey,style=filled]
 
-    nodeVersion [fillcolor=blue,style=filled]
     updateStagingK8Specs [fillcolor=blue,style=filled]
     deployToStaging [fillcolor=blue,style=filled]
     integrationTest [fillcolor=blue,style=filled]
@@ -16,7 +14,6 @@ graph {
     deployToProd [fillcolor=blue,style=filled]
     
     dockerBuild [fillcolor=lightblue,style=filled]
-    nodeDockerBuild [fillcolor=lightblue,style=filled]
     neoApolloDockerBuild [fillcolor=lightblue,style=filled]
 
     Push -- "Build project with lein and npm parts"
@@ -25,8 +22,6 @@ graph {
     Push -- "Build a Clojure Service with Leiningen"
     Push -- "Build a Clojure Service with Leiningen (default branch)"
     Push -- "Build a Clojure Library with Leiningen"
-    Push -- "Simple node based docker service (default branch)"
-    Push -- "Simple node based docker service (default branch)"
 
     "Build project with lein and npm parts" [shape = "rect"]
     "Build a Clojure Service with Leiningen (default branch)" [shape = "rect"]
@@ -34,8 +29,6 @@ graph {
     "Build a Clojure Service with Leiningen" [shape = "rect"]
     "Build a Clojure Service with Leiningen (default branch)" [shape = "rect"]
     "Build a Clojure Library with Leiningen" [shape = "rect"]
-    "Simple node based docker service (default branch)" [shape = "rect"]
-    "Simple node based docker service (default branch)" [shape = "rect"]
 
     "Build project with lein and npm parts" -- LeinAndNodeDockerGoals
     "Build a Clojure Service with Leiningen (default branch)" -- LeinDefaultBranchDockerGoals
@@ -43,19 +36,7 @@ graph {
     "Build a Clojure Service with Leiningen" -- LeinDockerGoals
     "Build a Clojure Service with Leiningen (default branch)" -- LeinDefaultBranchBuildGoals
     "Build a Clojure Library with Leiningen" -- LeinBuildGoals
-    "Simple node based docker service (default branch)" -- NodeServiceGoals
-    "Simple node based docker service (default branch)" -- BranchNodeServiceGoals
 
-    NodeServiceGoals -- nodeVersion [label="X"]
-    NodeServiceGoals -- nodeServiceCancel [label="X"]
-    nodeVersion -- nodeDockerBuild [label="X"]
-    nodeDockerBuild -- nodeTag [label="X"]
-    nodeTag -- updateStagingK8Specs [label="X"]
-    deployToStaging -- updateProdK8Specs [label="X"]
-    updateProdK8Specs -- deployToProd [label="X"]
-    BranchNodeServiceGoals -- nodeVersion [label="Y"]
-    nodeVersion -- nodeDockerBuild [label="Y"]
-    nodeDockerBuild -- nodeTag [label="Y"]
     CheckGoals -- autofix [label="Z"]
     autofix -- version [label="Z"]
     autofix -- autoCodeInspection [label="Z"]
