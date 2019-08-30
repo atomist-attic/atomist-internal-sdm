@@ -12,6 +12,10 @@ software.
 
 [atomist-doc]: https://docs.atomist.com/ (Atomist Documentation)
 
+## Push Rules and Goals
+
+![goals](goals.png)
+
 ## Prerequisites
 
 See the [Atomist Developer documentation][atomist-dev] for
