@@ -20,7 +20,10 @@ import {
     Project,
     SimpleRepoId,
 } from "@atomist/automation-client";
-import { PushAwareParametersInvocation, TransformReturnable } from "@atomist/sdm";
+import {
+    PushAwareParametersInvocation,
+    TransformReturnable,
+} from "@atomist/sdm";
 import { FP } from "@atomist/sdm-pack-fingerprints";
 import * as fs from "fs";
 import * as assert from "power-assert";
