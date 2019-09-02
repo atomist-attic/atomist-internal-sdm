@@ -1,0 +1,85 @@
+graph {
+
+    leinBuild [color=red,style=filled]
+    publish [color=red,style=filled]
+    version [fillcolor="green", style="filled"]
+    autofix [fillcolor="green", style="filled"]
+    autoCodeInspection [fillcolor=green,style=filled]
+    tag [fillcolor=grey,style=filled]
+
+    updateStagingK8Specs [fillcolor=blue,style=filled]
+    deployToStaging [fillcolor=blue,style=filled]
+    integrationTest [fillcolor=blue,style=filled]
+    updateProdK8Specs [fillcolor=blue,style=filled]
+    deployToProd [fillcolor=blue,style=filled]
+    
+    dockerBuild [fillcolor=lightblue,style=filled]
+    neoApolloDockerBuild [fillcolor=lightblue,style=filled]
+
+    Push -- "Build project with lein and npm parts"
+    Push -- "Build a Clojure Service with Leiningen (default branch)"
+    Push -- "Build a Clojure Service with Leiningen, and run integration tests"
+    Push -- "Build a Clojure Service with Leiningen"
+    Push -- "Build a Clojure Service with Leiningen (default branch)"
+    Push -- "Build a Clojure Library with Leiningen"
+
+    "Build project with lein and npm parts" [shape = "rect"]
+    "Build a Clojure Service with Leiningen (default branch)" [shape = "rect"]
+    "Build a Clojure Service with Leiningen, and run integration tests" [shape = "rect"]
+    "Build a Clojure Service with Leiningen" [shape = "rect"]
+    "Build a Clojure Service with Leiningen (default branch)" [shape = "rect"]
+    "Build a Clojure Library with Leiningen" [shape = "rect"]
+
+    "Build project with lein and npm parts" -- LeinAndNodeDockerGoals
+    "Build a Clojure Service with Leiningen (default branch)" -- LeinDefaultBranchDockerGoals
+    "Build a Clojure Service with Leiningen, and run integration tests" -- LeinDefaultBranchIntegrationTestDockerGoals
+    "Build a Clojure Service with Leiningen" -- LeinDockerGoals
+    "Build a Clojure Service with Leiningen (default branch)" -- LeinDefaultBranchBuildGoals
+    "Build a Clojure Library with Leiningen" -- LeinBuildGoals
+
+    CheckGoals -- autofix [label="Z"]
+    autofix -- version [label="Z"]
+    autofix -- autoCodeInspection [label="Z"]
+    DefaultBranchGoals -- autofix [label="A"]
+    LeinBuildGoals -- CheckGoals [label="B"]
+    LeinBuildGoals -- leinBuild [label="B"]
+    version -- leinBuild [label="B"]
+    LeinDefaultBranchBuildGoals -- DefaultBranchGoals [label="C"]
+    LeinDefaultBranchBuildGoals -- LeinBuildGoals [label="C"]
+    leinBuild -- sync1 [label="C"]
+    autoCodeInspection -- sync1 [label="C"]
+    sync1 -- publish [label="C"]
+    publish -- tag [label="C"]
+    LeinDockerGoals -- LeinBuildGoals [label="D"]
+    leinBuild -- dockerBuild [label="D"]
+    dockerBuild -- tag [label="D"]
+    LeinDefaultBranchDockerGoals -- DefaultBranchGoals [label="E"]
+    LeinDefaultBranchDockerGoals -- LeinDockerGoals [label="E"]
+    tag -- sync2 [label="E"]
+    autoCodeInspection -- sync2 [label="E"]
+    sync2 -- updateStagingK8Specs [label="E"]
+    updateStagingK8Specs -- deployToStaging [label="E"]
+    deployToStaging -- updateProdK8Specs [label="E"]
+    updateProdK8Specs -- deployToProd [label="E"]
+    LeinDefaultBranchIntegrationTestDockerGoals -- DefaultBranchGoals [label="F"]
+    LeinDefaultBranchIntegrationTestDockerGoals -- LeinDockerGoals [label="F"]
+    tag -- sync3 [label="F"]
+    autoCodeInspection -- sync3 [label="F"]
+    sync3 -- updateStagingK8Specs [label="F"]
+    deployToStaging -- integrationTest [label="F"]
+    integrationTest -- updateProdK8Specs [label="F"]
+    updateProdK8Specs -- deployToProd [label="F"]
+    LeinAndNodeDockerGoals -- LeinBuildGoals [label="G"]
+    LeinAndNodeDockerGoals -- DefaultBranchGoals [label="G"]
+    leinBuild -- neoApolloDockerBuild [label="G"]
+    leinBuild -- dockerBuild [label="G"]
+    neoApolloDockerBuild -- tag [label="G"]
+    tag -- updateStagingK8Specs [label="G"]
+    updateStagingK8Specs -- deployToStaging [label="G"]
+    deployToStaging -- updateProdK8Specs [label="G"]
+    updateProdK8Specs -- deployToProd [label="G"]
+
+    sync1 [shape=circle]
+    sync2 [shape=circle]
+    sync3 [shape=circle]
+}

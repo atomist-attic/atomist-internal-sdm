@@ -25,7 +25,6 @@ import {
     configureSdm,
 } from "@atomist/sdm-core";
 import {
-    dockerBuild,
     leinBuild,
 } from "@atomist/sdm-pack-clojure/lib/machine/goals";
 import { machine } from "./lib/machine/machine";
@@ -68,9 +67,6 @@ export const configuration: Configuration = {
             defaultSize: MockGoalSize.Small,
             goals: [{
                 goal: leinBuild,
-                size: MockGoalSize.Medium,
-            }, {
-                goal: dockerBuild,
                 size: MockGoalSize.Medium,
             }],
         },

@@ -75,7 +75,6 @@ import {
     DefaultDockerImageNameCreator,
     DockerImageNameCreator,
     DockerOptions,
-    HasDockerfile,
 } from "@atomist/sdm-pack-docker";
 import {
     fingerprintSupport,
@@ -84,9 +83,6 @@ import { ApplyTargetParameters } from "@atomist/sdm-pack-fingerprints/lib/handle
 import { singleIssuePerCategoryManaging } from "@atomist/sdm-pack-issue";
 import {
     IsNode,
-    NodeModulesProjectListener,
-    NpmCompileProjectListener,
-    NpmVersionProjectListener,
 } from "@atomist/sdm-pack-node";
 import { HasTravisFile } from "@atomist/sdm/lib/api-helper/pushtest/ci/ciPushTests";
 import * as df from "dateformat";
@@ -100,7 +96,6 @@ import { LogzioPresence } from "./fingerprints/RemoveLogzio";
 import {
     autoCodeInspection,
     autofix,
-    BranchNodeServiceGoals,
     deployToProd,
     deployToStaging,
     dockerBuild,
@@ -112,8 +107,6 @@ import {
     LeinDefaultBranchIntegrationTestDockerGoals,
     LeinDockerGoals,
     neoApolloDockerBuild,
-    nodeDockerBuild,
-    NodeServiceGoals,
     nodeVersion,
     updateProdK8Specs,
     updateStagingK8Specs,
@@ -239,28 +232,18 @@ export function machine(configuration: SoftwareDeliveryMachineConfiguration): So
             .setGoals(goals("service with fingerprints").plan(LeinDockerGoals, FingerprintGoal)),
 
         whenPushSatisfies(IsLein, not(HasTravisFile), HasAtomistFile, not(HasAtomistDockerfile), ToDefaultBranch, MaterialChangeToClojureRepo)
-            .itMeans("Build a Clojure Library with Leiningen")
+            .itMeans("Build a Clojure Library with Leiningen (default branch)")
             .setGoals(goals("library on master with fingerprints").plan(LeinDefaultBranchBuildGoals, FingerprintGoal)),
 
         whenPushSatisfies(IsLein, not(HasTravisFile), HasAtomistFile, not(HasAtomistDockerfile), MaterialChangeToClojureRepo)
             .itMeans("Build a Clojure Library with Leiningen")
             .setGoals(goals("library").plan(LeinBuildGoals, FingerprintGoal)),
-
-        whenPushSatisfies(not(IsLein), not(HasTravisFile), HasDockerfile, IsNode, ToDefaultBranch)
-            .itMeans("Simple node based docker service")
-            .setGoals(goals("simple node service").plan(NodeServiceGoals)),
-
-        whenPushSatisfies(not(IsLein), not(HasTravisFile), HasDockerfile, IsNode, not(ToDefaultBranch))
-            .itMeans("Simple node based docker service")
-            .setGoals(goals("simple node service").plan(BranchNodeServiceGoals)),
-
     );
 
     sdm.addExtensionPacks(
         leinSupport({
             autofixGoal: autofix,
             inspectGoal: autoCodeInspection,
-            dockerBuild,
             version,
         }),
         k8sGoalSchedulingSupport(),
@@ -312,25 +295,25 @@ export function machine(configuration: SoftwareDeliveryMachineConfiguration): So
         goalExecutor: executeVersioner(NodeProjectVersioner),
     });
 
-    nodeDockerBuild.with({
-        imageNameCreator: DefaultDockerImageNameCreator,
-        options: {
-            ...sdm.configuration.sdm.docker.jfrog as DockerOptions,
+    dockerBuild.with(
+        {
+            dockerImageNameCreator: DefaultDockerImageNameCreator,
+            dockerfileFinder: async () => "docker/Dockerfile",
             push: true,
+            registry: {
+                ...sdm.configuration.sdm.docker.jfrog,
+            },
         },
-    })
-        .withProjectListener(NodeModulesProjectListener)
-        .withProjectListener(NpmVersionProjectListener)
-        .withProjectListener(NpmCompileProjectListener);
+    );
 
     neoApolloDockerBuild.with(
         {
             // note that I've just made this public locally for the moment
-            imageNameCreator: apolloImageNamer,
-            options: {
-                dockerfileFinder: async () => "apollo/Dockerfile",
-                ...sdm.configuration.sdm.docker.jfrog as DockerOptions,
-                push: true,
+            dockerImageNameCreator: apolloImageNamer,
+            dockerfileFinder: async () => "apollo/Dockerfile",
+            push: true,
+            registry: {
+                ...sdm.configuration.sdm.docker.jfrog,
             },
         },
     );
@@ -412,9 +395,9 @@ export const apolloImageNamer: DockerImageNameCreator =
 
         logger.info(`Docker Image name is generated from ${projectclj} name and version ${projectName} ${newversion}`);
 
-        return {
+        return [{
             name: `${projectName}-apollo`,
-            registry: options.registry,
+            registry: Array.isArray(options.registry) ? options.registry[0].registry : options.registry.registry,
             tags: [newversion],
-        };
+        }];
     };
