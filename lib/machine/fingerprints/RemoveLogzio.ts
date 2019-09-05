@@ -22,7 +22,7 @@ import {
     ExtractFingerprint,
     FP,
     sha256,
-} from "@atomist/sdm-pack-fingerprints";
+} from "@atomist/sdm-pack-fingerprint";
 
 import * as clj from "@atomist/clj-editors";
 

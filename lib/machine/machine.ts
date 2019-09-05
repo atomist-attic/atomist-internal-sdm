@@ -78,8 +78,8 @@ import {
 } from "@atomist/sdm-pack-docker";
 import {
     fingerprintSupport,
-} from "@atomist/sdm-pack-fingerprints";
-import { ApplyTargetParameters } from "@atomist/sdm-pack-fingerprints/lib/handlers/commands/applyFingerprint";
+} from "@atomist/sdm-pack-fingerprint";
+import { ApplyTargetParameters } from "@atomist/sdm-pack-fingerprint/lib/handlers/commands/applyFingerprint";
 import { singleIssuePerCategoryManaging } from "@atomist/sdm-pack-issue";
 import {
     IsNode,

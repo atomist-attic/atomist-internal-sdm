@@ -24,7 +24,7 @@ import {
     PushAwareParametersInvocation,
     TransformReturnable,
 } from "@atomist/sdm";
-import { FP } from "@atomist/sdm-pack-fingerprints";
+import { FP } from "@atomist/sdm-pack-fingerprint";
 import * as fs from "fs";
 import * as assert from "power-assert";
 import * as logzio from "../lib/machine/fingerprints/RemoveLogzio";
@@ -44,7 +44,7 @@ describe("RemoveLogzioFeature", () => {
         const content = fs.readFileSync("test/logzio-logback.xml").toLocaleString();
         const p = InMemoryProject.from(new SimpleRepoId("atomist", "sdm"),
             { path: "resources/logback.xml", content });
-        const result = await logzio.createFingerprints(p);
+        const result = await logzio.createFingerprints(p, {} as any);
         assert.deepEqual(result, [{
             type: "logzio-removal",
             data: true,
@@ -57,7 +57,7 @@ describe("RemoveLogzioFeature", () => {
         const content = fs.readFileSync("test/logzio-logback.xml").toLocaleString();
         const p = InMemoryProject.from(new SimpleRepoId("atomist", "sdm"),
             { path: "resources/logback.xml", content });
-        const result = await logzio.createFingerprints(p);
+        const result = await logzio.createFingerprints(p, {} as any);
         assert(true === (await (await p.getFile("resources/logback.xml")).getContent()).includes("io.logz"), "Should include io.logz");
         assert.deepEqual(result, [{
             type: "logzio-removal",
@@ -76,7 +76,7 @@ describe("RemoveLogzioFeature", () => {
             sha: "7d2488246b6cc7ec838d6c25b25731d5d7c005085c391aa511e760150030d616",
         };
         await logzio.applyFingerprint(p, getPapi(targetfp));
-        const after = await logzio.createFingerprints(p);
+        const after = await logzio.createFingerprints(p, {} as any);
         assert(false === after[0].data);
         assert("7d2488246b6cc7ec838d6c25b25731d5d7c005085c391aa511e760150030d616" === after[0].sha);
         assert(false === (await (await p.getFile("resources/logback.xml")).getContent()).includes("io.logz"), "Should not include io.logz");
@@ -85,7 +85,7 @@ describe("RemoveLogzioFeature", () => {
         const content = fs.readFileSync("test/project-with-logzio.clj").toLocaleString();
         const p = InMemoryProject.from(new SimpleRepoId("atomist", "sdm"),
             { path: "project.clj", content });
-        const result = await logzio.createFingerprints(p);
+        const result = await logzio.createFingerprints(p, {} as any);
         assert.deepEqual(result, [{
             type: "logzio-removal",
             data: true,
@@ -98,7 +98,7 @@ describe("RemoveLogzioFeature", () => {
         const content = fs.readFileSync("test/project-with-logzio.clj").toLocaleString();
         const p = InMemoryProject.from(new SimpleRepoId("atomist", "sdm"),
             { path: "project.clj", content });
-        const result = await logzio.createFingerprints(p);
+        const result = await logzio.createFingerprints(p, {} as any);
         assert(true === (await (await p.getFile("project.clj")).getContent()).includes("io.logz"), "Should include io.logz");
         assert.deepEqual(result, [{
             type: "logzio-removal",
@@ -117,7 +117,7 @@ describe("RemoveLogzioFeature", () => {
             sha: "7d2488246b6cc7ec838d6c25b25731d5d7c005085c391aa511e760150030d616",
         };
         await logzio.applyFingerprint(p, getPapi(targetfp));
-        const after = await logzio.createFingerprints(p);
+        const after = await logzio.createFingerprints(p, {} as any);
         assert(false === after[0].data);
         assert("7d2488246b6cc7ec838d6c25b25731d5d7c005085c391aa511e760150030d616" === after[0].sha);
         assert(false === (await (await p.getFile("project.clj")).getContent()).includes("io.logz"), "Should not include io.logz");
