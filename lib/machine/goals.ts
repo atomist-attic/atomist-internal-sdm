@@ -163,7 +163,7 @@ export const targetComplianceGoal = new GoalWithFulfillment(
     },
 );
 
-leinBuild.withService(elasticsearch("6.7.1"));
+leinBuild.withService(elasticsearch("6.8.2"));
 leinBuild.withService(neo4j());
 
 // Just running review and autofix
