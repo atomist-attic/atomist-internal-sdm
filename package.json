@@ -20,16 +20,16 @@
     "url": "https://github.com/atomist/atomist-internal-sdm/issues"
   },
   "dependencies": {
-    "@atomist/automation-client": "^1.6.2",
+    "@atomist/automation-client": "^1.7.0",
     "@atomist/automation-client-ext-dashboard": "1.0.2-master.20190107121940",
     "@atomist/automation-client-ext-humio": "^0.2.0",
     "@atomist/automation-client-ext-logzio": "1.0.2-master.20181213233859",
     "@atomist/automation-client-ext-raven": "1.0.2-master.20181213200324",
     "@atomist/clj-editors": "0.8.2",
-    "@atomist/sdm": "^1.6.1",
-    "@atomist/sdm-core": "^1.6.1",
+    "@atomist/sdm": "^1.7.0",
+    "@atomist/sdm-core": "^1.7.0",
     "@atomist/sdm-pack-build": "1.0.6-master.20190903202948",
-    "@atomist/sdm-pack-clojure": "2.0.1",
+    "@atomist/sdm-pack-clojure": "^2.0.2",
     "@atomist/sdm-pack-docker": "2.0.3-master.20190903064256",
     "@atomist/sdm-pack-fingerprint": "5.0.0-master.20190903165024",
     "@atomist/sdm-pack-issue": "^1.1.0",
@@ -61,11 +61,11 @@
     "rimraf": "^2.6.3",
     "source-map-support": "^0.5.9",
     "supervisor": "^0.12.0",
-    "ts-node": "8.2.0",
-    "tslint": "^5.17.0",
-    "typedoc": "^0.14.2",
+    "ts-node": "^8.3.0",
+    "tslint": "^5.19.0",
+    "typedoc": "^0.15.0",
     "marked": "^0.6.2",
-    "typescript": "3.5.3"
+    "typescript": "^3.6.2"
   },
   "directories": {
     "test": "test"
