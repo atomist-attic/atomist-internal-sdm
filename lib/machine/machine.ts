@@ -287,7 +287,7 @@ export function machine(configuration: SoftwareDeliveryMachineConfiguration): So
 
     updateProdK8Specs.with({
         name: "update-prod-k8-specs",
-        goalExecutor: k8SpecUpdater("prod"),
+        goalExecutor: k8SpecUpdater("production"),
     });
 
     nodeVersion.with({

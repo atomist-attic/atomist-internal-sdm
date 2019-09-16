@@ -190,13 +190,14 @@ export const updateK8Spec: SimpleProjectEditor = async (project: Project, ctx: H
 
 };
 
-export function k8SpecUpdater(branch: string): ExecuteGoal {
+export function k8SpecUpdater(env: string): ExecuteGoal {
     return async (rwlc: GoalInvocation): Promise<ExecuteGoalResult> => {
         const { credentials, id, configuration } = rwlc;
         const version = await rwlcVersion(rwlc);
+        const repo = `k8s-internal-${env}-specs`;
         return configuration.sdm.projectLoader.doWithProject({
             credentials,
-            id: GitHubRepoRef.from({ owner: "atomisthq", repo: "atomist-k8-specs", branch }),
+            id: GitHubRepoRef.from({ owner: "atomisthq", repo, branch: "master" }),
             readOnly: false,
             context: rwlc.context,
             cloneOptions: {
@@ -204,7 +205,7 @@ export function k8SpecUpdater(branch: string): ExecuteGoal {
             },
         },
             async (project: GitProject) => {
-                await updateK8Spec(project, rwlc.context, { owner: id.owner, repo: id.repo, version, branch });
+                await updateK8Spec(project, rwlc.context, { owner: id.owner, repo: id.repo, version, branch: env });
                 await project.commit(`Update ${id.owner}/${id.repo} to ${version}`);
                 await project.push();
                 return SuccessPromise;
