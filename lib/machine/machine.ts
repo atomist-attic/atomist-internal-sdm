@@ -70,6 +70,7 @@ import {
     leinSupport,
     Logback,
     MaterialChangeToClojureRepo,
+    Metajar,
 } from "@atomist/sdm-pack-clojure";
 import {
     DefaultDockerImageNameCreator,
@@ -304,7 +305,7 @@ export function machine(configuration: SoftwareDeliveryMachineConfiguration): So
                 ...sdm.configuration.sdm.docker.jfrog,
             },
         },
-    );
+    ).withProjectListener(Metajar);
 
     neoApolloDockerBuild.with(
         {
