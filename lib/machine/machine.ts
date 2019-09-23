@@ -378,7 +378,7 @@ export function machine(configuration: SoftwareDeliveryMachineConfiguration): So
 
     sdm.addCommand(runIntegrationTestsCommand(sdm));
     sdm.addCommand(MakeSomePushes);
-    
+
     return sdm;
 }
 
