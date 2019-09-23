@@ -63,6 +63,7 @@ import {
     ProjectVersioner,
     readSdmVersion,
 } from "@atomist/sdm-core";
+import { aspectSupport } from "@atomist/sdm-pack-aspect";
 import {
     CljFunctions,
     IsLein,
@@ -77,8 +78,9 @@ import {
     DockerImageNameCreator,
     DockerOptions,
 } from "@atomist/sdm-pack-docker";
+
 import {
-    fingerprintSupport,
+    fingerprintSupport, RebaseFailure, RebaseStrategy,
 } from "@atomist/sdm-pack-fingerprint";
 import { ApplyTargetParameters } from "@atomist/sdm-pack-fingerprint/lib/handlers/commands/applyFingerprint";
 import { singleIssuePerCategoryManaging } from "@atomist/sdm-pack-issue";
@@ -120,6 +122,8 @@ import {
     K8SpecUpdaterParameters,
     updateK8Spec,
 } from "./k8Support";
+
+import { K8sContainerEnvAspect } from "@atomist/k8s-container-envs/lib/k8sContainers";
 
 export const NodeProjectVersioner: ProjectVersioner = async (sdmGoal, p, log) => {
     const pjFile = await p.getFile("package.json");
@@ -253,6 +257,7 @@ export function machine(configuration: SoftwareDeliveryMachineConfiguration): So
         fingerprintSupport({
             pushImpactGoal: FingerprintGoal,
             aspects: [
+                K8sContainerEnvAspect,
                 Logback,
                 CljFunctions,
                 LogzioPresence,
@@ -373,6 +378,7 @@ export function machine(configuration: SoftwareDeliveryMachineConfiguration): So
 
     sdm.addCommand(runIntegrationTestsCommand(sdm));
     sdm.addCommand(MakeSomePushes);
+    
     return sdm;
 }
 
