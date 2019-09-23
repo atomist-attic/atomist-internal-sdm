@@ -255,7 +255,6 @@ export function machine(configuration: SoftwareDeliveryMachineConfiguration): So
             aspects: [
                 Logback,
                 CljFunctions,
-                LeinDeps,
                 LogzioPresence,
             ],
             transformPresentation: AutoApproveEditModeMaker,
