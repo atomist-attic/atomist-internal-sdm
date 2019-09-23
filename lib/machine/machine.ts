@@ -80,7 +80,9 @@ import {
 } from "@atomist/sdm-pack-docker";
 
 import {
-    fingerprintSupport, RebaseFailure, RebaseStrategy,
+    fingerprintSupport,
+    RebaseFailure,
+    RebaseStrategy,
 } from "@atomist/sdm-pack-fingerprint";
 import { ApplyTargetParameters } from "@atomist/sdm-pack-fingerprint/lib/handlers/commands/applyFingerprint";
 import { singleIssuePerCategoryManaging } from "@atomist/sdm-pack-issue";
@@ -95,7 +97,6 @@ import { K8SpecKick } from "../handlers/commands/HandleK8SpecKick";
 import { MakeSomePushes } from "../handlers/commands/MakeSomePushes";
 import { runIntegrationTestsCommand } from "../handlers/commands/RunIntegrationTests";
 import { handleRunningPods } from "./events/HandleRunningPods";
-import { LogzioPresence } from "./fingerprints/RemoveLogzio";
 import {
     autoCodeInspection,
     autofix,
@@ -260,7 +261,6 @@ export function machine(configuration: SoftwareDeliveryMachineConfiguration): So
                 K8sContainerEnvAspect,
                 Logback,
                 CljFunctions,
-                LogzioPresence,
             ],
             transformPresentation: AutoApproveEditModeMaker,
         }),
