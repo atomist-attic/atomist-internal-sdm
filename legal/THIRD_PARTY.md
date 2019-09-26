@@ -11,7 +11,7 @@ This page details all runtime OSS dependencies of `@atomist/atomist-internal-sdm
 | License | Count |
 |---------|-------|
 |[AFLv2.1](#aflv21)|1|
-|[Apache-2.0](#apache-20)|39|
+|[Apache-2.0](#apache-20)|36|
 |[BSD-2-Clause](#bsd-2-clause)|11|
 |[BSD-3-Clause](#bsd-3-clause)|58|
 |[BSD](#bsd)|7|
@@ -20,10 +20,10 @@ This page details all runtime OSS dependencies of `@atomist/atomist-internal-sdm
 |[Custom: https://flowtype.org/](#custom-httpsflowtypeorg)|1|
 |[Custom: https://github.com/graphql/graphql-language-service](#custom-httpsgithubcomgraphqlgraphql-language-service)|2|
 |[Custom: https://github.com/medikoo/clock](#custom-httpsgithubcommedikooclock)|1|
-|[GPL-3.0](#gpl-30)|4|
+|[GPL-3.0](#gpl-30)|3|
 |[ISC](#isc)|66|
 |[MIT AND BSD-3-Clause](#mit-and-bsd-3-clause)|1|
-|[MIT](#mit)|924|
+|[MIT](#mit)|919|
 |[PSF](#psf)|2|
 |[Public Domain](#public-domain)|1|
 |[UNKNOWN](#unknown)|1|
@@ -46,20 +46,17 @@ Apache License 2.0 - [http://www.apache.org/licenses/LICENSE-2.0](http://www.apa
 |`@atomist/automation-client-ext-logzio`|`1.0.2-master.20181213233859`|Atomist|[https://github.com/atomist/automation-client-ext-logzio](https://github.com/atomist/automation-client-ext-logzio)|
 |`@atomist/automation-client-ext-raven`|`1.0.2-master.20181213200324`|Atomist|[https://github.com/atomist/automation-client-ext-raven](https://github.com/atomist/automation-client-ext-raven)|
 |`@atomist/clj-editors`|`0.8.2`||[https://github.com/atomisthq/clj-editors](https://github.com/atomisthq/clj-editors)|
-|`@atomist/k8s-container-envs`|`0.1.0`|Atomist Bot|[https://github.com/atomisthq/k8s-container-envs](https://github.com/atomisthq/k8s-container-envs)|
+|`@atomist/k8s-container-envs`|`0.1.1-master.20190926091600`|Atomist Bot|[https://github.com/atomisthq/k8s-container-envs](https://github.com/atomisthq/k8s-container-envs)|
 |`@atomist/sdm-core`|`1.7.0`|Atomist|[https://github.com/atomist/sdm-core](https://github.com/atomist/sdm-core)|
-|`@atomist/sdm-core`|`1.7.1-noop-goal-cache-logging.20190917230807`|Atomist|[https://github.com/atomist/sdm-core](https://github.com/atomist/sdm-core)|
 |`@atomist/sdm-pack-aspect`|`1.0.0-master.20190925060605`|Atomist Inc.|[https://github.com/atomist/sdm-pack-aspect](https://github.com/atomist/sdm-pack-aspect)|
 |`@atomist/sdm-pack-build`|`1.0.6-master.20190903202948`|Atomist|[https://github.com/atomist/sdm-pack-build](https://github.com/atomist/sdm-pack-build)|
 |`@atomist/sdm-pack-clojure`|`2.0.2`|Atomist, Inc.|[https://github.com/atomist/sdm-pack-clojure](https://github.com/atomist/sdm-pack-clojure)|
 |`@atomist/sdm-pack-docker`|`2.0.3-master.20190903064256`|Atomist|[https://github.com/atomist/sdm-pack-docker](https://github.com/atomist/sdm-pack-docker)|
 |`@atomist/sdm-pack-fingerprint`|`5.0.0`|Atomist|[https://github.com/atomist/sdm-pack-fingerprints](https://github.com/atomist/sdm-pack-fingerprints)|
-|`@atomist/sdm-pack-fingerprint`|`5.0.1-nortissej.projectfinder.20190918004738`|Atomist|[https://github.com/atomist/sdm-pack-fingerprints](https://github.com/atomist/sdm-pack-fingerprints)|
 |`@atomist/sdm-pack-issue`|`1.2.2`|Atomist|[https://github.com/atomist/sdm-pack-issue](https://github.com/atomist/sdm-pack-issue)|
 |`@atomist/sdm-pack-node`|`1.0.3-master.20190110120831`|Atomist|[https://github.com/atomist/sdm-pack-node](https://github.com/atomist/sdm-pack-node)|
 |`@atomist/sdm-pack-sloc`|`1.0.3-master.20190502175705`|Atomist|[https://github.com/atomist/sdm-pack-sloc](https://github.com/atomist/sdm-pack-sloc)|
 |`@atomist/sdm`|`1.7.0`|Atomist|[https://github.com/atomist/sdm](https://github.com/atomist/sdm)|
-|`@atomist/sdm`|`1.7.1-master.20190915225602`|Atomist|[https://github.com/atomist/sdm](https://github.com/atomist/sdm)|
 |`@atomist/slack-messages`|`1.1.1`|Atomist|[https://github.com/atomist/slack-messages](https://github.com/atomist/slack-messages)|
 |`@kubernetes/client-node`|`0.10.2`|Kubernetes Authors|[https://github.com/kubernetes-client/javascript](https://github.com/kubernetes-client/javascript)|
 |`@kubernetes/client-node`|`0.8.2`|Kubernetes Authors|[https://github.com/kubernetes-client/javascript](https://github.com/kubernetes-client/javascript)|
@@ -212,7 +209,6 @@ GNU General Public License v3.0 only - [https://www.gnu.org/licenses/gpl-3.0-sta
 | Name | Version | Publisher | Repository |
 |------|---------|-----------|------------|
 |`@atomist/automation-client`|`1.7.0`|Atomist|[https://github.com/atomist/automation-client](https://github.com/atomist/automation-client)|
-|`@atomist/automation-client`|`1.7.1-nortissej.flexible-gql-gen.20190918220049`|Atomist|[https://github.com/atomist/automation-client](https://github.com/atomist/automation-client)|
 |`@atomist/microgrammar`|`1.2.0`|Atomist|[https://github.com/atomist/microgrammar](https://github.com/atomist/microgrammar)|
 |`@atomist/tree-path`|`1.0.3`|Atomist|[https://github.com/atomist/tree-path](https://github.com/atomist/tree-path)|
 
@@ -371,10 +367,8 @@ MIT License - [https://opensource.org/licenses/MIT](https://opensource.org/licen
 |`@types/node-statsd`|`0.1.2`||[https://github.com/DefinitelyTyped/DefinitelyTyped](https://github.com/DefinitelyTyped/DefinitelyTyped)|
 |`@types/node`|`10.14.10`||[https://github.com/DefinitelyTyped/DefinitelyTyped](https://github.com/DefinitelyTyped/DefinitelyTyped)|
 |`@types/node`|`10.14.17`||[https://github.com/DefinitelyTyped/DefinitelyTyped](https://github.com/DefinitelyTyped/DefinitelyTyped)|
-|`@types/node`|`10.14.18`||[https://github.com/DefinitelyTyped/DefinitelyTyped](https://github.com/DefinitelyTyped/DefinitelyTyped)|
 |`@types/node`|`12.0.10`||[https://github.com/DefinitelyTyped/DefinitelyTyped](https://github.com/DefinitelyTyped/DefinitelyTyped)|
 |`@types/node`|`12.7.4`||[https://github.com/DefinitelyTyped/DefinitelyTyped](https://github.com/DefinitelyTyped/DefinitelyTyped)|
-|`@types/node`|`12.7.5`||[https://github.com/DefinitelyTyped/DefinitelyTyped](https://github.com/DefinitelyTyped/DefinitelyTyped)|
 |`@types/passport-http-bearer`|`1.0.33`||[https://github.com/DefinitelyTyped/DefinitelyTyped.git](https://github.com/DefinitelyTyped/DefinitelyTyped.git)|
 |`@types/passport-http`|`0.3.8`||[https://github.com/DefinitelyTyped/DefinitelyTyped](https://github.com/DefinitelyTyped/DefinitelyTyped)|
 |`@types/passport`|`1.0.1`||[https://github.com/DefinitelyTyped/DefinitelyTyped](https://github.com/DefinitelyTyped/DefinitelyTyped)|
@@ -417,8 +411,6 @@ MIT License - [https://opensource.org/licenses/MIT](https://opensource.org/licen
 |`@types/uuid`|`3.4.5`||[https://github.com/DefinitelyTyped/DefinitelyTyped](https://github.com/DefinitelyTyped/DefinitelyTyped)|
 |`@types/ws`|`6.0.1`||[https://github.com/DefinitelyTyped/DefinitelyTyped](https://github.com/DefinitelyTyped/DefinitelyTyped)|
 |`@types/yamljs`|`0.2.30`|Tim Jonischkat|[https://github.com/DefinitelyTyped/DefinitelyTyped](https://github.com/DefinitelyTyped/DefinitelyTyped)|
-|`@types/yargs-parser`|`13.1.0`||[https://github.com/DefinitelyTyped/DefinitelyTyped](https://github.com/DefinitelyTyped/DefinitelyTyped)|
-|`@types/yargs`|`13.0.2`||[https://github.com/DefinitelyTyped/DefinitelyTyped](https://github.com/DefinitelyTyped/DefinitelyTyped)|
 |`@types/zen-observable`|`0.8.0`||[https://github.com/DefinitelyTyped/DefinitelyTyped](https://github.com/DefinitelyTyped/DefinitelyTyped)|
 |`@wry/context`|`0.4.4`|Ben Newman|[https://github.com/benjamn/wryware](https://github.com/benjamn/wryware)|
 |`@wry/equality`|`0.1.9`|Ben Newman|[https://github.com/benjamn/wryware](https://github.com/benjamn/wryware)|
@@ -868,7 +860,6 @@ MIT License - [https://opensource.org/licenses/MIT](https://opensource.org/licen
 |`lodash.templatesettings`|`4.2.0`|John-David Dalton|[https://github.com/lodash/lodash](https://github.com/lodash/lodash)|
 |`lodash.union`|`4.6.0`|John-David Dalton|[https://github.com/lodash/lodash](https://github.com/lodash/lodash)|
 |`lodash.uniq`|`4.5.0`|John-David Dalton|[https://github.com/lodash/lodash](https://github.com/lodash/lodash)|
-|`lodash`|`4.17.14`|John-David Dalton|[https://github.com/lodash/lodash](https://github.com/lodash/lodash)|
 |`lodash`|`4.17.15`|John-David Dalton|[https://github.com/lodash/lodash](https://github.com/lodash/lodash)|
 |`log-symbols`|`1.0.2`|Sindre Sorhus|[https://github.com/sindresorhus/log-symbols](https://github.com/sindresorhus/log-symbols)|
 |`log-update`|`2.3.0`|Sindre Sorhus|[https://github.com/sindresorhus/log-update](https://github.com/sindresorhus/log-update)|
