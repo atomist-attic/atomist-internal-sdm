@@ -265,7 +265,7 @@ export function machine(configuration: SoftwareDeliveryMachineConfiguration): So
     sdm.addCommand(EnableDeploy);
     sdm.addCommand(K8SpecKick);
 
-    sdm.addIngester(GraphQL.ingester("podDeployments"));
+    // sdm.addIngester(GraphQL.ingester("podDeployments"));
 
     autofix.with(
         {
