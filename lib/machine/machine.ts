@@ -29,6 +29,7 @@ import {
     AutoMergeMode,
 } from "@atomist/automation-client/lib/operations/edit/editModes";
 import * as clj from "@atomist/clj-editors";
+import { K8sContainerEnvAspect } from "@atomist/k8s-container-envs/lib/k8sContainers";
 import {
     allSatisfied,
     ApproveGoalIfErrorComments,
@@ -63,11 +64,9 @@ import {
     ProjectVersioner,
     readSdmVersion,
 } from "@atomist/sdm-core";
-import { aspectSupport } from "@atomist/sdm-pack-aspect";
 import {
     CljFunctions,
     IsLein,
-    LeinDeps,
     leinSupport,
     Logback,
     MaterialChangeToClojureRepo,
@@ -78,17 +77,10 @@ import {
     DockerImageNameCreator,
     DockerOptions,
 } from "@atomist/sdm-pack-docker";
-
-import {
-    fingerprintSupport,
-    RebaseFailure,
-    RebaseStrategy,
-} from "@atomist/sdm-pack-fingerprint";
+import { fingerprintSupport } from "@atomist/sdm-pack-fingerprint";
 import { ApplyTargetParameters } from "@atomist/sdm-pack-fingerprint/lib/handlers/commands/applyFingerprint";
 import { singleIssuePerCategoryManaging } from "@atomist/sdm-pack-issue";
-import {
-    IsNode,
-} from "@atomist/sdm-pack-node";
+import { IsNode } from "@atomist/sdm-pack-node";
 import { HasTravisFile } from "@atomist/sdm/lib/api-helper/pushtest/ci/ciPushTests";
 import * as df from "dateformat";
 import * as _ from "lodash";
@@ -123,8 +115,6 @@ import {
     K8SpecUpdaterParameters,
     updateK8Spec,
 } from "./k8Support";
-
-import { K8sContainerEnvAspect } from "@atomist/k8s-container-envs/lib/k8sContainers";
 
 export const NodeProjectVersioner: ProjectVersioner = async (sdmGoal, p, log) => {
     const pjFile = await p.getFile("package.json");

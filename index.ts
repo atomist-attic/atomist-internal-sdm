@@ -18,7 +18,6 @@ import { Configuration } from "@atomist/automation-client";
 import { configureDashboardNotifications } from "@atomist/automation-client-ext-dashboard";
 import { configureHumio } from "@atomist/automation-client-ext-humio";
 import { configureLogzio } from "@atomist/automation-client-ext-logzio";
-import { configureRaven } from "@atomist/automation-client-ext-raven";
 import { MockGoalSize } from "@atomist/sdm";
 import {
     ConfigureOptions,
