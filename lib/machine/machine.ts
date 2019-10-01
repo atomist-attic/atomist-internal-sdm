@@ -198,7 +198,7 @@ export function machine(configuration: SoftwareDeliveryMachineConfiguration): So
     },
 
         whenPushSatisfies(not(IsWorkspaceWhitelisted))
-            .setGoals(goals("no goals")),
+            .setGoals(goals("fingerprint only").plan(FingerprintGoal)),
 
         whenPushSatisfies(not(isSdmEnabled(configuration.name)), IsNode, not(IsLein))
             .itMeans("Default to not build Node.js projects unless they are cljs ones")
