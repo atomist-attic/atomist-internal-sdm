@@ -25,7 +25,7 @@ export function neo4j(): K8sServiceRegistration {
 
     const container: k8s.V1Container = {
         name: "neo4j",
-        image: `whostolebenfrog/neo4j-graphql:3.4.1.1`,
+        image: `whostolebenfrog/neo4j-graphql:3.5.9.2`,
         imagePullPolicy: "IfNotPresent",
         resources: {
             limits: {
