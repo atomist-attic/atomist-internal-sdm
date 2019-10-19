@@ -14,7 +14,11 @@
  * limitations under the License.
  */
 
-import { GitHubRepoRef, GitProject, GraphQL } from "@atomist/automation-client";
+import {
+    GitHubRepoRef,
+    GitProject,
+    GraphQL,
+} from "@atomist/automation-client";
 import { configureDashboardNotifications } from "@atomist/automation-client-ext-dashboard";
 import { configureHumio } from "@atomist/automation-client-ext-humio";
 import { configureLogzio } from "@atomist/automation-client-ext-logzio";
@@ -28,7 +32,8 @@ import {
     HasTravisFile,
     MockGoalSize,
     not,
-    ToDefaultBranch } from "@atomist/sdm";
+    ToDefaultBranch,
+} from "@atomist/sdm";
 import {
     configure,
     DisableDeploy,
@@ -38,9 +43,17 @@ import {
     goalStateSupport,
     k8sGoalSchedulingSupport,
 } from "@atomist/sdm-core";
-import { CljFunctions, IsLein, leinSupport, Logback, MaterialChangeToClojureRepo, Metajar } from "@atomist/sdm-pack-clojure";
 import {
-    leinBuild, publish,
+    CljFunctions,
+    IsLein,
+    leinSupport,
+    Logback,
+    MaterialChangeToClojureRepo,
+    Metajar,
+} from "@atomist/sdm-pack-clojure";
+import {
+    leinBuild,
+    publish,
 } from "@atomist/sdm-pack-clojure/lib/machine/goals";
 import { DefaultDockerImageNameCreator } from "@atomist/sdm-pack-docker";
 import { fingerprintSupport } from "@atomist/sdm-pack-fingerprint";
@@ -73,7 +86,8 @@ import {
     HasIntegrationTestMarkerFile,
     HasNeoApolloDockerfile,
     IsWorkspaceWhitelisted,
-    NodeProjectVersioner} from "./lib/machine/machine";
+    NodeProjectVersioner,
+} from "./lib/machine/machine";
 
 export const configuration = configure(async sdm => {
 
