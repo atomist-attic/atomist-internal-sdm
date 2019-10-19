@@ -102,12 +102,6 @@ export const configuration = configure(async sdm => {
         },
     };
 
-    sdm.configuration.postProcessors = [
-        configureLogzio,
-        configureHumio,
-        configureDashboardNotifications,
-    ];
-
     sdm.addExtensionPacks(
         leinSupport({
             autofixGoal: autofix,
@@ -309,6 +303,10 @@ export const configuration = configure(async sdm => {
 },
 {
     name: "Atomist Software Delivery Machine",
+    postProcessors: [
+        configureHumio,
+        configureDashboardNotifications,
+    ],
     requiredConfigurationValues: [
         "sdm.npm.npmrc",
         "sdm.npm.registry",
