@@ -87,7 +87,7 @@ export async function addCacheHooks(p: Project): Promise<Project> {
 
 @Parameters()
 export class K8SpecUpdaterParameters {
-    @Parameter({ required: true, pattern: /prod|staging/, validInput: "prod | staging" })
+    @Parameter({ required: true, pattern: /production|staging/, validInput: "production | staging" })
     public readonly env: string;
     @Parameter({ required: true, pattern: /.*/ })
     public readonly version: string;
