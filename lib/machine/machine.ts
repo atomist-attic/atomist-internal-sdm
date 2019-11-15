@@ -341,10 +341,10 @@ export function machine(configuration: SoftwareDeliveryMachineConfiguration): So
         intent: "update spec",
         paramsMaker: K8SpecUpdaterParameters,
         listener: async cli => {
-
+            const repo = `k8s-internal-${cli.parameters.env}-specs`;
             return CloningProjectLoader.doWithProject({
                 credentials: { token: cli.parameters.token },
-                id: GitHubRepoRef.from({ owner: "atomisthq", repo: "atomist-k8-specs", branch: cli.parameters.env }),
+                id: GitHubRepoRef.from({ owner: "atomisthq", repo, branch: "master" }),
                 readOnly: false,
                 context: cli.context,
                 cloneOptions: {
