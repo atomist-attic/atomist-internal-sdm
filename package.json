@@ -27,7 +27,7 @@
     "@atomist/automation-client-ext-raven": "1.0.2-master.20181213200324",
     "@atomist/clj-editors": "0.8.2",
     "@atomist/k8s-container-envs": "0.1.1-master.20190926091600",
-    "@atomist/sdm": "^1.7.0",
+    "@atomist/sdm": "^1.8.0-dynamic-goals.20191115162021",
     "@atomist/sdm-core": "^1.7.0",
     "@atomist/sdm-pack-aspect": "1.0.0-master.20190925060605",
     "@atomist/sdm-pack-build": "^1.0.6",
