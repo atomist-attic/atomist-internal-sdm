@@ -40,6 +40,7 @@ import {
     executeVersioner,
     githubGoalStatusSupport,
     goalStateSupport,
+    IsInLocalMode,
     k8sGoalSchedulingSupport,
 } from "@atomist/sdm-core";
 import {
@@ -288,27 +289,27 @@ export const configuration = configure(async sdm => {
             dependsOn: "tag",
         },
         updateStagingK8Specs: {
-            test: ToDefaultBranch,
+            test: and(IsInLocalMode, ToDefaultBranch),
             goals: [updateStagingK8Specs],
             dependsOn: "tag",
         },
         updateProdK8Specs: {
-            test: ToDefaultBranch,
+            test: and(IsInLocalMode, ToDefaultBranch),
             goals: [updateProdK8Specs],
             dependsOn: "deployToStaging",
         },
         deployToStaging: {
-            test: ToDefaultBranch,
+            test: and(IsInLocalMode, ToDefaultBranch),
             goals: [updateProdK8Specs],
             dependsOn: "updateStagingK8Specs",
         },
         integrationTest: {
-            test: and( HasIntegrationTestMarkerFile, ToDefaultBranch),
+            test: and(IsInLocalMode, HasIntegrationTestMarkerFile, ToDefaultBranch),
             goals: [integrationTest],
             dependsOn: "deployToStaging",
         },
         deployToProd: {
-            test: ToDefaultBranch,
+            test: and(IsInLocalMode, ToDefaultBranch),
             goals: [deployToProd],
             dependsOn: "updateProdK8Specs",
         },
