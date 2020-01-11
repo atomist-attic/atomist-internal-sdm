@@ -20,14 +20,8 @@ import {
     GitProject,
     HandlerContext,
     logger,
-    MappedParameter,
-    MappedParameters,
-    Parameter,
-    Parameters,
     Project,
     projectUtils,
-    Secret,
-    Secrets,
     SimpleProjectEditor,
     SuccessPromise,
 } from "@atomist/automation-client";
@@ -83,23 +77,6 @@ export async function addCacheHooks(p: Project): Promise<Project> {
     }));
     logger.info("Finished copying .atomist files");
     return p;
-}
-
-@Parameters()
-export class K8SpecUpdaterParameters {
-    @Parameter({ required: true, pattern: /production|staging/, validInput: "production | staging" })
-    public readonly env: string;
-    @Parameter({ required: true, pattern: /.*/ })
-    public readonly version: string;
-
-    @MappedParameter(MappedParameters.GitHubOwner)
-    public readonly owner: string;
-
-    @MappedParameter(MappedParameters.GitHubRepository)
-    public readonly repo: string;
-
-    @Secret(Secrets.userToken("repo"))
-    public readonly token: string;
 }
 
 /**

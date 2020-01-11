@@ -18,7 +18,6 @@
 
 import {
     editModes,
-    GitHubRepoRef,
     GitProject,
     GraphQL,
     HandlerContext,
@@ -34,7 +33,6 @@ import {
     allSatisfied,
     ApproveGoalIfErrorComments,
     ApproveGoalIfWarnComments,
-    CloningProjectLoader,
     goals,
     hasFile,
     ImmaterialGoals,
@@ -55,8 +53,6 @@ import {
 } from "@atomist/sdm";
 import {
     createSoftwareDeliveryMachine,
-    DisableDeploy,
-    EnableDeploy,
     executeVersioner,
     githubGoalStatusSupport,
     goalStateSupport,
@@ -85,9 +81,6 @@ import { HasTravisFile } from "@atomist/sdm/lib/api-helper/pushtest/ci/ciPushTes
 import * as df from "dateformat";
 import * as _ from "lodash";
 import * as path from "path";
-import { K8SpecKick } from "../handlers/commands/HandleK8SpecKick";
-import { MakeSomePushes } from "../handlers/commands/MakeSomePushes";
-import { runIntegrationTestsCommand } from "../handlers/commands/RunIntegrationTests";
 import { handleRunningPods } from "./events/HandleRunningPods";
 import {
     autoCodeInspection,
@@ -112,7 +105,6 @@ import { goalRunIntegrationTests } from "./integrationTests";
 import {
     addCacheHooks,
     k8SpecUpdater,
-    K8SpecUpdaterParameters,
     updateK8Spec,
 } from "./k8Support";
 
@@ -261,10 +253,6 @@ export function machine(configuration: SoftwareDeliveryMachineConfiguration): So
         .withListener(ApproveGoalIfWarnComments)
         .withListener(singleIssuePerCategoryManaging(sdm.configuration.name, true, () => true));
 
-    sdm.addCommand(DisableDeploy);
-    sdm.addCommand(EnableDeploy);
-    sdm.addCommand(K8SpecKick);
-
     sdm.addIngester(GraphQL.ingester("podDeployments"));
 
     autofix.with(
@@ -334,40 +322,6 @@ export function machine(configuration: SoftwareDeliveryMachineConfiguration): So
         subscription: GraphQL.subscription("runningPods"),
         listener: handleRunningPods(),
     });
-
-    sdm.addCommand<K8SpecUpdaterParameters>({
-        name: "k8SpecUpdater",
-        description: "Update k8 specs",
-        intent: "update spec",
-        paramsMaker: K8SpecUpdaterParameters,
-        listener: async cli => {
-            const repo = `k8s-internal-${cli.parameters.env}-specs`;
-            return CloningProjectLoader.doWithProject({
-                credentials: { token: cli.parameters.token },
-                id: GitHubRepoRef.from({ owner: "atomisthq", repo, branch: "master" }),
-                readOnly: false,
-                context: cli.context,
-                cloneOptions: {
-                    alwaysDeep: true,
-                },
-            },
-                async (prj: GitProject) => {
-                    const result = await updateK8Spec(prj, cli.context, {
-                        owner: cli.parameters.owner,
-                        repo: cli.parameters.repo,
-                        version: cli.parameters.version,
-                        branch: cli.parameters.env,
-                    });
-                    await prj.commit(`Update ${cli.parameters.owner}/${cli.parameters.repo} to ${cli.parameters.version}`);
-                    await prj.push();
-                    return result;
-                },
-            );
-        },
-    });
-
-    sdm.addCommand(runIntegrationTestsCommand(sdm));
-    sdm.addCommand(MakeSomePushes);
 
     return sdm;
 }
