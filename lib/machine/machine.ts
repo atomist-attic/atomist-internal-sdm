@@ -107,6 +107,7 @@ import {
     k8SpecUpdater,
     updateK8Spec,
 } from "./k8Support";
+import { isNamed, isOrgNamed } from "./identityPushTests";
 
 export const NodeProjectVersioner: ProjectVersioner = async (sdmGoal, p, log) => {
     const pjFile = await p.getFile("package.json");
@@ -188,6 +189,9 @@ export function machine(configuration: SoftwareDeliveryMachineConfiguration): So
         name: "Atomist Software Delivery Machine",
         configuration,
     },
+
+        whenPushSatisfies(isOrgNamed("atomisthq"), isNamed("bruce"))
+            .setGoals(goals("no goals")),
 
         whenPushSatisfies(not(IsWorkspaceWhitelisted))
             .setGoals(goals("fingerprint only").plan(FingerprintGoal)),
