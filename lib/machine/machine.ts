@@ -101,13 +101,13 @@ import {
     updateStagingK8Specs,
     version,
 } from "./goals";
+import { isNamed, isOrgNamed } from "./identityPushTests";
 import { goalRunIntegrationTests } from "./integrationTests";
 import {
     addCacheHooks,
     k8SpecUpdater,
     updateK8Spec,
 } from "./k8Support";
-import { isNamed, isOrgNamed } from "./identityPushTests";
 
 export const NodeProjectVersioner: ProjectVersioner = async (sdmGoal, p, log) => {
     const pjFile = await p.getFile("package.json");
