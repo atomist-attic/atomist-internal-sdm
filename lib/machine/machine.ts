@@ -101,7 +101,10 @@ import {
     updateStagingK8Specs,
     version,
 } from "./goals";
-import { isNamed, isOrgNamed } from "./identityPushTests";
+import {
+    isNamed,
+    isOrgNamed,
+} from "./identityPushTests";
 import { goalRunIntegrationTests } from "./integrationTests";
 import {
     addCacheHooks,
