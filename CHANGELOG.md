@@ -5,7 +5,9 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## [Unreleased](https://github.com/atomist/atomist-internal-sdm/compare/0.3.97...HEAD)
+## [Unreleased](https://github.com/atomist/atomist-internal-sdm/compare/0.3.98...HEAD)
+
+## [0.3.98](https://github.com/atomist/atomist-internal-sdm/compare/0.3.97...0.3.98) - 2020-06-17
 
 ## [0.3.97](https://github.com/atomist/atomist-internal-sdm/compare/0.3.96...0.3.97) - 2020-05-06
 
