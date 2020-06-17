@@ -196,6 +196,9 @@ export function machine(configuration: SoftwareDeliveryMachineConfiguration): So
         whenPushSatisfies(isOrgNamed("atomisthq"), isNamed("bruce"))
             .setGoals(goals("no goals")),
 
+        whenPushSatisfies(isOrgNamed("atomisthq"), isNamed("bot-service"))
+            .setGoals(goals("no goals")),                                              
+                                              
         whenPushSatisfies(not(IsWorkspaceWhitelisted))
             .setGoals(goals("fingerprint only").plan(FingerprintGoal)),
 
