@@ -196,7 +196,7 @@ export function machine(configuration: SoftwareDeliveryMachineConfiguration): So
         whenPushSatisfies(isOrgNamed("atomisthq"), isNamed("bruce"))
             .setGoals(goals("no goals")),
 
-        whenPushSatisfies(isOrgNamed("atomisthq"), isNamed("bot-service"))
+        whenPushSatisfies(isOrgNamed("atomisthq"), isNamed("bot"))
             .setGoals(goals("no goals")),
 
         whenPushSatisfies(not(IsWorkspaceWhitelisted))
