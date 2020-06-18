@@ -187,13 +187,23 @@ export const AutoApproveEditModeMaker: TransformPresentation<ApplyTargetParamete
         });
 };
 
+
+const IsMigrated: PushTest =
+    pushTest(`have we migrated to internal skill`,
+        async pci => {
+            const file = await pci.project.getFile("project.clj");
+            let fileContent = await file.getContent();
+            return fileContent.includes("mvn_artifactorymavenrepository_user");
+        },
+    );
+
 export function machine(configuration: SoftwareDeliveryMachineConfiguration): SoftwareDeliveryMachine {
     const sdm = createSoftwareDeliveryMachine({
         name: "Atomist Software Delivery Machine",
         configuration,
     },
 
-        whenPushSatisfies(isOrgNamed("atomisthq"), isNamed("bruce", "bot-service", "lore"))
+        whenPushSatisfies(isOrgNamed("atomisthq"), IsMigrated)
             .setGoals(goals("no goals")),
 
         whenPushSatisfies(not(IsWorkspaceWhitelisted))
